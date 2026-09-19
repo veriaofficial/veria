@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Veria</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,sans-serif;
+    background:#10131c;
+    color:white;
+    overflow:hidden;
+}
+
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+
+.navbar{
+    height:64px;
+    background:#171b27;
+    border-bottom:1px solid #292f40;
+    display:flex;
+    align-items:center;
+    padding:0 22px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:800;
+    color:#6ea8ff;
+    margin-right:32px;
+    letter-spacing:-1px;
+}
+
+.nav-left,.nav-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.nav-left{flex:1}
+
+.nav-button{
+    border:0;
+    background:transparent;
+    color:#d7dbea;
+    font-size:15px;
+    padding:10px 14px;
+    border-radius:8px;
+}
+
+.nav-button:hover{
+    background:#232938;
+    color:white;
+}
+
+.account-button{
+    border:0;
+    padding:10px 15px;
+    border-radius:8px;
+    font-weight:700;
+    color:white;
+    background:#252b3a;
+}
+
+.account-button:hover{background:#30384c}
+.signup-button{background:#5c8df6}
+
+#homePage{
+    height:100vh;
+    overflow-y:auto;
+    padding:105px 32px 50px;
+}
+
+.home-inner{
+    max-width:1500px;
+    margin:auto;
+}
+
+h1{
+    font-size:34px;
+    margin:0 0 30px;
+}
+
+.section{margin-bottom:42px}
+
+.section-title{
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:16px;
+}
+
+.played-row{
+    display:flex;
+    gap:18px;
+    overflow-x:auto;
+    padding-bottom:12px;
+}
+
+.game-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+    gap:22px;
+}
+
+.game-card{
+    background:#181d29;
+    border:1px solid #272e40;
+    border-radius:12px;
+    overflow:hidden;
+    transition:.15s;
+}
+
+.game-card:hover{
+    transform:translateY(-4px);
+    border-color:#4c74b8;
+}
+
+.played-row .game-card{flex:0 0 220px}
+
+.game-image{
+    height:125px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    font-weight:900;
+    background:linear-gradient(135deg,#293b65,#1b2231);
+}
+
+.game-info{padding:13px}
+
+.game-name{
+    font-weight:800;
+    font-size:17px;
+    margin-bottom:6px;
+}
+
+.game-description{
+    color:#9fa8bb;
+    font-size:13px;
+    min-height:34px;
+}
+
+.play-button{
+    width:100%;
+    border:0;
+    margin-top:12px;
+    padding:9px;
+    border-radius:7px;
+    background:#5c8df6;
+    color:white;
+    font-weight:800;
+}
+
+#createPage{
+    display:none;
+    height:100vh;
+    overflow-y:auto;
+    padding:105px 32px 50px;
+}
+
+.create-inner{
+    max-width:900px;
+    margin:auto;
+}
+
+.create-title{
+    font-size:34px;
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.create-subtitle{
+    color:#9fa8bb;
+    margin-bottom:30px;
+}
+
+.create-box{
+    background:#181d29;
+    border:1px solid #272e40;
+    border-radius:12px;
+    padding:24px;
+}
+
+.create-label{
+    display:block;
+    font-size:14px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.create-input,.create-textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #343c50;
+    border-radius:8px;
+    background:#10141e;
+    color:white;
+    outline:none;
+    margin-bottom:18px;
+}
+
+.create-textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+.create-templates{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.create-template{
+    border:1px solid #343c50;
+    background:#202533;
+    color:white;
+    border-radius:9px;
+    padding:16px;
+    text-align:left;
+}
+
+.create-template.selected{
+    border-color:#5c8df6;
+    background:#293653;
+}
+
+.create-template-name{
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.create-template-description{
+    font-size:12px;
+    color:#9fa8bb;
+}
+
+.primary-button{
+    width:100%;
+    border:0;
+    border-radius:8px;
+    padding:12px;
+    background:#5c8df6;
+    color:white;
+    font-weight:800;
+}
+
+#studioPage{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#11151f;
+    z-index:5000;
+}
+
+.studio-top{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:64px;
+    background:#171b27;
+    border-bottom:1px solid #303749;
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    z-index:20;
+}
+
+.studio-logo{
+    color:#6ea8ff;
+    font-size:20px;
+    font-weight:900;
+    margin-right:25px;
+}
+
+.studio-game-name{
+    flex:1;
+    color:#dce2f0;
+    font-size:14px;
+}
+
+.studio-top-button{
+    border:0;
+    background:#252b3a;
+    color:white;
+    border-radius:7px;
+    padding:9px 14px;
+    margin-left:8px;
+}
+
+.studio-top-button:hover{background:#34405a}
+
+.studio-layout{
+    position:absolute;
+    top:64px;
+    bottom:0;
+    left:0;
+    right:0;
+    display:grid;
+    grid-template-columns:240px 1fr 275px;
+}
+
+.explorer{
+    background:#151923;
+    border-right:1px solid #303749;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.panel-title{
+    height:44px;
+    display:flex;
+    align-items:center;
+    padding:0 14px;
+    font-weight:800;
+    border-bottom:1px solid #303749;
+}
+
+.workspace-tree{
+    padding:12px 10px;
+    overflow:auto;
+    flex:1;
+}
+
+.tree-root{
+    font-weight:800;
+    padding:8px;
+    color:#e8edf8;
+}
+
+.tree-item{
+    padding:9px 10px 9px 26px;
+    border-radius:6px;
+    margin-top:3px;
+    color:#cbd3e3;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.tree-item:hover{background:#222b3e}
+
+.tree-item.selected{
+    background:#31588e;
+    color:white;
+}
+
+.tree-icon{
+    display:inline-block;
+    width:22px;
+}
+
+.explorer-bottom{
+    padding:10px;
+    border-top:1px solid #303749;
+}
+
+.add-part-button{
+    width:100%;
+    border:0;
+    border-radius:7px;
+    padding:11px;
+    background:#6ea8ff;
+    color:#07101f;
+    font-weight:900;
+}
+
+.viewport{
+    position:relative;
+    min-width:0;
+    min-height:0;
+    background:#79bde7;
+    overflow:hidden;
+}
+
+#studioCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.controls-help{
+    position:absolute;
+    top:12px;
+    left:12px;
+    background:rgba(15,20,30,.88);
+    border:1px solid #37435a;
+    border-radius:7px;
+    padding:9px 12px;
+    font-size:12px;
+    color:#dce3ef;
+    z-index:5;
+    pointer-events:none;
+}
+
+.viewport-status{
+    position:absolute;
+    left:12px;
+    bottom:12px;
+    background:rgba(15,20,30,.88);
+    border:1px solid #37435a;
+    border-radius:7px;
+    padding:8px 11px;
+    font-size:12px;
+    color:#cbd5e5;
+    z-index:5;
+    pointer-events:none;
+}
+
+.properties{
+    background:#151923;
+    border-left:1px solid #303749;
+    overflow-y:auto;
+}
+
+.properties-content{padding:14px}
+
+.property-section{margin-bottom:20px}
+
+.property-heading{
+    color:#8d9ab1;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.5px;
+    margin-bottom:9px;
+}
+
+.property-label{
+    color:#aeb8c9;
+    font-size:12px;
+    margin-bottom:5px;
+}
+
+.property-input{
+    width:100%;
+    background:#0f131d;
+    border:1px solid #343d51;
+    color:white;
+    padding:9px;
+    border-radius:6px;
+    outline:none;
+    margin-bottom:10px;
+}
+
+.property-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:6px;
+}
+
+.color-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+#partColor{
+    width:54px;
+    height:36px;
+    padding:2px;
+}
+
+.delete-button{
+    width:100%;
+    border:0;
+    background:#963b48;
+    color:white;
+    padding:10px;
+    border-radius:7px;
+    font-weight:800;
+}
+
+.empty-properties{
+    color:#7f899c;
+    text-align:center;
+    padding:30px 10px;
+    font-size:13px;
+}
+
+.transform-tools{
+    display:flex;
+    gap:6px;
+    margin-bottom:15px;
+}
+
+.transform-tool{
+    flex:1;
+    border:1px solid #343d51;
+    background:#202533;
+    color:#cbd5e5;
+    padding:9px 5px;
+    border-radius:6px;
+    font-weight:800;
+    font-size:12px;
+}
+
+.transform-tool:hover{
+    background:#293653;
+}
+
+.transform-tool.active{
+    background:#31588e;
+    border-color:#6ea8ff;
+    color:white;
+}
+
+.studio-options{
+    position:absolute;
+    left:10px;
+    bottom:10px;
+    z-index:30;
+}
+
+.options-button{
+    border:0;
+    background:#171c28;
+    color:white;
+    padding:11px 18px;
+    border-radius:8px;
+    font-weight:800;
+    box-shadow:0 5px 20px rgba(0,0,0,.3);
+}
+
+.options-menu{
+    display:none;
+    position:absolute;
+    left:0;
+    bottom:48px;
+    width:190px;
+    background:#181d29;
+    border:1px solid #394258;
+    border-radius:9px;
+    padding:7px;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);
+}
+
+.options-menu.open{display:block}
+
+.options-menu button{
+    width:100%;
+    text-align:left;
+    border:0;
+    background:transparent;
+    color:white;
+    padding:11px;
+    border-radius:6px;
+}
+
+.options-menu button:hover{background:#29334a}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    z-index:10000;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.open{display:flex}
+
+.modal-box{
+    width:100%;
+    max-width:480px;
+    max-height:88vh;
+    overflow-y:auto;
+    background:#181d29;
+    border:1px solid #30384b;
+    border-radius:14px;
+    padding:24px;
+    box-shadow:0 20px 70px rgba(0,0,0,.55);
+}
+
+.modal-title{
+    font-size:24px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.close-button{
+    float:right;
+    border:0;
+    background:transparent;
+    color:#9da7bb;
+    font-size:24px;
+}
+
+.modal-input,.modal-textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #343c50;
+    border-radius:8px;
+    background:#10141e;
+    color:white;
+    outline:none;
+    margin-bottom:13px;
+}
+
+.modal-textarea{
+    min-height:110px;
+    resize:vertical;
+}
+
+.image-upload{
+    width:100%;
+    padding:12px;
+    border:1px dashed #47536a;
+    border-radius:8px;
+    background:#10141e;
+    color:#aeb8ca;
+    margin-bottom:15px;
+}
+
+.modal-message{
+    min-height:20px;
+    color:#aeb8ca;
+    margin-top:10px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.modal-actions button{flex:1}
+
+.secondary-button{
+    border:0;
+    border-radius:8px;
+    padding:11px;
+    background:#292f40;
+    color:white;
+    font-weight:700;
+}
+
+@media(max-width:800px){
+    .studio-layout{grid-template-columns:190px 1fr}
+    .properties{display:none}
+    .nav-left .nav-button{display:none}
+    .create-templates{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar" id="mainNavbar">
+<div class="logo">Veria</div>
+
+<div class="nav-left">
+<button class="nav-button" onclick="goHome()">Home</button>
+<button class="nav-button" onclick="showGames()">Games</button>
+<button class="nav-button" onclick="showCreate()">Create</button>
+</div>
+
+<div class="nav-right">
+<button id="loginButton" class="account-button" onclick="openLogin()">Login</button>
+<button id="signupButton" class="account-button signup-button" onclick="openSignup()">Sign Up</button>
+<button id="profileButton" class="account-button" onclick="openProfile()" style="display:none">Profile</button>
+<button id="signoutButton" class="account-button" onclick="signOut()" style="display:none">Sign Out</button>
+</div>
+</nav>
+
+<main id="homePage">
+<div class="home-inner">
+
+<h1>Welcome to Veria</h1>
+
+<div class="section">
+<div class="section-title">Games Played</div>
+
+<div class="played-row">
+<div class="game-card">
+<div class="game-image">V</div>
+<div class="game-info">
+<div class="game-name">Veyra</div>
+<div class="game-description">Explore, survive and build your own world.</div>
+<button class="play-button" onclick="playGame('Veyra')">Play</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Discover Games</div>
+
+<div class="game-grid">
+
+<div class="game-card">
+<div class="game-image">🏝️</div>
+<div class="game-info">
+<div class="game-name">Island Adventure</div>
+<div class="game-description">Explore a mysterious island.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">🧱</div>
+<div class="game-info">
+<div class="game-name">Block Builder</div>
+<div class="game-description">Build whatever you can imagine.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">☁️</div>
+<div class="game-info">
+<div class="game-name">Sky Islands</div>
+<div class="game-description">Survive above the clouds.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">🌲</div>
+<div class="game-info">
+<div class="game-name">Survival World</div>
+<div class="game-description">Gather resources and survive.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">🏙️</div>
+<div class="game-info">
+<div class="game-name">City Life</div>
+<div class="game-description">Build and live in your own city.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">⚔️</div>
+<div class="game-info">
+<div class="game-name">Dungeon Quest</div>
+<div class="game-description">Fight through dangerous dungeons.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">🌊</div>
+<div class="game-info">
+<div class="game-name">Ocean Explorer</div>
+<div class="game-description">Discover what lies beneath.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+<div class="game-card">
+<div class="game-image">🏗️</div>
+<div class="game-info">
+<div class="game-name">Build & Battle</div>
+<div class="game-description">Build your base and defend it.</div>
+<button class="play-button">Play</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</main>
+
+<div id="createPage">
+<div class="create-inner">
+
+<div class="create-title">Create</div>
+<div class="create-subtitle">Your games</div>
+
+<div class="create-box">
+
+<label class="create-label">Game Name</label>
+
+<input id="createGameName" class="create-input"
+placeholder="Enter your game name..." maxlength="40">
+
+<label class="create-label">Description</label>
+
+<textarea id="createGameDescription" class="create-textarea"
+placeholder="Describe your game..." maxlength="300"></textarea>
+
+<div style="font-weight:800;margin-bottom:12px">
+Choose a Template
+</div>
+
+<div class="create-templates">
+
+<button id="templateEmpty" class="create-template selected"
+onclick="selectTemplate('Empty World')">
+<div class="create-template-name">Empty World</div>
+<div class="create-template-description">Start with a blank 3D world.</div>
+</button>
+
+<button id="templateObby" class="create-template"
+onclick="selectTemplate('Obby')">
+<div class="create-template-name">Obby</div>
+<div class="create-template-description">Start with an obstacle course.</div>
+</button>
+
+<button id="templateAdventure" class="create-template"
+onclick="selectTemplate('Adventure')">
+<div class="create-template-name">Adventure</div>
+<div class="create-template-description">Start with an adventure world.</div>
+</button>
+
+</div>
+
+<button class="primary-button" onclick="createGame()">Create Game</button>
+
+<div id="createMessage" class="modal-message"></div>
+
+</div>
+</div>
+</div>
+
+<div id="studioPage">
+
+<div class="studio-top">
+
+<div class="studio-logo">Veria Studio</div>
+
+<div id="studioGameName" class="studio-game-name">Untitled Game</div>
+
+<button class="studio-top-button" onclick="addPart()">+ Part</button>
+<button class="studio-top-button" onclick="openSaveModal()">Save</button>
+<button class="studio-top-button" onclick="openPublishModal()">Publish</button>
+
+</div>
+
+<div class="studio-layout">
+
+<div class="explorer">
+
+<div class="panel-title">Workspace</div>
+
+<div class="workspace-tree">
+
+<div class="tree-root">🌎 Workspace</div>
+
+<div class="tree-item" onclick="selectObject('baseplate')">
+<span class="tree-icon">▣</span>Baseplate
+</div>
+
+<div class="tree-item" onclick="selectObject('spawn')">
+<span class="tree-icon">📍</span>Spawn Location
+</div>
+
+<div id="partTree"></div>
+
+</div>
+
+<div class="explorer-bottom">
+<button class="add-part-button" onclick="addPart()">+ Add Part</button>
+</div>
+
+</div>
+
+<div class="viewport">
+
+<canvas id="studioCanvas"></canvas>
+
+<div class="controls-help">
+Left drag: rotate camera
+&nbsp;•&nbsp;
+Right drag: pan
+&nbsp;•&nbsp;
+Wheel: zoom
+&nbsp;•&nbsp;
+Click: select
+</div>
+
+<div id="viewportStatus" class="viewport-status">
+Workspace
+</div>
+
+<div class="studio-options">
+
+<button class="options-button" onclick="toggleOptions()">⚙ Options</button>
+
+<div id="optionsMenu" class="options-menu">
+
+<button onclick="openSaveModal()">💾 Save</button>
+<button onclick="openPublishModal()">📢 Publish</button>
+<button onclick="exitStudio()">🚪 Exit Studio</button>
+
+</div>
+</div>
+</div>
+
+<div class="properties">
+
+<div class="panel-title">Properties</div>
+
+<div id="propertiesContent" class="properties-content">
+<div class="empty-properties">Select an object.</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="saveModal" class="modal">
+<div class="modal-box">
+
+<button class="close-button" onclick="closeModal('saveModal')">×</button>
+
+<div class="modal-title">Save Game</div>
+
+<input id="saveName" class="modal-input"
+placeholder="Game name..." maxlength="40">
+
+<textarea id="saveDescription" class="modal-textarea"
+placeholder="Game description..." maxlength="300"></textarea>
+
+<input id="saveImage" class="image-upload" type="file" accept="image/*">
+
+<div class="modal-actions">
+<button class="secondary-button" onclick="closeModal('saveModal')">Cancel</button>
+<button class="primary-button" onclick="saveStudioGame()">Save</button>
+</div>
+
+<div id="saveMessage" class="modal-message"></div>
+
+</div>
+</div>
+
+<div id="publishModal" class="modal">
+<div class="modal-box">
+
+<button class="close-button" onclick="closeModal('publishModal')">×</button>
+
+<div class="modal-title">Publish Game</div>
+
+<input id="publishName" class="modal-input"
+placeholder="Game name..." maxlength="40">
+
+<textarea id="publishDescription" class="modal-textarea"
+placeholder="Game description..." maxlength="300"></textarea>
+
+<input id="publishImage" class="image-upload" type="file" accept="image/*">
+
+<div class="modal-actions">
+<button class="secondary-button" onclick="closeModal('publishModal')">Cancel</button>
+<button class="primary-button" onclick="publishStudioGame()">Publish</button>
+</div>
+
+<div id="publishMessage" class="modal-message"></div>
+
+</div>
+</div>
+
+<div id="loginModal" class="modal">
+<div class="modal-box">
+
+<button class="close-button" onclick="closeModal('loginModal')">×</button>
+
+<div class="modal-title">Login</div>
+
+<input id="loginUsername" class="modal-input" placeholder="Username">
+<input id="loginPassword" class="modal-input" type="password" placeholder="Password">
+
+<button class="primary-button" onclick="login()">Login</button>
+
+<div id="loginMessage" class="modal-message"></div>
+
+</div>
+</div>
+
+<div id="signupModal" class="modal">
+<div class="modal-box">
+
+<button class="close-button" onclick="closeModal('signupModal')">×</button>
+
+<div class="modal-title">Create Account</div>
+
+<input id="signupUsername" class="modal-input" placeholder="Username">
+<input id="signupPassword" class="modal-input" type="password" placeholder="Password">
+
+<button class="primary-button" onclick="signup()">Create Account</button>
+
+<div id="signupMessage" class="modal-message"></div>
+
+</div>
+</div>
+
+<script type="importmap">
+{
+    "imports":{
+        "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
+        "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.1/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import {TransformControls} from "three/addons/controls/TransformControls.js";
+
+const API="http://localhost:5000";
+
+let currentUsername=localStorage.getItem("veriaUsername")||"";
+let selectedTemplate="Empty World";
+let currentGame=null;
+let selectedObjectId=null;
+
+let scene;
+let camera;
+let renderer;
+let controls;
+let transformControls;
+let raycaster;
+let mouse;
+
+const objects={};
+let partNumber=0;
+let transformMode="translate";
+
+
+window.openModal=function(id){
+    document.getElementById(id).classList.add("open");
+};
+
+window.closeModal=function(id){
+    document.getElementById(id).classList.remove("open");
+};
+
+window.goHome=function(){
+    document.getElementById("homePage").style.display="block";
+    document.getElementById("createPage").style.display="none";
+    window.scrollTo(0,0);
+};
+
+window.showGames=function(){
+    document.getElementById("homePage").style.display="block";
+    document.getElementById("createPage").style.display="none";
+
+    const sections=document.querySelectorAll("#homePage .section");
+
+    if(sections[1]){
+        sections[1].scrollIntoView({behavior:"smooth"});
+    }
+};
+
+window.showCreate=function(){
+    document.getElementById("homePage").style.display="none";
+    document.getElementById("createPage").style.display="block";
+
+    renderCreatedGames();
+    window.scrollTo(0,0);
+};
+
+window.openLogin=function(){
+    openModal("loginModal");
+};
+
+window.openSignup=function(){
+    openModal("signupModal");
+};
+
+function updateAccountUI(){
+
+    const loggedIn=!!currentUsername;
+
+    document.getElementById("loginButton").style.display=
+        loggedIn?"none":"";
+
+    document.getElementById("signupButton").style.display=
+        loggedIn?"none":"";
+
+    document.getElementById("profileButton").style.display=
+        loggedIn?"":"none";
+
+    document.getElementById("signoutButton").style.display=
+        loggedIn?"":"none";
+}
+
+window.signOut=function(){
+
+    currentUsername="";
+    localStorage.removeItem("veriaUsername");
+
+    updateAccountUI();
+    goHome();
+};
+
+window.login=async function(){
+
+    const username=document.getElementById("loginUsername").value.trim();
+    const password=document.getElementById("loginPassword").value;
+    const message=document.getElementById("loginMessage");
+
+    message.textContent="";
+
+    if(!username||!password){
+        message.textContent="Enter your username and password.";
+        return;
+    }
+
+    try{
+
+        const response=await fetch(API+"/login",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({username,password})
+        });
+
+        const data=await response.json();
+
+        if(!response.ok){
+            message.textContent=data.error||"Login failed.";
+            return;
+        }
+
+        currentUsername=
+            data.username||
+            (data.user&&data.user.username)||
+            username;
+
+        localStorage.setItem("veriaUsername",currentUsername);
+
+        closeModal("loginModal");
+        updateAccountUI();
+
+    }catch(error){
+
+        console.error(error);
+        message.textContent="Could not connect to Veria server.";
+    }
+};
+
+window.signup=async function(){
+
+    const username=document.getElementById("signupUsername").value.trim();
+    const password=document.getElementById("signupPassword").value;
+    const message=document.getElementById("signupMessage");
+
+    message.textContent="";
+
+    if(!username||!password){
+        message.textContent="Enter a username and password.";
+        return;
+    }
+
+    try{
+
+        const response=await fetch(API+"/signup",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({username,password})
+        });
+
+        const data=await response.json();
+
+        if(!response.ok){
+            message.textContent=data.error||"Could not create account.";
+            return;
+        }
+
+        message.textContent="Account created! You can now log in.";
+
+    }catch(error){
+
+        console.error(error);
+        message.textContent="Could not connect to Veria server.";
+    }
+};
+
+window.openProfile=function(){
+
+    if(!currentUsername){
+        openLogin();
+        return;
+    }
+
+    alert("Logged in as: "+currentUsername);
+};
+
+window.selectTemplate=function(template){
+
+    selectedTemplate=template;
+
+    document.querySelectorAll(".create-template")
+        .forEach(button=>button.classList.remove("selected"));
+
+    if(template==="Empty World")
+        document.getElementById("templateEmpty").classList.add("selected");
+
+    if(template==="Obby")
+        document.getElementById("templateObby").classList.add("selected");
+
+    if(template==="Adventure")
+        document.getElementById("templateAdventure").classList.add("selected");
+};
+
+window.createGame=function(){
+
+    const name=document.getElementById("createGameName").value.trim();
+    const description=document.getElementById("createGameDescription").value.trim();
+    const message=document.getElementById("createMessage");
+
+    message.textContent="";
+
+    if(!currentUsername){
+        message.textContent="You need to log in before creating a game.";
+        return;
+    }
+
+    if(!name){
+        message.textContent="Enter a game name.";
+        return;
+    }
+
+    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
+
+    const game={
+        id:"game_"+Date.now(),
+        name,
+        description,
+        creator:currentUsername,
+        template:selectedTemplate,
+        published:false,
+        parts:[],
+        createdAt:Date.now()
+    };
+
+    games.push(game);
+
+    localStorage.setItem("veriaGames",JSON.stringify(games));
+
+    message.textContent="Opening Veria Studio...";
+
+    setTimeout(()=>{
+
+        document.getElementById("createGameName").value="";
+        document.getElementById("createGameDescription").value="";
+
+        openStudio(game);
+
+    },300);
+};
+
+function renderCreatedGames(){
+
+    const box=document.querySelector(".create-box");
+    if(!box)return;
+
+    let old=document.getElementById("myGames");
+    if(old)old.remove();
+
+    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
+
+    const mine=games.filter(game=>game.creator===currentUsername);
+
+    if(!currentUsername||mine.length===0)return;
+
+    const section=document.createElement("div");
+
+    section.id="myGames";
+    section.style.marginTop="30px";
+
+    section.innerHTML=`
+        <div style="
+            font-size:20px;
+            font-weight:800;
+            margin-bottom:15px;
+        ">Your Games</div>
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+            gap:15px;
+        ">
+            ${mine.map(game=>`
+                <div style="
+                    background:#202533;
+                    border:1px solid #343c50;
+                    border-radius:10px;
+                    padding:15px;
+                ">
+                    <div style="
+                        height:100px;
+                        border-radius:7px;
+                        background:linear-gradient(135deg,#293b65,#1b2231);
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-size:35px;
+                        margin-bottom:10px;
+                    ">
+                        ${game.published?"🎮":"🛠️"}
+                    </div>
+
+                    <div style="
+                        font-weight:800;
+                        margin-bottom:5px;
+                    ">
+                        ${escapeHtml(game.name)}
+                    </div>
+
+                    <div style="
+                        color:#9fa8bb;
+                        font-size:12px;
+                        margin-bottom:10px;
+                    ">
+                        ${game.published?"Published":"Not published"}
+                    </div>
+
+                    <button
+                        style="
+                        width:100%;
+                        border:0;
+                        padding:9px;
+                        border-radius:7px;
+                        background:#5c8df6;
+                        color:white;
+                        font-weight:800;
+                        "
+                        onclick="openExistingGame('${game.id}')"
+                    >Edit</button>
+                </div>
+            `).join("")}
+        </div>
+    `;
+
+    box.appendChild(section);
+}
+
+window.openExistingGame=function(id){
+
+    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
+    const game=games.find(g=>g.id===id);
+
+    if(!game)return;
+
+    openStudio(game);
+};
+
+function openStudio(game){
+
+    currentGame=game;
+
+    document.getElementById("homePage").style.display="none";
+    document.getElementById("createPage").style.display="none";
+    document.getElementById("mainNavbar").style.display="none";
+    document.getElementById("studioPage").style.display="block";
+
+    document.getElementById("studioGameName").textContent=game.name;
+
+    selectedObjectId=null;
+
+    startStudio();
+    loadWorld(game);
+}
+
+function startStudio(){
+
+    if(renderer){
+        resizeStudio();
+        return;
+    }
+
+    const canvas=document.getElementById("studioCanvas");
+
+    scene=new THREE.Scene();
+    scene.background=new THREE.Color("#79bde7");
+
+    camera=new THREE.PerspectiveCamera(50,1,.1,1000);
+    camera.position.set(18,15,20);
+
+    renderer=new THREE.WebGLRenderer({
+        canvas,
+        antialias:true
+    });
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.shadowMap.enabled=true;
+
+    controls=new OrbitControls(camera,renderer.domElement);
+
+    controls.enableDamping=true;
+    controls.dampingFactor=.08;
+    controls.enablePan=true;
+    controls.enableZoom=true;
+    controls.enableRotate=true;
+    controls.minDistance=5;
+    controls.maxDistance=80;
+    controls.minPolarAngle=.25;
+    controls.maxPolarAngle=1.48;
+    controls.target.set(0,0,0);
+    controls.update();
+
+    controls.mouseButtons.LEFT=THREE.MOUSE.ROTATE;
+    controls.mouseButtons.RIGHT=THREE.MOUSE.PAN;
+    controls.mouseButtons.MIDDLE=THREE.MOUSE.DOLLY;
+
+    /*
+       TRANSFORM CONTROLS
+       W = Move
+       E = Rotate
+       R = Scale
+    */
+
+    transformControls=new TransformControls(
+        camera,
+        renderer.domElement
+    );
+
+    transformControls.setMode("translate");
+    transformControls.setSize(.8);
+
+    transformControls.addEventListener("dragging-changed",event=>{
+        controls.enabled=!event.value;
+    });
+
+    transformControls.addEventListener("objectChange",()=>{
+        updateSelectedPartFromMesh();
+    });
+
+    scene.add(transformControls);
+
+    const hemi=new THREE.HemisphereLight(
+        0xffffff,
+        0x607080,
+        2.2
+    );
+
+    scene.add(hemi);
+
+    const sun=new THREE.DirectionalLight(
+        0xffffff,
+        2.4
+    );
+
+    sun.position.set(12,25,10);
+    sun.castShadow=true;
+
+    scene.add(sun);
+
+    const grid=new THREE.GridHelper(
+        30,
+        30,
+        0x60758b,
+        0x8ca8ba
+    );
+
+    grid.position.y=.015;
+    scene.add(grid);
+
+    raycaster=new THREE.Raycaster();
+    mouse=new THREE.Vector2();
+
+    canvas.addEventListener(
+        "pointerdown",
+        onViewportClick
+    );
+
+    window.addEventListener(
+        "resize",
+        resizeStudio
+    );
+
+    animate();
+}
+
+function resizeStudio(){
+
+    if(!renderer)return;
+
+    const canvas=document.getElementById("studioCanvas");
+
+    const width=canvas.clientWidth;
+    const height=canvas.clientHeight;
+
+    if(width<=0||height<=0)return;
+
+    renderer.setSize(width,height,false);
+
+    camera.aspect=width/height;
+    camera.updateProjectionMatrix();
+}
+
+function loadWorld(game){
+
+    clearWorld();
+
+    const baseGeometry=new THREE.BoxGeometry(30,.5,30);
+
+    const baseMaterial=new THREE.MeshStandardMaterial({
+        color:0x707070,
+        roughness:.85
+    });
+
+    const base=new THREE.Mesh(
+        baseGeometry,
+        baseMaterial
+    );
+
+    base.position.set(0,-.25,0);
+    base.receiveShadow=true;
+
+    base.userData={
+        id:"baseplate",
+        type:"baseplate"
+    };
+
+    scene.add(base);
+    objects.baseplate=base;
+
+    createSpawn();
+
+    if(Array.isArray(game.parts)){
+        game.parts.forEach(savedPart=>{
+            createPartFromData(savedPart);
+        });
+    }
+
+    updateTree();
+    showProperties(null);
+
+    camera.position.set(18,15,20);
+
+    controls.target.set(0,0,0);
+    controls.update();
+}
+
+function clearWorld(){
+
+    if(transformControls){
+        transformControls.detach();
+    }
+
+    Object.keys(objects).forEach(key=>{
+
+        const object=objects[key];
+
+        if(object&&object.parent){
+
+            object.parent.remove(object);
+
+            if(object.geometry)
+                object.geometry.dispose();
+
+            if(object.material){
+
+                if(Array.isArray(object.material)){
+                    object.material.forEach(m=>m.dispose());
+                }else{
+                    object.material.dispose();
+                }
+            }
+        }
+    });
+
+    Object.keys(objects).forEach(
+        key=>delete objects[key]
+    );
+
+    scene.children
+        .filter(obj=>obj.isMesh)
+        .forEach(obj=>{
+            scene.remove(obj);
+        });
+}
+
+function createSpawn(){
+
+    const group=new THREE.Group();
+
+    group.position.set(0,.15,0);
+
+    group.userData={
+        id:"spawn",
+        type:"spawn"
+    };
+
+    const pad=new THREE.Mesh(
+        new THREE.CylinderGeometry(1.6,1.6,.18,32),
+        new THREE.MeshStandardMaterial({
+            color:0x36d56f
+        })
+    );
+
+    group.add(pad);
+
+    const arrow=new THREE.Mesh(
+        new THREE.ConeGeometry(.7,1.7,4),
+        new THREE.MeshStandardMaterial({
+            color:0xffffff
+        })
+    );
+
+    arrow.position.y=1;
+    arrow.rotation.y=Math.PI/4;
+
+    group.add(arrow);
+
+    scene.add(group);
+    objects.spawn=group;
+}
+
+window.addPart=function(){
+
+    if(!currentGame)return;
+
+    partNumber++;
+
+    const part={
+        id:"part_"+Date.now()+"_"+partNumber,
+        name:"Part"+partNumber,
+        color:"#ff7070",
+
+        position:{
+            x:0,
+            y:1,
+            z:0
+        },
+
+        size:{
+            x:2,
+            y:2,
+            z:2
+        },
+
+        rotation:{
+            x:0,
+            y:0,
+            z:0
+        }
+    };
+
+    currentGame.parts=
+        Array.isArray(currentGame.parts)
+        ?currentGame.parts
+        :[];
+
+    currentGame.parts.push(part);
+
+    createPartFromData(part);
+
+    selectedObjectId=part.id;
+
+    updateTree();
+    showProperties(part);
+    attachTransform(part.id);
+
+    saveCurrentGameSilently();
+};
+
+function createPartFromData(data){
+
+    if(!data.rotation){
+        data.rotation={
+            x:0,
+            y:0,
+            z:0
+        };
+    }
+
+    const geometry=new THREE.BoxGeometry(
+        2,2,2
+    );
+
+    const material=new THREE.MeshStandardMaterial({
+        color:data.color||"#ff7070",
+        roughness:.65
+    });
+
+    const mesh=new THREE.Mesh(
+        geometry,
+        material
+    );
+
+    mesh.position.set(
+        Number(data.position.x)||0,
+        Number(data.position.y)||1,
+        Number(data.position.z)||0
+    );
+
+    mesh.scale.set(
+        (Number(data.size.x)||2)/2,
+        (Number(data.size.y)||2)/2,
+        (Number(data.size.z)||2)/2
+    );
+
+    mesh.rotation.set(
+        Number(data.rotation.x)||0,
+        Number(data.rotation.y)||0,
+        Number(data.rotation.z)||0
+    );
+
+    mesh.castShadow=true;
+    mesh.receiveShadow=true;
+
+    mesh.userData={
+        id:data.id,
+        type:"part"
+    };
+
+    scene.add(mesh);
+
+    objects[data.id]=mesh;
+}
+
+window.selectObject=function(id){
+
+    selectedObjectId=id;
+
+    if(id==="baseplate"){
+
+        detachTransform();
+
+        showProperties({
+            id:"baseplate",
+            name:"Baseplate",
+            type:"baseplate"
+        });
+
+        updateTree();
+        return;
+    }
+
+    if(id==="spawn"){
+
+        detachTransform();
+
+        showProperties({
+            id:"spawn",
+            name:"Spawn Location",
+            type:"spawn"
+        });
+
+        updateTree();
+        return;
+    }
+
+    const part=currentGame.parts.find(
+        p=>p.id===id
+    );
+
+    if(part){
+
+        showProperties(part);
+        attachTransform(id);
+        updateTree();
+    }
+};
+
+function attachTransform(id){
+
+    if(!transformControls)return;
+
+    const mesh=objects[id];
+
+    if(mesh){
+        transformControls.attach(mesh);
+    }
+}
+
+function detachTransform(){
+
+    if(transformControls){
+        transformControls.detach();
+    }
+}
+
+function updateSelectedPartFromMesh(){
+
+    if(!currentGame||!selectedObjectId)return;
+
+    const part=currentGame.parts.find(
+        p=>p.id===selectedObjectId
+    );
+
+    const mesh=objects[selectedObjectId];
+
+    if(!part||!mesh)return;
+
+    part.position.x=Number(mesh.position.x.toFixed(3));
+    part.position.y=Number(mesh.position.y.toFixed(3));
+    part.position.z=Number(mesh.position.z.toFixed(3));
+
+    part.size.x=Number((mesh.scale.x*2).toFixed(3));
+    part.size.y=Number((mesh.scale.y*2).toFixed(3));
+    part.size.z=Number((mesh.scale.z*2).toFixed(3));
+
+    part.rotation.x=Number(mesh.rotation.x.toFixed(3));
+    part.rotation.y=Number(mesh.rotation.y.toFixed(3));
+    part.rotation.z=Number(mesh.rotation.z.toFixed(3));
+
+    updatePropertyInputs(part);
+    saveCurrentGameSilently();
+}
+
+function updatePropertyInputs(data){
+
+    const ids=[
+        ["posX",data.position.x],
+        ["posY",data.position.y],
+        ["posZ",data.position.z],
+        ["sizeX",data.size.x],
+        ["sizeY",data.size.y],
+        ["sizeZ",data.size.z]
+    ];
+
+    ids.forEach(([id,value])=>{
+        const el=document.getElementById(id);
+        if(el&&!el.matches(":focus")){
+            el.value=value;
+        }
+    });
+}
+
+function onViewportClick(event){
+
+    if(event.button!==0)return;
+
+    if(transformControls&&transformControls.dragging)return;
+
+    const rect=renderer.domElement.getBoundingClientRect();
+
+    mouse.x=((event.clientX-rect.left)/rect.width)*2-1;
+    mouse.y=-((event.clientY-rect.top)/rect.height)*2+1;
+
+    raycaster.setFromCamera(mouse,camera);
+
+    const selectable=Object.values(objects).filter(obj=>obj);
+
+    const hits=raycaster.intersectObjects(
+        selectable,
+        true
+    );
+
+    if(hits.length===0)return;
+
+    let selected=hits[0].object;
+
+    while(
+        selected.parent&&
+        !selected.userData.id
+    ){
+        selected=selected.parent;
+    }
+
+    if(selected.userData.id){
+        selectObject(selected.userData.id);
+    }
+}
+
+function showProperties(data){
+
+    const panel=document.getElementById("propertiesContent");
+
+    if(!data){
+
+        panel.innerHTML=`
+            <div class="empty-properties">
+                Select an object.
+            </div>
+        `;
+
+        return;
+    }
+
+    if(data.type==="baseplate"){
+
+        panel.innerHTML=`
+            <div class="property-section">
+                <div class="property-heading">BASEPLATE</div>
+
+                <div class="property-label">Name</div>
+
+                <input
+                    class="property-input"
+                    value="Baseplate"
+                    disabled
+                >
+
+                <div style="
+                    color:#8f9bb0;
+                    font-size:12px;
+                    line-height:1.5;
+                ">
+                    The main floor of your game.
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    if(data.type==="spawn"){
+
+        panel.innerHTML=`
+            <div class="property-section">
+
+                <div class="property-heading">
+                    SPAWN LOCATION
+                </div>
+
+                <div style="
+                    color:#8f9bb0;
+                    font-size:12px;
+                    line-height:1.5;
+                ">
+                    Players will start here
+                    when they enter your game.
+                </div>
+
+                <div style="
+                    margin-top:15px;
+                    padding:10px;
+                    background:#202533;
+                    border-radius:7px;
+                    font-size:12px;
+                ">
+                    Position: 0, 0.15, 0
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    if(!data.rotation){
+        data.rotation={x:0,y:0,z:0};
+    }
+
+    panel.innerHTML=`
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                TRANSFORM
+            </div>
+
+            <div class="transform-tools">
+
+                <button
+                    id="toolMove"
+                    class="transform-tool active"
+                    onclick="setTransformMode('translate')">
+                    Move
+                </button>
+
+                <button
+                    id="toolRotate"
+                    class="transform-tool"
+                    onclick="setTransformMode('rotate')">
+                    Rotate
+                </button>
+
+                <button
+                    id="toolScale"
+                    class="transform-tool"
+                    onclick="setTransformMode('scale')">
+                    Scale
+                </button>
+
+            </div>
+
+            <div style="
+                color:#7f899c;
+                font-size:11px;
+                line-height:1.5;
+            ">
+                W = Move &nbsp; E = Rotate &nbsp; R = Scale
+            </div>
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                PART
+            </div>
+
+            <div class="property-label">
+                Name
+            </div>
+
+            <input
+                id="propName"
+                class="property-input"
+                value="${escapeHtml(data.name)}"
+            >
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                APPEARANCE
+            </div>
+
+            <div class="property-label">
+                Color
+            </div>
+
+            <div class="color-row">
+
+                <input
+                    id="partColor"
+                    type="color"
+                    value="${data.color}"
+                >
+
+                <span id="colorText">
+                    ${data.color}
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                POSITION
+            </div>
+
+            <div class="property-row">
+
+                <div>
+                    <div class="property-label">X</div>
+                    <input
+                        id="posX"
+                        class="property-input"
+                        type="number"
+                        step=".1"
+                        value="${data.position.x}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Y</div>
+                    <input
+                        id="posY"
+                        class="property-input"
+                        type="number"
+                        step=".1"
+                        value="${data.position.y}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Z</div>
+                    <input
+                        id="posZ"
+                        class="property-input"
+                        type="number"
+                        step=".1"
+                        value="${data.position.z}"
+                    >
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                SIZE
+            </div>
+
+            <div class="property-row">
+
+                <div>
+                    <div class="property-label">X</div>
+                    <input
+                        id="sizeX"
+                        class="property-input"
+                        type="number"
+                        min=".1"
+                        step=".1"
+                        value="${data.size.x}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Y</div>
+                    <input
+                        id="sizeY"
+                        class="property-input"
+                        type="number"
+                        min=".1"
+                        step=".1"
+                        value="${data.size.y}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Z</div>
+                    <input
+                        id="sizeZ"
+                        class="property-input"
+                        type="number"
+                        min=".1"
+                        step=".1"
+                        value="${data.size.z}"
+                    >
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-heading">
+                ROTATION
+            </div>
+
+            <div class="property-row">
+
+                <div>
+                    <div class="property-label">X</div>
+                    <input
+                        id="rotX"
+                        class="property-input"
+                        type="number"
+                        step="1"
+                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.x))}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Y</div>
+                    <input
+                        id="rotY"
+                        class="property-input"
+                        type="number"
+                        step="1"
+                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.y))}"
+                    >
+                </div>
+
+                <div>
+                    <div class="property-label">Z</div>
+                    <input
+                        id="rotZ"
+                        class="property-input"
+                        type="number"
+                        step="1"
+                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.z))}"
+                    >
+                </div>
+
+            </div>
+
+        </div>
+
+        <button
+            class="delete-button"
+            onclick="deleteSelectedPart()">
+            Delete Part
+        </button>
+    `;
+
+    document.getElementById("propName")
+        .addEventListener("input",e=>{
+            data.name=e.target.value;
+            updateTree();
+            saveCurrentGameSilently();
+        });
+
+    document.getElementById("partColor")
+        .addEventListener("input",e=>{
+
+            data.color=e.target.value;
+
+            document.getElementById("colorText")
+                .textContent=e.target.value;
+
+            const mesh=objects[data.id];
+
+            if(mesh){
+                mesh.material.color.set(e.target.value);
+            }
+
+            saveCurrentGameSilently();
+        });
+
+    ["X","Y","Z"].forEach(axis=>{
+
+        document.getElementById("pos"+axis)
+            .addEventListener("input",e=>{
+
+                const key=axis.toLowerCase();
+
+                data.position[key]=
+                    Number(e.target.value)||0;
+
+                const mesh=objects[data.id];
+
+                if(mesh){
+                    mesh.position[key]=
+                        data.position[key];
+                }
+
+                saveCurrentGameSilently();
+            });
+
+        document.getElementById("size"+axis)
+            .addEventListener("input",e=>{
+
+                const key=axis.toLowerCase();
+
+                data.size[key]=Math.max(
+                    .1,
+                    Number(e.target.value)||1
+                );
+
+                const mesh=objects[data.id];
+
+                if(mesh){
+                    mesh.scale[key]=
+                        data.size[key]/2;
+                }
+
+                saveCurrentGameSilently();
+            });
+
+        document.getElementById("rot"+axis)
+            .addEventListener("input",e=>{
+
+                const key=axis.toLowerCase();
+
+                const degrees=
+                    Number(e.target.value)||0;
+
+                data.rotation[key]=
+                    THREE.MathUtils.degToRad(degrees);
+
+                const mesh=objects[data.id];
+
+                if(mesh){
+                    mesh.rotation[key]=
+                        data.rotation[key];
+                }
+
+                saveCurrentGameSilently();
+            });
+    });
+}
+
+window.setTransformMode=function(mode){
+
+    transformMode=mode;
+
+    if(transformControls){
+        transformControls.setMode(mode);
+    }
+
+    ["Move","Rotate","Scale"].forEach(name=>{
+
+        const button=
+            document.getElementById(
+                "tool"+name
+            );
+
+        if(button){
+            button.classList.toggle(
+                "active",
+                (
+                    name==="Move"&&mode==="translate"
+                )||
+                (
+                    name==="Rotate"&&mode==="rotate"
+                )||
+                (
+                    name==="Scale"&&mode==="scale"
+                )
+            );
+        }
+    });
+};
+
+window.deleteSelectedPart=function(){
+
+    if(!selectedObjectId)return;
+
+    if(
+        selectedObjectId==="baseplate"||
+        selectedObjectId==="spawn"
+    ){
+        return;
+    }
+
+    detachTransform();
+
+    const mesh=objects[selectedObjectId];
+
+    if(mesh){
+
+        scene.remove(mesh);
+
+        if(mesh.geometry)
+            mesh.geometry.dispose();
+
+        if(mesh.material)
+            mesh.material.dispose();
+
+        delete objects[selectedObjectId];
+    }
+
+    currentGame.parts=
+        currentGame.parts.filter(
+            p=>p.id!==selectedObjectId
+        );
+
+    selectedObjectId=null;
+
+    updateTree();
+    showProperties(null);
+
+    saveCurrentGameSilently();
+};
+
+function updateTree(){
+
+    const tree=document.getElementById("partTree");
+
+    tree.innerHTML="";
+
+    const base=document.querySelector(
+        '.tree-item[onclick*="baseplate"]'
+    );
+
+    const spawn=document.querySelector(
+        '.tree-item[onclick*="spawn"]'
+    );
+
+    if(base)
+        base.classList.toggle(
+            "selected",
+            selectedObjectId==="baseplate"
+        );
+
+    if(spawn)
+        spawn.classList.toggle(
+            "selected",
+            selectedObjectId==="spawn"
+        );
+
+    if(!currentGame)return;
+
+    currentGame.parts.forEach(part=>{
+
+        const item=document.createElement("div");
+
+        item.className="tree-item";
+
+        if(part.id===selectedObjectId)
+            item.classList.add("selected");
+
+        item.innerHTML=
+            `<span class="tree-icon">🧱</span>`+
+            escapeHtml(part.name);
+
+        item.onclick=()=>{
+            selectObject(part.id);
+        };
+
+        tree.appendChild(item);
+    });
+}
+
+function saveCurrentGameSilently(){
+
+    if(!currentGame)return;
+
+    const games=JSON.parse(
+        localStorage.getItem("veriaGames")||"[]"
+    );
+
+    const index=games.findIndex(
+        g=>g.id===currentGame.id
+    );
+
+    if(index>=0){
+
+        games[index]=currentGame;
+
+        localStorage.setItem(
+            "veriaGames",
+            JSON.stringify(games)
+        );
+    }
+}
+
+window.openSaveModal=function(){
+
+    if(!currentGame)return;
+
+    document.getElementById("saveName").value=
+        currentGame.name||"";
+
+    document.getElementById("saveDescription").value=
+        currentGame.description||"";
+
+    document.getElementById("saveMessage").textContent="";
+
+    openModal("saveModal");
+};
+
+window.saveStudioGame=function(){
+
+    if(!currentGame)return;
+
+    const name=document.getElementById("saveName").value.trim();
+    const description=document.getElementById("saveDescription").value.trim();
+
+    if(!name){
+
+        document.getElementById("saveMessage").textContent=
+            "Enter a game name.";
+
+        return;
+    }
+
+    currentGame.name=name;
+    currentGame.description=description;
+    currentGame.updatedAt=Date.now();
+
+    saveCurrentGameSilently();
+
+    document.getElementById("studioGameName")
+        .textContent=name;
+
+    document.getElementById("saveMessage")
+        .textContent="Game saved!";
+
+    setTimeout(()=>{
+        closeModal("saveModal");
+    },700);
+};
+
+window.openPublishModal=function(){
+
+    if(!currentGame)return;
+
+    document.getElementById("publishName").value=
+        currentGame.name||"";
+
+    document.getElementById("publishDescription").value=
+        currentGame.description||"";
+
+    document.getElementById("publishMessage")
+        .textContent="";
+
+    openModal("publishModal");
+};
+
+window.publishStudioGame=function(){
+
+    if(!currentGame)return;
+
+    const name=document.getElementById("publishName").value.trim();
+    const description=document.getElementById("publishDescription").value.trim();
+
+    if(!name){
+
+        document.getElementById("publishMessage")
+            .textContent="Enter a game name.";
+
+        return;
+    }
+
+    currentGame.name=name;
+    currentGame.description=description;
+    currentGame.published=true;
+    currentGame.updatedAt=Date.now();
+
+    saveCurrentGameSilently();
+
+    document.getElementById("studioGameName")
+        .textContent=name;
+
+    document.getElementById("publishMessage")
+        .textContent="Game published!";
+
+    setTimeout(()=>{
+        closeModal("publishModal");
+    },700);
+};
+
+window.toggleOptions=function(){
+
+    document.getElementById("optionsMenu")
+        .classList.toggle("open");
+};
+
+window.exitStudio=function(){
+
+    saveCurrentGameSilently();
+
+    detachTransform();
+
+    document.getElementById("studioPage")
+        .style.display="none";
+
+    document.getElementById("mainNavbar")
+        .style.display="flex";
+
+    document.getElementById("createPage")
+        .style.display="block";
+
+    renderCreatedGames();
+
+    window.scrollTo(0,0);
+};
+
+window.playGame=function(game){
+
+    const games=JSON.parse(
+        localStorage.getItem("veriaGames")||"[]"
+    );
+
+    const created=games.find(
+        g=>g.name===game
+    );
+
+    if(created){
+
+        openStudio(created);
+        return;
+    }
+
+    alert(
+        game+
+        " is ready to connect to the Veria game engine."
+    );
+};
+
+/*
+   Keyboard shortcuts:
+   W = Move
+   E = Rotate
+   R = Scale
+*/
+
+window.addEventListener("keydown",event=>{
+
+    if(!selectedObjectId)return;
+
+    const tag=document.activeElement?.tagName;
+
+    if(tag==="INPUT"||tag==="TEXTAREA")return;
+
+    if(event.key.toLowerCase()==="w"){
+        setTransformMode("translate");
+    }
+
+    if(event.key.toLowerCase()==="e"){
+        setTransformMode("rotate");
+    }
+
+    if(event.key.toLowerCase()==="r"){
+        setTransformMode("scale");
+    }
+});
+
+function animate(){
+
+    requestAnimationFrame(animate);
+
+    if(controls)
+        controls.update();
+
+    if(renderer&&scene&&camera){
+
+        renderer.render(
+            scene,
+            camera
+        );
+    }
+}
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+updateAccountUI();
+
+</script>
+
+</body>
+</html>

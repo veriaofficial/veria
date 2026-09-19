@@ -1,0 +1,5238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Veria</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,sans-serif;
+    background:#10131c;
+    color:white;
+    overflow:hidden;
+}
+
+button,input,textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* =========================
+   MAIN NAVBAR
+========================= */
+
+.navbar{
+    height:64px;
+    background:#171b27;
+    border-bottom:1px solid #292f40;
+    display:flex;
+    align-items:center;
+    padding:0 22px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:800;
+    color:#6ea8ff;
+    margin-right:32px;
+    letter-spacing:-1px;
+}
+
+.nav-left,
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.nav-left{
+    flex:1;
+}
+
+.nav-button{
+    border:0;
+    background:transparent;
+    color:#d8deea;
+    padding:10px 15px;
+    border-radius:7px;
+    font-size:15px;
+}
+
+.nav-button:hover{
+    background:#222838;
+}
+
+.nav-right{
+    margin-left:auto;
+}
+
+.login-button,
+.signup-button,
+.profile-button,
+.signout-button{
+    border:0;
+    border-radius:7px;
+    padding:10px 15px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.login-button{
+    background:#242a39;
+    color:white;
+}
+
+.signup-button{
+    background:#5c8df6;
+    color:white;
+}
+
+.profile-button{
+    background:#252c3d;
+    color:white;
+}
+
+.signout-button{
+    background:#252c3d;
+    color:#ff8585;
+}
+
+/* =========================
+   NOTIFICATION
+========================= */
+
+.notification-button{
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:8px;
+    background:#222838;
+    color:white;
+    font-size:20px;
+    position:relative;
+}
+
+.notification-count{
+    position:absolute;
+    right:-4px;
+    top:-4px;
+    min-width:17px;
+    height:17px;
+    padding:0 4px;
+    border-radius:20px;
+    background:#ff3d4f;
+    color:white;
+    font-size:10px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* =========================
+   FRIENDS ARROW
+========================= */
+
+.friends-arrow{
+    position:fixed;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:34px;
+    height:58px;
+    border:0;
+    border-radius:0 10px 10px 0;
+    background:#1d2331;
+    color:white;
+    z-index:900;
+    font-size:20px;
+}
+
+.friends-arrow:hover{
+    background:#2a3245;
+}
+
+.friends-panel{
+    position:fixed;
+    left:-330px;
+    top:64px;
+    bottom:0;
+    width:330px;
+    background:#171b27;
+    border-right:1px solid #30374a;
+    z-index:850;
+    transition:left .2s ease;
+    padding:18px;
+    overflow-y:auto;
+}
+
+.friends-panel.open{
+    left:0;
+}
+
+.friends-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+}
+
+.friends-title{
+    font-size:21px;
+    font-weight:700;
+}
+
+.add-friend-button{
+    width:34px;
+    height:34px;
+    border:0;
+    border-radius:8px;
+    background:#5c8df6;
+    color:white;
+    font-size:22px;
+}
+
+.friend-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    background:#1d2331;
+    border:1px solid #2c3447;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.friend-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#5c8df6;
+    object-fit:cover;
+}
+
+.friend-name{
+    flex:1;
+    font-weight:600;
+}
+
+.friend-empty{
+    color:#8d96aa;
+    font-size:14px;
+    padding:20px 5px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.page{
+    position:absolute;
+    left:0;
+    right:0;
+    top:64px;
+    bottom:0;
+    overflow-y:auto;
+    padding:30px 34px 50px;
+}
+
+.page-title{
+    font-size:29px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.page-subtitle{
+    color:#8f99ad;
+    margin-bottom:28px;
+}
+
+.section{
+    margin-bottom:35px;
+}
+
+.section-title{
+    font-size:21px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.games-row{
+    display:flex;
+    gap:16px;
+    overflow-x:auto;
+    padding-bottom:10px;
+}
+
+.games-row::-webkit-scrollbar{
+    height:7px;
+}
+
+.games-row::-webkit-scrollbar-thumb{
+    background:#353e53;
+    border-radius:10px;
+}
+
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:18px;
+}
+
+.game-card{
+    background:#181d29;
+    border:1px solid #2a3142;
+    border-radius:11px;
+    overflow:hidden;
+    min-width:220px;
+    transition:transform .15s ease,border-color .15s ease;
+}
+
+.game-card:hover{
+    transform:translateY(-2px);
+    border-color:#485878;
+}
+
+.game-image{
+    width:100%;
+    height:130px;
+    background:#252c3b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#727d93;
+    font-size:13px;
+    overflow:hidden;
+}
+
+.game-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.game-info{
+    padding:14px;
+}
+
+.game-name{
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:5px;
+}
+
+.game-description{
+    color:#8993a8;
+    font-size:13px;
+    min-height:34px;
+}
+
+.play-button{
+    width:100%;
+    border:0;
+    background:#5c8df6;
+    color:white;
+    border-radius:7px;
+    padding:10px;
+    margin-top:12px;
+    font-weight:700;
+}
+
+.play-button:hover{
+    background:#6b99fa;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+}
+
+.modal-overlay.open{
+    display:flex;
+}
+
+.modal{
+    width:min(520px,calc(100% - 30px));
+    max-height:90vh;
+    overflow-y:auto;
+    background:#181d29;
+    border:1px solid #343d53;
+    border-radius:12px;
+    padding:22px;
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.modal-title{
+    font-size:22px;
+    font-weight:800;
+}
+
+.close-button{
+    width:32px;
+    height:32px;
+    border:0;
+    border-radius:7px;
+    background:#252c3c;
+    color:white;
+    font-size:18px;
+}
+
+.form-label{
+    display:block;
+    margin:12px 0 7px;
+    font-size:13px;
+    color:#aeb7c9;
+}
+
+.form-input,
+.form-textarea{
+    width:100%;
+    border:1px solid #363f53;
+    background:#10141e;
+    color:white;
+    border-radius:7px;
+    padding:11px;
+    outline:none;
+}
+
+.form-input:focus,
+.form-textarea:focus{
+    border-color:#5c8df6;
+}
+
+.form-textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    margin-top:20px;
+}
+
+.secondary-button,
+.primary-button{
+    border:0;
+    border-radius:7px;
+    padding:10px 17px;
+    font-weight:700;
+}
+
+.secondary-button{
+    background:#292f3e;
+    color:white;
+}
+
+.primary-button{
+    background:#5c8df6;
+    color:white;
+}
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+.notification-item{
+    background:#202635;
+    border:1px solid #30394d;
+    border-radius:9px;
+    padding:13px;
+    margin-bottom:10px;
+}
+
+.notification-name{
+    font-weight:700;
+}
+
+.notification-text{
+    color:#9aa4b8;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.notification-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.accept-button,
+.reject-button{
+    border:0;
+    border-radius:6px;
+    padding:8px 12px;
+    font-weight:700;
+}
+
+.accept-button{
+    background:#5c8df6;
+    color:white;
+}
+
+.reject-button{
+    background:#303746;
+    color:#ff9a9a;
+}
+
+/* =========================
+   CREATE PAGE
+========================= */
+
+.create-page{
+    display:none;
+}
+
+.create-page.active{
+    display:block;
+}
+
+.home-page{
+    display:block;
+}
+
+.home-page.hidden{
+    display:none;
+}
+
+.create-tools{
+    display:flex;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.create-new-button{
+    border:0;
+    background:#5c8df6;
+    color:white;
+    padding:13px 20px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:15px;
+}
+
+.create-new-button:hover{
+    background:#6b99fa;
+}
+
+/* =========================
+   STUDIO
+========================= */
+
+.studio{
+    position:fixed;
+    inset:0;
+    background:#0d1119;
+    display:none;
+    z-index:3000;
+}
+
+.studio.active{
+    display:block;
+}
+
+.studio-topbar{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:58px;
+    background:#171c27;
+    border-bottom:1px solid #30384a;
+    display:flex;
+    align-items:center;
+    z-index:20;
+    padding:0 12px;
+}
+
+.studio-title{
+    font-size:17px;
+    font-weight:800;
+    margin-right:20px;
+}
+
+.studio-button{
+    border:0;
+    background:#242b3b;
+    color:white;
+    padding:8px 13px;
+    border-radius:6px;
+    margin-right:6px;
+}
+
+.studio-button:hover{
+    background:#30394d;
+}
+
+.studio-button.primary{
+    background:#5c8df6;
+}
+
+.studio-close{
+    margin-left:auto;
+}
+
+.studio-left{
+    position:absolute;
+    left:0;
+    top:58px;
+    bottom:0;
+    width:245px;
+    background:#171c27;
+    border-right:1px solid #30384a;
+    z-index:15;
+    overflow:auto;
+}
+
+.explorer-title{
+    padding:14px;
+    font-size:13px;
+    font-weight:800;
+    color:#aab4c7;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.explorer-item{
+    padding:9px 15px;
+    font-size:14px;
+    color:#dce2ed;
+    cursor:pointer;
+}
+
+.explorer-item:hover{
+    background:#232a3a;
+}
+
+.explorer-item.selected{
+    background:#2c3851;
+}
+
+.explorer-child{
+    padding-left:30px;
+}
+
+.studio-right{
+    position:absolute;
+    right:0;
+    top:58px;
+    bottom:0;
+    width:275px;
+    background:#171c27;
+    border-left:1px solid #30384a;
+    z-index:15;
+    overflow:auto;
+}
+
+.properties-title{
+    padding:14px;
+    font-size:13px;
+    font-weight:800;
+    color:#aab4c7;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.property-section{
+    border-top:1px solid #2c3445;
+    padding:13px;
+}
+
+.property-section-title{
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.property-row{
+    display:grid;
+    grid-template-columns:75px 1fr;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.property-label{
+    color:#9da7ba;
+    font-size:12px;
+}
+
+.property-input{
+    width:100%;
+    min-width:0;
+    background:#10141d;
+    color:white;
+    border:1px solid #343d50;
+    border-radius:5px;
+    padding:6px;
+    font-size:12px;
+}
+
+.property-color{
+    width:100%;
+    height:31px;
+    border:1px solid #343d50;
+    border-radius:5px;
+    background:#fff;
+    padding:2px;
+}
+
+.delete-part-button{
+    width:100%;
+    border:0;
+    border-radius:6px;
+    padding:9px;
+    background:#492631;
+    color:#ff9aa7;
+    font-weight:700;
+}
+
+.delete-part-button:hover{
+    background:#5a2c39;
+}
+
+/* =========================
+   VIEWPORT
+========================= */
+
+.studio-viewport{
+    position:absolute;
+    left:245px;
+    right:275px;
+    top:58px;
+    bottom:0;
+    background:#75bdf0;
+    overflow:hidden;
+}
+
+#studioCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.transform-toolbar{
+    position:absolute;
+    top:12px;
+    left:12px;
+    display:flex;
+    gap:6px;
+    z-index:8;
+    background:rgba(15,20,30,.92);
+    border:1px solid #37435a;
+    border-radius:8px;
+    padding:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+
+.transform-tool{
+    border:0;
+    background:#252d3d;
+    color:#dfe5ef;
+    border-radius:6px;
+    padding:8px 11px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.transform-tool:hover{
+    background:#34405a;
+}
+
+.transform-tool.active{
+    background:#5c8df6;
+    color:white;
+}
+
+.controls-help{
+    position:absolute;
+    left:12px;
+    bottom:12px;
+    z-index:8;
+    background:rgba(15,20,30,.85);
+    border:1px solid #364057;
+    color:#cbd3e1;
+    border-radius:7px;
+    padding:9px 11px;
+    font-size:11px;
+    pointer-events:none;
+}
+
+/* =========================
+   STUDIO BOTTOM BAR
+========================= */
+
+.studio-bottom{
+    position:absolute;
+    left:245px;
+    right:275px;
+    bottom:0;
+    height:44px;
+    background:#171c27;
+    border-top:1px solid #30384a;
+    z-index:18;
+    display:flex;
+    align-items:center;
+    padding:0 10px;
+}
+
+.options-button{
+    border:0;
+    background:#252c3c;
+    color:white;
+    border-radius:6px;
+    padding:7px 12px;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-avatar-large{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#5c8df6;
+    object-fit:cover;
+    display:block;
+    margin:0 auto 14px;
+}
+
+.profile-name{
+    text-align:center;
+    font-size:21px;
+    font-weight:800;
+}
+
+.profile-small{
+    text-align:center;
+    color:#8f99ad;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* =========================
+   AVATAR CREATOR
+========================= */
+
+.avatar-preview{
+    height:240px;
+    background:#10151f;
+    border:1px solid #30394d;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:15px;
+}
+
+.avatar-body{
+    width:70px;
+    height:125px;
+    background:#5c8df6;
+    border-radius:10px 10px 8px 8px;
+    position:relative;
+}
+
+.avatar-head{
+    position:absolute;
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    background:#f1bd91;
+    left:4px;
+    top:-68px;
+}
+
+.avatar-leg{
+    position:absolute;
+    bottom:-65px;
+    width:27px;
+    height:65px;
+    background:#303a55;
+    border-radius:0 0 7px 7px;
+}
+
+.avatar-leg.left{
+    left:4px;
+}
+
+.avatar-leg.right{
+    right:4px;
+}
+
+.avatar-arm{
+    position:absolute;
+    top:7px;
+    width:22px;
+    height:78px;
+    background:#f1bd91;
+    border-radius:10px;
+}
+
+.avatar-arm.left{
+    left:-28px;
+    transform:rotate(4deg);
+}
+
+.avatar-arm.right{
+    right:-28px;
+    transform:rotate(-4deg);
+}
+
+/* =========================
+   SCROLLBARS
+========================= */
+
+::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#11151f;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#323b50;
+    border-radius:8px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#414d66;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:900px){
+
+    .studio-left{
+        width:190px;
+    }
+
+    .studio-right{
+        width:230px;
+    }
+
+    .studio-viewport,
+    .studio-bottom{
+        left:190px;
+        right:230px;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .studio-left,
+    .studio-right{
+        display:none;
+    }
+
+    .studio-viewport,
+    .studio-bottom{
+        left:0;
+        right:0;
+    }
+
+    .logo{
+        margin-right:8px;
+    }
+
+    .nav-button{
+        padding:8px;
+    }
+
+}
+
+/* =========================
+   GAME VIEW
+========================= */
+
+.play-view{
+    position:fixed;
+    inset:0;
+    background:#75bdf0;
+    display:none;
+    z-index:4000;
+}
+
+.play-view.active{
+    display:block;
+}
+
+#playCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.play-ui{
+    position:absolute;
+    top:15px;
+    left:15px;
+    right:15px;
+    display:flex;
+    align-items:center;
+    z-index:5;
+    pointer-events:none;
+}
+
+.play-game-name{
+    background:rgba(15,20,30,.82);
+    border:1px solid #364057;
+    border-radius:7px;
+    padding:9px 13px;
+    font-weight:700;
+}
+
+.play-exit{
+    margin-left:auto;
+    pointer-events:auto;
+    border:0;
+    border-radius:7px;
+    background:#252c3c;
+    color:white;
+    padding:9px 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div class="navbar">
+
+    <div class="logo">
+        Veria
+    </div>
+
+    <div class="nav-left">
+
+        <button class="nav-button" onclick="showHome()">
+            Home
+        </button>
+
+        <button class="nav-button" onclick="showGames()">
+            Games
+        </button>
+
+        <button class="nav-button" onclick="showCreate()">
+            Create
+        </button>
+
+    </div>
+
+    <div class="nav-right">
+
+        <button
+            id="notificationButton"
+            class="notification-button"
+            onclick="openNotifications()">
+            🔔
+            <span
+                id="notificationCount"
+                class="notification-count"
+                style="display:none">
+                0
+            </span>
+        </button>
+
+        <button
+            id="loginButton"
+            class="login-button"
+            onclick="openLogin()">
+            Login
+        </button>
+
+        <button
+            id="signupButton"
+            class="signup-button"
+            onclick="openSignup()">
+            Sign Up
+        </button>
+
+        <button
+            id="profileButton"
+            class="profile-button"
+            style="display:none"
+            onclick="openProfile()">
+            Profile
+        </button>
+
+        <button
+            id="signoutButton"
+            class="signout-button"
+            style="display:none"
+            onclick="signOut()">
+            Sign Out
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FRIENDS
+========================= -->
+
+<button
+    id="friendsArrow"
+    class="friends-arrow"
+    onclick="toggleFriends()">
+    ›
+</button>
+
+<div id="friendsPanel" class="friends-panel">
+
+    <div class="friends-header">
+
+        <div class="friends-title">
+            Friends
+        </div>
+
+        <button
+            class="add-friend-button"
+            onclick="openAddFriend()">
+            +
+        </button>
+
+    </div>
+
+    <div id="friendsList"></div>
+
+</div>
+
+
+<!-- =========================
+     HOME
+========================= -->
+
+<div id="homePage" class="page home-page">
+
+    <div class="page-title">
+        Home
+    </div>
+
+    <div class="page-subtitle">
+        Play games made by the Veria community.
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+            Games You Have Played
+        </div>
+
+        <div
+            id="playedGames"
+            class="games-row">
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+            Games
+        </div>
+
+        <div
+            id="homeGames"
+            class="games-grid">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     GAMES PAGE
+========================= -->
+
+<div
+    id="gamesPage"
+    class="page home-page hidden">
+
+    <div class="page-title">
+        Games
+    </div>
+
+    <div class="page-subtitle">
+        Explore games on Veria.
+    </div>
+
+    <div
+        id="gamesGrid"
+        class="games-grid">
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CREATE PAGE
+========================= -->
+
+<div
+    id="createPage"
+    class="page create-page">
+
+    <div class="page-title">
+        Create
+    </div>
+
+    <div class="page-subtitle">
+        Build and manage your Veria games.
+    </div>
+
+    <div class="create-tools">
+
+        <button
+            class="create-new-button"
+            onclick="openCreateGame()">
+            + Create New Game
+        </button>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+            Your Games
+        </div>
+
+        <div
+            id="createdGames"
+            class="games-grid">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     LOGIN MODAL
+========================= -->
+
+<div
+    id="loginModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Log In
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('loginModal')">
+                ×
+            </button>
+
+        </div>
+
+        <label class="form-label">
+            Account Name
+        </label>
+
+        <input
+            id="loginName"
+            class="form-input"
+            placeholder="Account name">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('loginModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="login()">
+                Log In
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SIGNUP MODAL
+========================= -->
+
+<div
+    id="signupModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Create Account
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('signupModal')">
+                ×
+            </button>
+
+        </div>
+
+        <label class="form-label">
+            Account Name
+        </label>
+
+        <input
+            id="signupName"
+            class="form-input"
+            placeholder="Choose a name">
+
+        <label class="form-label">
+            Avatar Color
+        </label>
+
+        <input
+            id="signupColor"
+            class="property-color"
+            type="color"
+            value="#5c8df6">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('signupModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="signup()">
+                Sign Up
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PROFILE MODAL
+========================= -->
+
+<div
+    id="profileModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Profile
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('profileModal')">
+                ×
+            </button>
+
+        </div>
+
+        <img
+            id="profileAvatar"
+            class="profile-avatar-large"
+            src=""
+            alt="Avatar">
+
+        <div
+            id="profileName"
+            class="profile-name">
+        </div>
+
+        <div class="profile-small">
+            Veria Account
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="openAvatarCreator()">
+                Edit Avatar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     AVATAR MODAL
+========================= -->
+
+<div
+    id="avatarModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Avatar Creator
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('avatarModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div class="avatar-preview">
+
+            <div class="avatar-body">
+
+                <div class="avatar-head"></div>
+
+                <div class="avatar-arm left"></div>
+                <div class="avatar-arm right"></div>
+
+                <div class="avatar-leg left"></div>
+                <div class="avatar-leg right"></div>
+
+            </div>
+
+        </div>
+
+        <label class="form-label">
+            Shirt Color
+        </label>
+
+        <input
+            id="avatarColor"
+            class="property-color"
+            type="color"
+            value="#5c8df6"
+            onchange="updateAvatarPreview()">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('avatarModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="saveAvatar()">
+                Save Avatar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ADD FRIEND
+========================= -->
+
+<div
+    id="friendModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Add Friend
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('friendModal')">
+                ×
+            </button>
+
+        </div>
+
+        <label class="form-label">
+            Search account
+        </label>
+
+        <input
+            id="friendNameInput"
+            class="form-input"
+            placeholder="Account name">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('friendModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="sendFriendRequest()">
+                Add Friend
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     NOTIFICATIONS MODAL
+========================= -->
+
+<div
+    id="notificationsModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Notifications
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('notificationsModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div id="notificationList"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CREATE GAME MODAL
+========================= -->
+
+<div
+    id="createGameModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Create New Game
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('createGameModal')">
+                ×
+            </button>
+
+        </div>
+
+        <label class="form-label">
+            Game Name
+        </label>
+
+        <input
+            id="newGameName"
+            class="form-input"
+            placeholder="My Game">
+
+        <label class="form-label">
+            Description
+        </label>
+
+        <textarea
+            id="newGameDescription"
+            class="form-textarea"
+            placeholder="Describe your game..."></textarea>
+
+        <label class="form-label">
+            Game Picture URL
+        </label>
+
+        <input
+            id="newGameImage"
+            class="form-input"
+            placeholder="https://...">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('createGameModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="createGame()">
+                Create
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PUBLISH MODAL
+========================= -->
+
+<div
+    id="publishModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Publish Game
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('publishModal')">
+                ×
+            </button>
+
+        </div>
+
+        <label class="form-label">
+            Game Name
+        </label>
+
+        <input
+            id="publishName"
+            class="form-input"
+            placeholder="Game name">
+
+        <label class="form-label">
+            Description
+        </label>
+
+        <textarea
+            id="publishDescription"
+            class="form-textarea"
+            placeholder="Game description"></textarea>
+
+        <label class="form-label">
+            Picture URL
+        </label>
+
+        <input
+            id="publishImage"
+            class="form-input"
+            placeholder="https://...">
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-button"
+                onclick="closeModal('publishModal')">
+                Cancel
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="publishGame()">
+                Publish
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     OPTIONS MODAL
+========================= -->
+
+<div
+    id="optionsModal"
+    class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Options
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeModal('optionsModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div class="property-section">
+
+            <div class="property-section-title">
+                Studio Controls
+            </div>
+
+            <div style="color:#9da7ba;font-size:13px;line-height:1.7">
+                Left mouse drag: rotate camera<br>
+                Right mouse drag: pan camera<br>
+                Mouse wheel: zoom<br>
+                W: Move<br>
+                E: Rotate<br>
+                R: Scale
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     STUDIO
+========================= -->
+
+<div
+    id="studio"
+    class="studio">
+
+    <div class="studio-topbar">
+
+        <div
+            id="studioTitle"
+            class="studio-title">
+            Veria Studio
+        </div>
+
+        <button
+            class="studio-button"
+            onclick="addPart()">
+            + Part
+        </button>
+
+        <button
+            class="studio-button"
+            onclick="openSaveModal()">
+            Save
+        </button>
+
+        <button
+            class="studio-button primary"
+            onclick="openPublishModal()">
+            Publish
+        </button>
+
+        <button
+            class="studio-button studio-close"
+            onclick="closeStudio()">
+            Exit
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         EXPLORER
+    ========================= -->
+
+    <div class="studio-left">
+
+        <div class="explorer-title">
+            Workspace
+        </div>
+
+        <div
+            id="explorerTree">
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         VIEWPORT
+    ========================= -->
+
+    <div class="studio-viewport">
+
+        <canvas id="studioCanvas"></canvas>
+
+        <div class="transform-toolbar">
+
+            <button
+                id="toolMove"
+                class="transform-tool active"
+                onclick="setTransformMode('translate')">
+                ↕ Move
+            </button>
+
+            <button
+                id="toolScale"
+                class="transform-tool"
+                onclick="setTransformMode('scale')">
+                ⤢ Scale
+            </button>
+
+            <button
+                id="toolRotate"
+                class="transform-tool"
+                onclick="setTransformMode('rotate')">
+                ↻ Rotate
+            </button>
+
+        </div>
+
+        <div class="controls-help">
+            Left drag: rotate camera
+            &nbsp;•&nbsp;
+            Right drag: pan
+            &nbsp;•&nbsp;
+            Wheel: zoom
+            &nbsp;•&nbsp;
+            W/E/R: tools
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PROPERTIES
+    ========================= -->
+
+    <div class="studio-right">
+
+        <div class="properties-title">
+            Properties
+        </div>
+
+        <div
+            id="propertiesPanel">
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         BOTTOM
+    ========================= -->
+
+    <div class="studio-bottom">
+
+        <button
+            class="options-button"
+            onclick="openOptions()">
+            Options
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PLAY VIEW
+========================= -->
+
+<div
+    id="playView"
+    class="play-view">
+
+    <canvas id="playCanvas"></canvas>
+
+    <div class="play-ui">
+
+        <div
+            id="playGameName"
+            class="play-game-name">
+            Veria Game
+        </div>
+
+        <button
+            class="play-exit"
+            onclick="closePlayView()">
+            Exit Game
+        </button>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+import {
+    OrbitControls
+} from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
+
+import {
+    TransformControls
+} from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/TransformControls.js";
+
+
+/* ==================================
+   GLOBALS
+================================== */
+
+let renderer;
+let scene;
+let camera;
+let controls;
+let transformControls;
+
+let raycaster;
+let mouse;
+
+const objects={};
+
+let selectedObject=null;
+
+let currentGame=null;
+
+let partNumber=0;
+
+
+/* ==================================
+   GENERAL UI
+================================== */
+
+window.closeModal=function(id){
+
+    const modal=document.getElementById(id);
+
+    if(modal)
+        modal.classList.remove("open");
+};
+
+
+function openModal(id){
+
+    const modal=document.getElementById(id);
+
+    if(modal)
+        modal.classList.add("open");
+}
+
+
+/* ==================================
+   ACCOUNT STORAGE
+================================== */
+
+function getAccounts(){
+
+    return JSON.parse(
+        localStorage.getItem("veriaAccounts")||"[]"
+    );
+}
+
+
+function saveAccounts(accounts){
+
+    localStorage.setItem(
+        "veriaAccounts",
+        JSON.stringify(accounts)
+    );
+}
+
+
+function getCurrentAccount(){
+
+    return JSON.parse(
+        localStorage.getItem("veriaCurrentAccount")||"null"
+    );
+}
+
+
+function saveCurrentAccount(account){
+
+    localStorage.setItem(
+        "veriaCurrentAccount",
+        JSON.stringify(account)
+    );
+}
+
+
+/* ==================================
+   LOGIN
+================================== */
+
+window.openLogin=function(){
+
+    openModal("loginModal");
+
+};
+
+
+window.openSignup=function(){
+
+    openModal("signupModal");
+
+};
+
+
+window.login=function(){
+
+    const name=
+        document.getElementById("loginName").value.trim();
+
+    if(!name){
+
+        alert("Enter an account name.");
+
+        return;
+    }
+
+    const accounts=getAccounts();
+
+    const account=accounts.find(
+        a=>a.name.toLowerCase()===name.toLowerCase()
+    );
+
+    if(!account){
+
+        alert("Account not found.");
+
+        return;
+    }
+
+    saveCurrentAccount(account);
+
+    closeModal("loginModal");
+
+    updateAccountUI();
+
+};
+
+
+window.signup=function(){
+
+    const name=
+        document.getElementById("signupName").value.trim();
+
+    const color=
+        document.getElementById("signupColor").value;
+
+    if(!name){
+
+        alert("Enter an account name.");
+
+        return;
+    }
+
+    const accounts=getAccounts();
+
+    if(
+        accounts.some(
+            a=>a.name.toLowerCase()===name.toLowerCase()
+        )
+    ){
+
+        alert("That account already exists.");
+
+        return;
+    }
+
+    const account={
+        name:name,
+        avatarColor:color,
+        friends:[],
+        notifications:[]
+    };
+
+    accounts.push(account);
+
+    saveAccounts(accounts);
+    saveCurrentAccount(account);
+
+    closeModal("signupModal");
+
+    updateAccountUI();
+
+};
+
+
+window.signOut=function(){
+
+    localStorage.removeItem(
+        "veriaCurrentAccount"
+    );
+
+    updateAccountUI();
+
+};
+
+
+window.updateAccountUI=function(){
+
+    const account=getCurrentAccount();
+
+    const loginButton=
+        document.getElementById("loginButton");
+
+    const signupButton=
+        document.getElementById("signupButton");
+
+    const profileButton=
+        document.getElementById("profileButton");
+
+    const signoutButton=
+        document.getElementById("signoutButton");
+
+    if(account){
+
+        loginButton.style.display="none";
+        signupButton.style.display="none";
+
+        profileButton.style.display="block";
+        signoutButton.style.display="block";
+
+    }else{
+
+        loginButton.style.display="block";
+        signupButton.style.display="block";
+
+        profileButton.style.display="none";
+        signoutButton.style.display="none";
+
+    }
+
+    updateFriends();
+    updateNotifications();
+
+};
+
+
+/* ==================================
+   PROFILE
+================================== */
+
+window.openProfile=function(){
+
+    const account=getCurrentAccount();
+
+    if(!account){
+
+        openLogin();
+
+        return;
+    }
+
+    document.getElementById("profileName").textContent=
+        account.name;
+
+    const avatar=
+        document.getElementById("profileAvatar");
+
+    avatar.style.background=
+        account.avatarColor||"#5c8df6";
+
+    avatar.src=
+        createAvatarData(
+            account.avatarColor||"#5c8df6"
+        );
+
+    openModal("profileModal");
+
+};
+
+
+window.openAvatarCreator=function(){
+
+    closeModal("profileModal");
+
+    const account=getCurrentAccount();
+
+    if(account){
+
+        document.getElementById("avatarColor").value=
+            account.avatarColor||"#5c8df6";
+
+    }
+
+    openModal("avatarModal");
+
+};
+
+
+window.updateAvatarPreview=function(){
+
+    const color=
+        document.getElementById("avatarColor").value;
+
+    document.querySelector(".avatar-body").style.background=
+        color;
+
+};
+
+
+window.saveAvatar=function(){
+
+    const account=getCurrentAccount();
+
+    if(!account)
+        return;
+
+    const color=
+        document.getElementById("avatarColor").value;
+
+    account.avatarColor=color;
+
+    saveCurrentAccount(account);
+
+    const accounts=getAccounts();
+
+    const index=accounts.findIndex(
+        a=>a.name===account.name
+    );
+
+    if(index>=0){
+
+        accounts[index]=account;
+
+        saveAccounts(accounts);
+
+    }
+
+    closeModal("avatarModal");
+
+    updateAccountUI();
+
+};
+
+
+function createAvatarData(color){
+
+    const svg=`
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+<circle cx="64" cy="64" r="62" fill="#252c3c"/>
+<circle cx="64" cy="38" r="24" fill="#f1bd91"/>
+<rect x="37" y="58" width="54" height="43" rx="8" fill="${color}"/>
+<rect x="40" y="98" width="20" height="25" rx="4" fill="#303a55"/>
+<rect x="68" y="98" width="20" height="25" rx="4" fill="#303a55"/>
+<rect x="20" y="62" width="16" height="45" rx="8" fill="#f1bd91"/>
+<rect x="92" y="62" width="16" height="45" rx="8" fill="#f1bd91"/>
+</svg>`;
+
+    return "data:image/svg+xml;charset=utf-8,"+
+        encodeURIComponent(svg);
+}
+
+
+/* ==================================
+   FRIENDS
+================================== */
+
+window.toggleFriends=function(){
+
+    const panel=
+        document.getElementById("friendsPanel");
+
+    const arrow=
+        document.getElementById("friendsArrow");
+
+    panel.classList.toggle("open");
+
+    arrow.textContent=
+        panel.classList.contains("open")
+        ? "‹"
+        : "›";
+
+};
+
+
+window.openAddFriend=function(){
+
+    if(!getCurrentAccount()){
+
+        openLogin();
+
+        return;
+    }
+
+    document.getElementById("friendNameInput").value="";
+
+    openModal("friendModal");
+
+};
+
+
+function updateFriends(){
+
+    const account=getCurrentAccount();
+
+    const list=
+        document.getElementById("friendsList");
+
+    if(!list)
+        return;
+
+    list.innerHTML="";
+
+    if(!account){
+
+        list.innerHTML=
+            '<div class="friend-empty">Log in to see your friends.</div>';
+
+        return;
+    }
+
+    const accounts=getAccounts();
+
+    const friends=
+        account.friends||[];
+
+    if(!friends.length){
+
+        list.innerHTML=
+            '<div class="friend-empty">No friends yet.</div>';
+
+        return;
+    }
+
+    friends.forEach(friendName=>{
+
+        const friend=accounts.find(
+            a=>a.name===friendName
+        );
+
+        if(!friend)
+            return;
+
+        const card=
+            document.createElement("div");
+
+        card.className="friend-card";
+
+        const img=
+            document.createElement("img");
+
+        img.className="friend-avatar";
+
+        img.src=
+            createAvatarData(
+                friend.avatarColor||"#5c8df6"
+            );
+
+        const name=
+            document.createElement("div");
+
+        name.className="friend-name";
+
+        name.textContent=
+            friend.name;
+
+        card.appendChild(img);
+        card.appendChild(name);
+
+        list.appendChild(card);
+
+    });
+
+}
+
+
+window.sendFriendRequest=function(){
+
+    const current=getCurrentAccount();
+
+    if(!current){
+
+        openLogin();
+
+        return;
+    }
+
+    const targetName=
+        document
+            .getElementById("friendNameInput")
+            .value
+            .trim();
+
+    if(!targetName){
+
+        alert("Enter an account name.");
+
+        return;
+    }
+
+    if(
+        targetName.toLowerCase()===
+        current.name.toLowerCase()
+    ){
+
+        alert("You cannot add yourself.");
+
+        return;
+    }
+
+    const accounts=getAccounts();
+
+    const target=accounts.find(
+        a=>a.name.toLowerCase()===
+            targetName.toLowerCase()
+    );
+
+    if(!target){
+
+        alert("Account not found.");
+
+        return;
+    }
+
+    target.notifications=
+        target.notifications||[];
+
+    if(
+        target.notifications.some(
+            n=>
+                n.type==="friend_request" &&
+                n.from===current.name
+        )
+    ){
+
+        alert("Friend request already sent.");
+
+        return;
+    }
+
+    target.notifications.push({
+
+        type:"friend_request",
+        from:current.name,
+        date:Date.now()
+
+    });
+
+    const targetIndex=
+        accounts.findIndex(
+            a=>a.name===target.name
+        );
+
+    accounts[targetIndex]=target;
+
+    saveAccounts(accounts);
+
+    closeModal("friendModal");
+
+    alert("Friend request sent.");
+
+};
+
+
+function updateNotifications(){
+
+    const account=getCurrentAccount();
+
+    const count=
+        document.getElementById("notificationCount");
+
+    if(!count)
+        return;
+
+    const amount=
+        account&&account.notifications
+        ? account.notifications.length
+        : 0;
+
+    if(amount>0){
+
+        count.style.display="flex";
+        count.textContent=
+            amount>9?"9+":amount;
+
+    }else{
+
+        count.style.display="none";
+
+    }
+
+}
+
+
+window.openNotifications=function(){
+
+    const account=getCurrentAccount();
+
+    if(!account){
+
+        openLogin();
+
+        return;
+    }
+
+    renderNotifications();
+
+    openModal("notificationsModal");
+
+};
+
+
+function renderNotifications(){
+
+    const account=getCurrentAccount();
+
+    const list=
+        document.getElementById("notificationList");
+
+    list.innerHTML="";
+
+    const notifications=
+        account.notifications||[];
+
+    if(!notifications.length){
+
+        list.innerHTML=
+            '<div class="friend-empty">No notifications.</div>';
+
+        return;
+    }
+
+    notifications.forEach((notification,index)=>{
+
+        const item=
+            document.createElement("div");
+
+        item.className="notification-item";
+
+        if(notification.type==="friend_request"){
+
+            item.innerHTML=`
+                <div class="notification-name">
+                    ${escapeHtml(notification.from)}
+                </div>
+
+                <div class="notification-text">
+                    wants to be your friend.
+                </div>
+
+                <div class="notification-actions">
+
+                    <button
+                        class="accept-button"
+                        onclick="acceptFriend(${index})">
+                        Accept
+                    </button>
+
+                    <button
+                        class="reject-button"
+                        onclick="rejectFriend(${index})">
+                        Reject
+                    </button>
+
+                </div>
+            `;
+
+        }
+
+        list.appendChild(item);
+
+    });
+
+}
+
+
+window.acceptFriend=function(index){
+
+    const account=getCurrentAccount();
+
+    if(!account)
+        return;
+
+    const notification=
+        (account.notifications||[])[index];
+
+    if(!notification)
+        return;
+
+    const accounts=getAccounts();
+
+    const friend=accounts.find(
+        a=>a.name===notification.from
+    );
+
+    if(!friend){
+
+        account.notifications.splice(index,1);
+
+        saveCurrentAccount(account);
+
+        updateAccountUI();
+        renderNotifications();
+
+        return;
+    }
+
+    account.friends=
+        account.friends||[];
+
+    friend.friends=
+        friend.friends||[];
+
+    if(!account.friends.includes(friend.name))
+        account.friends.push(friend.name);
+
+    if(!friend.friends.includes(account.name))
+        friend.friends.push(account.name);
+
+    account.notifications.splice(index,1);
+
+    const accountIndex=
+        accounts.findIndex(
+            a=>a.name===account.name
+        );
+
+    const friendIndex=
+        accounts.findIndex(
+            a=>a.name===friend.name
+        );
+
+    accounts[accountIndex]=account;
+    accounts[friendIndex]=friend;
+
+    saveAccounts(accounts);
+    saveCurrentAccount(account);
+
+    updateAccountUI();
+    renderNotifications();
+
+};
+
+
+window.rejectFriend=function(index){
+
+    const account=getCurrentAccount();
+
+    if(!account)
+        return;
+
+    account.notifications=
+        account.notifications||[];
+
+    account.notifications.splice(index,1);
+
+    saveCurrentAccount(account);
+
+    const accounts=getAccounts();
+
+    const accountIndex=
+        accounts.findIndex(
+            a=>a.name===account.name
+        );
+
+    if(accountIndex>=0){
+
+        accounts[accountIndex]=account;
+
+        saveAccounts(accounts);
+
+    }
+
+    updateAccountUI();
+    renderNotifications();
+
+};
+
+
+/* ==================================
+   PAGE NAVIGATION
+================================== */
+
+function hideAllPages(){
+
+    document
+        .getElementById("homePage")
+        .classList.add("hidden");
+
+    document
+        .getElementById("gamesPage")
+        .classList.add("hidden");
+
+    document
+        .getElementById("createPage")
+        .classList.remove("active");
+
+}
+
+
+window.showHome=function(){
+
+    hideAllPages();
+
+    document
+        .getElementById("homePage")
+        .classList.remove("hidden");
+
+    renderGames();
+
+};
+
+
+window.showGames=function(){
+
+    hideAllPages();
+
+    document
+        .getElementById("gamesPage")
+        .classList.remove("hidden");
+
+    renderGames();
+
+};
+
+
+window.showCreate=function(){
+
+    hideAllPages();
+
+    document
+        .getElementById("createPage")
+        .classList.add("active");
+
+    renderCreatedGames();
+
+};
+
+
+/* ==================================
+   GAME STORAGE
+================================== */
+
+function getGames(){
+
+    return JSON.parse(
+        localStorage.getItem("veriaGames")||"[]"
+    );
+
+}
+
+
+function saveGames(games){
+
+    localStorage.setItem(
+        "veriaGames",
+        JSON.stringify(games)
+    );
+
+}
+
+
+function gameCard(game){
+
+    const card=
+        document.createElement("div");
+
+    card.className="game-card";
+
+    const image=
+        document.createElement("div");
+
+    image.className="game-image";
+
+    if(game.image){
+
+        const img=
+            document.createElement("img");
+
+        img.src=game.image;
+
+        img.onerror=function(){
+
+            image.textContent=
+                "No Image";
+
+        };
+
+        image.appendChild(img);
+
+    }else{
+
+        image.textContent=
+            "No Game Image";
+
+    }
+
+    const info=
+        document.createElement("div");
+
+    info.className="game-info";
+
+    const name=
+        document.createElement("div");
+
+    name.className="game-name";
+
+    name.textContent=
+        game.name;
+
+    const desc=
+        document.createElement("div");
+
+    desc.className="game-description";
+
+    desc.textContent=
+        game.description||"";
+
+    const play=
+        document.createElement("button");
+
+    play.className="play-button";
+
+    play.textContent="Play";
+
+    play.onclick=function(){
+
+        window.playGame(game.name);
+
+    };
+
+    info.appendChild(name);
+    info.appendChild(desc);
+    info.appendChild(play);
+
+    card.appendChild(image);
+    card.appendChild(info);
+
+    return card;
+
+}
+
+
+function renderGames(){
+
+    const games=getGames();
+
+    const home=
+        document.getElementById("homeGames");
+
+    const grid=
+        document.getElementById("gamesGrid");
+
+    const played=
+        document.getElementById("playedGames");
+
+    if(home){
+
+        home.innerHTML="";
+
+        games.forEach(game=>{
+
+            home.appendChild(
+                gameCard(game)
+            );
+
+        });
+
+    }
+
+    if(grid){
+
+        grid.innerHTML="";
+
+        games.forEach(game=>{
+
+            grid.appendChild(
+                gameCard(game)
+            );
+
+        });
+
+    }
+
+    if(played){
+
+        played.innerHTML="";
+
+        const playedNames=
+            JSON.parse(
+                localStorage.getItem("veriaPlayedGames")||"[]"
+            );
+
+        playedNames.forEach(name=>{
+
+            const game=
+                games.find(
+                    g=>g.name===name
+                );
+
+            if(game)
+                played.appendChild(
+                    gameCard(game)
+                );
+
+        });
+
+    }
+
+}
+
+
+function renderCreatedGames(){
+
+    const container=
+        document.getElementById("createdGames");
+
+    if(!container)
+        return;
+
+    container.innerHTML="";
+
+    const account=getCurrentAccount();
+
+    if(!account){
+
+        container.innerHTML=
+            '<div class="friend-empty">Log in to create games.</div>';
+
+        return;
+    }
+
+    const games=
+        getGames().filter(
+            g=>g.owner===account.name
+        );
+
+    if(!games.length){
+
+        container.innerHTML=
+            '<div class="friend-empty">You have not created any games yet.</div>';
+
+        return;
+    }
+
+    games.forEach(game=>{
+
+        container.appendChild(
+            gameCard(game)
+        );
+
+    });
+
+}
+
+
+window.openCreateGame=function(){
+
+    const account=getCurrentAccount();
+
+    if(!account){
+
+        openLogin();
+
+        return;
+    }
+
+    document.getElementById("newGameName").value="";
+    document.getElementById("newGameDescription").value="";
+    document.getElementById("newGameImage").value="";
+
+    openModal("createGameModal");
+
+};
+
+
+window.createGame=function(){
+
+    const account=getCurrentAccount();
+
+    if(!account){
+
+        openLogin();
+
+        return;
+    }
+
+    const name=
+        document
+            .getElementById("newGameName")
+            .value
+            .trim();
+
+    const description=
+        document
+            .getElementById("newGameDescription")
+            .value
+            .trim();
+
+    const image=
+        document
+            .getElementById("newGameImage")
+            .value
+            .trim();
+
+    if(!name){
+
+        alert("Enter a game name.");
+
+        return;
+    }
+
+    const game={
+
+        name:name,
+        description:description,
+        image:image,
+        owner:account.name,
+        parts:[],
+        created:Date.now()
+
+    };
+
+    const games=getGames();
+
+    games.push(game);
+
+    saveGames(games);
+
+    closeModal("createGameModal");
+
+    renderCreatedGames();
+
+    openStudio(game);
+
+};
+
+
+/* ==================================
+   STUDIO START
+================================== */
+
+window.openStudio=function(game){
+
+    currentGame=game;
+
+    document
+        .getElementById("studioTitle")
+        .textContent=
+            "Veria Studio — "+game.name;
+
+    document
+        .getElementById("studio")
+        .classList.add("active");
+
+    startStudio();
+
+};
+
+
+function startStudio(){
+
+    const canvas=
+        document.getElementById("studioCanvas");
+
+    if(renderer){
+
+        renderer.setSize(
+            canvas.clientWidth,
+            canvas.clientHeight,
+            false
+        );
+
+        camera.aspect=
+            canvas.clientWidth/
+            canvas.clientHeight;
+
+        camera.updateProjectionMatrix();
+
+        controls.target.set(
+            0,
+            0,
+            0
+        );
+
+        controls.update();
+
+        rebuildStudioScene();
+
+        return;
+    }
+
+
+    renderer=
+        new THREE.WebGLRenderer({
+            canvas:canvas,
+            antialias:true
+        });
+
+    renderer.setPixelRatio(
+        Math.min(
+            window.devicePixelRatio||1,
+            2
+        )
+    );
+
+    renderer.setSize(
+        canvas.clientWidth,
+        canvas.clientHeight,
+        false
+    );
+
+    renderer.shadowMap.enabled=true;
+
+    scene=
+        new THREE.Scene();
+
+    scene.background=
+        new THREE.Color("#75bdf0");
+
+
+    /* CAMERA */
+
+    camera=
+        new THREE.PerspectiveCamera(
+            55,
+            canvas.clientWidth/
+            canvas.clientHeight,
+            .1,
+            2000
+        );
+
+    camera.position.set(
+        22,
+        18,
+        22
+    );
+
+
+    /* ORBIT CONTROLS */
+
+    controls=
+        new OrbitControls(
+            camera,
+            canvas
+        );
+
+    controls.enableDamping=true;
+
+    controls.dampingFactor=.08;
+
+    controls.screenSpacePanning=true;
+
+    controls.mouseButtons.LEFT=
+        THREE.MOUSE.ROTATE;
+
+    controls.mouseButtons.MIDDLE=
+        THREE.MOUSE.DOLLY;
+
+    controls.mouseButtons.RIGHT=
+        THREE.MOUSE.PAN;
+
+    controls.minDistance=4;
+
+    controls.maxDistance=500;
+
+    controls.target.set(
+        0,
+        0,
+        0
+    );
+
+    controls.update();
+
+
+    /* TRANSFORM CONTROLS */
+
+    transformControls=
+        new TransformControls(
+            camera,
+            canvas
+        );
+
+    transformControls.setMode(
+        "translate"
+    );
+
+    transformControls.setSpace(
+        "world"
+    );
+
+    transformControls.setSize(
+        1.15
+    );
+
+    scene.add(
+        transformControls.getHelper()
+    );
+
+    transformControls.addEventListener(
+        "mouseDown",
+        ()=>{
+            controls.enabled=false;
+        }
+    );
+
+    transformControls.addEventListener(
+        "mouseUp",
+        ()=>{
+            controls.enabled=true;
+
+            syncSelectedObjectFromMesh();
+
+            saveCurrentGameSilently();
+        }
+    );
+
+    transformControls.addEventListener(
+        "objectChange",
+        ()=>{
+            syncSelectedObjectFromMesh();
+        }
+    );
+
+
+    /* LIGHTING */
+
+    const ambient=
+        new THREE.HemisphereLight(
+            0xffffff,
+            0x506070,
+            1.7
+        );
+
+    scene.add(ambient);
+
+
+    const sun=
+        new THREE.DirectionalLight(
+            0xffffff,
+            2.2
+        );
+
+    sun.position.set(
+        30,
+        50,
+        20
+    );
+
+    sun.castShadow=true;
+
+    sun.shadow.mapSize.width=2048;
+    sun.shadow.mapSize.height=2048;
+
+    scene.add(sun);
+
+
+    /* RAYCASTING */
+
+    raycaster=
+        new THREE.Raycaster();
+
+    mouse=
+        new THREE.Vector2();
+
+
+    canvas.addEventListener(
+        "pointerdown",
+        onViewportClick
+    );
+
+
+    canvas.addEventListener(
+        "contextmenu",
+        event=>{
+            event.preventDefault();
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        resizeStudio
+    );
+
+
+    window.addEventListener(
+        "keydown",
+        studioKeyboard
+    );
+
+
+    rebuildStudioScene();
+
+}
+
+
+/* ==================================
+   RESIZE
+================================== */
+
+function resizeStudio(){
+
+    if(!renderer||!camera)
+        return;
+
+    const canvas=
+        document.getElementById("studioCanvas");
+
+    const width=
+        canvas.clientWidth;
+
+    const height=
+        canvas.clientHeight;
+
+    renderer.setSize(
+        width,
+        height,
+        false
+    );
+
+    camera.aspect=
+        width/height;
+
+    camera.updateProjectionMatrix();
+
+}
+
+
+/* ==================================
+   BUILD STUDIO
+================================== */
+
+function rebuildStudioScene(){
+
+    if(!scene)
+        return;
+
+    Object.keys(objects).forEach(id=>{
+
+        scene.remove(
+            objects[id].mesh
+        );
+
+        if(
+            objects[id].mesh.geometry
+        )
+            objects[id].mesh.geometry.dispose();
+
+        if(
+            objects[id].mesh.material
+        )
+            objects[id].mesh.material.dispose();
+
+        delete objects[id];
+
+    });
+
+
+    if(transformControls){
+
+        transformControls.detach();
+
+    }
+
+
+    partNumber=0;
+
+
+    /* =========================
+       BASEPLATE
+    ========================= */
+
+    const baseGeometry=
+        new THREE.BoxGeometry(
+            40,
+            1,
+            40
+        );
+
+    const baseMaterial=
+        new THREE.MeshStandardMaterial({
+            color:"#4d8c4a",
+            roughness:.8
+        });
+
+    const baseMesh=
+        new THREE.Mesh(
+            baseGeometry,
+            baseMaterial
+        );
+
+    baseMesh.position.set(
+        0,
+        -.5,
+        0
+    );
+
+    baseMesh.receiveShadow=true;
+
+    baseMesh.name="Baseplate";
+
+    scene.add(baseMesh);
+
+    objects.baseplate={
+        mesh:baseMesh,
+        type:"baseplate",
+        name:"Baseplate"
+    };
+
+
+    /* =========================
+       SPAWN
+    ========================= */
+
+    const spawnGroup=
+        new THREE.Group();
+
+    spawnGroup.name=
+        "Spawn Location";
+
+    const spawnBase=
+        new THREE.CylinderGeometry(
+            2.2,
+            2.2,
+            .3,
+            32
+        );
+
+    const spawnMaterial=
+        new THREE.MeshStandardMaterial({
+            color:"#4e8cff",
+            emissive:"#102d7a",
+            emissiveIntensity:.25
+        });
+
+    const spawnDisk=
+        new THREE.Mesh(
+            spawnBase,
+            spawnMaterial
+        );
+
+    spawnDisk.position.y=.15;
+
+    spawnDisk.castShadow=true;
+
+    spawnGroup.add(
+        spawnDisk
+    );
+
+
+    const spawnPole=
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .1,
+                .1,
+                3,
+                12
+            ),
+            new THREE.MeshStandardMaterial({
+                color:"#e8e8e8"
+            })
+        );
+
+    spawnPole.position.y=1.65;
+
+    spawnGroup.add(
+        spawnPole
+    );
+
+
+    const spawnTop=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.2,
+                .5,
+                .25
+            ),
+            new THREE.MeshStandardMaterial({
+                color:"#5c8df6"
+            })
+        );
+
+    spawnTop.position.set(
+        0,
+        3,
+        0
+    );
+
+    spawnGroup.add(
+        spawnTop
+    );
+
+    spawnGroup.position.set(
+        0,
+        0,
+        0
+    );
+
+    scene.add(
+        spawnGroup
+    );
+
+    objects.spawn={
+        mesh:spawnGroup,
+        type:"spawn",
+        name:"Spawn Location"
+    };
+
+
+    /* =========================
+       SAVED PARTS
+    ========================= */
+
+    const parts=
+        currentGame&&
+        Array.isArray(currentGame.parts)
+        ?currentGame.parts
+        :[];
+
+    parts.forEach(
+        data=>{
+            createMeshFromData(
+                data
+            );
+        }
+    );
+
+
+    updateExplorer();
+
+}
+
+
+/* ==================================
+   CREATE PART
+================================== */
+
+window.addPart=function(){
+
+    if(!currentGame)
+        return;
+
+    partNumber++;
+
+    const id=
+        "part_"+Date.now()+"_"+partNumber;
+
+    const data={
+
+        id:id,
+
+        name:"Part "+partNumber,
+
+        type:"part",
+
+        position:{
+            x:0,
+            y:1,
+            z:0
+        },
+
+        size:{
+            x:4,
+            y:1,
+            z:4
+        },
+
+        rotation:{
+            x:0,
+            y:0,
+            z:0
+        },
+
+        color:"#ff5252"
+
+    };
+
+
+    currentGame.parts=
+        currentGame.parts||[];
+
+    currentGame.parts.push(
+        data
+    );
+
+
+    createMeshFromData(
+        data
+    );
+
+    saveCurrentGameSilently();
+
+    selectObject(id);
+
+};
+
+
+/* ==================================
+   CREATE MESH
+================================== */
+
+function createMeshFromData(data){
+
+    const geometry=
+        new THREE.BoxGeometry(
+            2,
+            2,
+            2
+        );
+
+    const material=
+        new THREE.MeshStandardMaterial({
+
+            color:
+                data.color||
+                "#ff5252",
+
+            roughness:.72
+
+        });
+
+
+    const mesh=
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+
+    mesh.position.set(
+
+        Number(data.position?.x)||0,
+
+        Number(data.position?.y)||0,
+
+        Number(data.position?.z)||0
+
+    );
+
+
+    mesh.scale.set(
+
+        (Number(data.size?.x)||2)/2,
+
+        (Number(data.size?.y)||2)/2,
+
+        (Number(data.size?.z)||2)/2
+
+    );
+
+
+    mesh.rotation.set(
+
+        Number(data.rotation?.x)||0,
+
+        Number(data.rotation?.y)||0,
+
+        Number(data.rotation?.z)||0
+
+    );
+
+
+    mesh.castShadow=true;
+
+    mesh.receiveShadow=true;
+
+    mesh.name=
+        data.name||"Part";
+
+
+    scene.add(mesh);
+
+
+    objects[data.id]={
+        mesh:mesh,
+        type:"part",
+        data:data,
+        name:data.name
+    };
+
+}
+
+
+/* ==================================
+   SELECT OBJECT
+================================== */
+
+window.selectObject=function(id){
+
+    selectedObject=id;
+
+    const item=
+        objects[id];
+
+    if(!item){
+
+        if(transformControls)
+            transformControls.detach();
+
+        return;
+    }
+
+
+    if(
+        transformControls &&
+        item.type==="part"
+    ){
+
+        transformControls.attach(
+            item.mesh
+        );
+
+    }else if(transformControls){
+
+        transformControls.detach();
+
+    }
+
+
+    updateExplorer();
+
+    showProperties(id);
+
+};
+
+
+/* ==================================
+   TRANSFORM MODE
+================================== */
+
+window.setTransformMode=function(mode){
+
+    if(!transformControls)
+        return;
+
+    if(
+        mode!=="translate" &&
+        mode!=="scale" &&
+        mode!=="rotate"
+    )
+        return;
+
+    transformControls.setMode(
+        mode
+    );
+
+
+    document
+        .querySelectorAll(".transform-tool")
+        .forEach(button=>{
+            button.classList.remove(
+                "active"
+            );
+        });
+
+
+    if(mode==="translate"){
+
+        document
+            .getElementById("toolMove")
+            .classList.add("active");
+
+    }
+
+    if(mode==="scale"){
+
+        document
+            .getElementById("toolScale")
+            .classList.add("active");
+
+    }
+
+    if(mode==="rotate"){
+
+        document
+            .getElementById("toolRotate")
+            .classList.add("active");
+
+    }
+
+};
+
+
+/* ==================================
+   SYNC TRANSFORM
+================================== */
+
+function syncSelectedObjectFromMesh(){
+
+    if(!selectedObject)
+        return;
+
+    const item=
+        objects[selectedObject];
+
+    if(
+        !item||
+        item.type!=="part"
+    )
+        return;
+
+    const mesh=
+        item.mesh;
+
+    const data=
+        item.data;
+
+
+    data.position={
+        x:mesh.position.x,
+        y:mesh.position.y,
+        z:mesh.position.z
+    };
+
+
+    data.size={
+        x:Math.abs(mesh.scale.x)*2,
+        y:Math.abs(mesh.scale.y)*2,
+        z:Math.abs(mesh.scale.z)*2
+    };
+
+
+    data.rotation={
+        x:mesh.rotation.x,
+        y:mesh.rotation.y,
+        z:mesh.rotation.z
+    };
+
+
+    updatePropertyInputsFromMesh(
+        data
+    );
+
+}
+
+
+/* ==================================
+   PROPERTY INPUT UPDATE
+================================== */
+
+function updatePropertyInputsFromMesh(data){
+
+    const fields=[
+        ["propPosX",data.position.x],
+        ["propPosY",data.position.y],
+        ["propPosZ",data.position.z],
+        ["propSizeX",data.size.x],
+        ["propSizeY",data.size.y],
+        ["propSizeZ",data.size.z],
+        ["propRotX",data.rotation.x],
+        ["propRotY",data.rotation.y],
+        ["propRotZ",data.rotation.z]
+    ];
+
+    fields.forEach(
+        ([id,value])=>{
+            const input=
+                document.getElementById(id);
+
+            if(input)
+                input.value=
+                    Number(value).toFixed(2);
+        }
+    );
+
+}
+
+
+/* ==================================
+   VIEWPORT CLICK
+================================== */
+
+function onViewportClick(event){
+
+    /*
+       Don't select when dragging.
+    */
+
+    if(event.button!==0)
+        return;
+
+    if(
+        transformControls &&
+        transformControls.dragging
+    )
+        return;
+
+
+    const canvas=
+        document.getElementById(
+            "studioCanvas"
+        );
+
+    const rect=
+        canvas.getBoundingClientRect();
+
+
+    mouse.x=
+        ((event.clientX-rect.left)/
+        rect.width)*2-1;
+
+    mouse.y=
+        -((event.clientY-rect.top)/
+        rect.height)*2+1;
+
+
+    raycaster.setFromCamera(
+        mouse,
+        camera
+    );
+
+
+    const meshes=[];
+
+    Object.keys(objects).forEach(id=>{
+
+        const item=
+            objects[id];
+
+        if(item.type==="part"){
+
+            meshes.push(
+                item.mesh
+            );
+
+        }
+
+    });
+
+
+    const hits=
+        raycaster.intersectObjects(
+            meshes,
+            true
+        );
+
+
+    if(!hits.length)
+        return;
+
+
+    let object=
+        hits[0].object;
+
+
+    while(
+        object &&
+        !Object.values(objects)
+            .some(
+                item=>item.mesh===object
+            )
+    ){
+
+        object=object.parent;
+
+    }
+
+
+    if(!object)
+        return;
+
+
+    const found=
+        Object.entries(objects)
+            .find(
+                ([id,item])=>
+                    item.mesh===object
+            );
+
+
+    if(found)
+        selectObject(found[0]);
+
+}
+
+
+/* ==================================
+   PROPERTIES
+================================== */
+
+function showProperties(id){
+
+    const panel=
+        document.getElementById(
+            "propertiesPanel"
+        );
+
+    const item=
+        objects[id];
+
+    if(!item){
+
+        panel.innerHTML=
+            '<div style="padding:14px;color:#7f899d">Nothing selected.</div>';
+
+        return;
+    }
+
+
+    if(item.type==="baseplate"){
+
+        panel.innerHTML=`
+
+            <div class="property-section">
+
+                <div class="property-section-title">
+                    Baseplate
+                </div>
+
+                <div style="color:#8f99ad;font-size:12px;line-height:1.6">
+                    The default Veria baseplate.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    if(item.type==="spawn"){
+
+        panel.innerHTML=`
+
+            <div class="property-section">
+
+                <div class="property-section-title">
+                    Spawn Location
+                </div>
+
+                <div style="color:#8f99ad;font-size:12px;line-height:1.6">
+                    Player spawn point.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const data=
+        item.data;
+
+
+    panel.innerHTML=`
+
+        <div class="property-section">
+
+            <div class="property-section-title">
+                Part
+            </div>
+
+            <div class="property-row">
+
+                <div class="property-label">
+                    Name
+                </div>
+
+                <input
+                    id="propName"
+                    class="property-input"
+                    value="${escapeHtml(data.name)}">
+
+            </div>
+
+            <div class="property-row">
+
+                <div class="property-label">
+                    Color
+                </div>
+
+                <input
+                    id="propColor"
+                    class="property-color"
+                    type="color"
+                    value="${data.color||"#ff5252"}">
+
+            </div>
+
+        </div>
+
+
+        <div class="property-section">
+
+            <div class="property-section-title">
+                Position
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">X</div>
+                <input id="propPosX" class="property-input" type="number" step=".1" value="${Number(data.position.x).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Y</div>
+                <input id="propPosY" class="property-input" type="number" step=".1" value="${Number(data.position.y).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Z</div>
+                <input id="propPosZ" class="property-input" type="number" step=".1" value="${Number(data.position.z).toFixed(2)}">
+            </div>
+
+        </div>
+
+
+        <div class="property-section">
+
+            <div class="property-section-title">
+                Size
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">X</div>
+                <input id="propSizeX" class="property-input" type="number" min=".1" step=".1" value="${Number(data.size.x).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Y</div>
+                <input id="propSizeY" class="property-input" type="number" min=".1" step=".1" value="${Number(data.size.y).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Z</div>
+                <input id="propSizeZ" class="property-input" type="number" min=".1" step=".1" value="${Number(data.size.z).toFixed(2)}">
+            </div>
+
+        </div>
+
+
+        <div class="property-section">
+
+            <div class="property-section-title">
+                Rotation
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">X</div>
+                <input id="propRotX" class="property-input" type="number" step=".01" value="${Number(data.rotation?.x||0).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Y</div>
+                <input id="propRotY" class="property-input" type="number" step=".01" value="${Number(data.rotation?.y||0).toFixed(2)}">
+            </div>
+
+            <div class="property-row">
+                <div class="property-label">Z</div>
+                <input id="propRotZ" class="property-input" type="number" step=".01" value="${Number(data.rotation?.z||0).toFixed(2)}">
+            </div>
+
+        </div>
+
+
+        <div class="property-section">
+
+            <button
+                class="delete-part-button"
+                onclick="deleteSelectedPart()">
+                Delete Part
+            </button>
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById("propName")
+        .addEventListener(
+            "input",
+            ()=>{
+                data.name=
+                    document
+                        .getElementById("propName")
+                        .value;
+
+                item.mesh.name=
+                    data.name;
+
+                updateExplorer();
+
+                saveCurrentGameSilently();
+
+            }
+        );
+
+
+    document
+        .getElementById("propColor")
+        .addEventListener(
+            "input",
+            ()=>{
+                data.color=
+                    document
+                        .getElementById("propColor")
+                        .value;
+
+                item.mesh.material.color.set(
+                    data.color
+                );
+
+                saveCurrentGameSilently();
+
+            }
+        );
+
+
+    const positionInputs=[
+        ["propPosX","x"],
+        ["propPosY","y"],
+        ["propPosZ","z"]
+    ];
+
+
+    positionInputs.forEach(
+        ([inputId,axis])=>{
+
+            document
+                .getElementById(inputId)
+                .addEventListener(
+                    "input",
+                    event=>{
+
+                        const value=
+                            Number(event.target.value);
+
+                        if(
+                            Number.isNaN(value)
+                        )
+                            return;
+
+                        data.position[axis]=
+                            value;
+
+                        item.mesh.position[axis]=
+                            value;
+
+                        saveCurrentGameSilently();
+
+                    }
+                );
+
+        }
+    );
+
+
+    const sizeInputs=[
+        ["propSizeX","x"],
+        ["propSizeY","y"],
+        ["propSizeZ","z"]
+    ];
+
+
+    sizeInputs.forEach(
+        ([inputId,axis])=>{
+
+            document
+                .getElementById(inputId)
+                .addEventListener(
+                    "input",
+                    event=>{
+
+                        let value=
+                            Number(event.target.value);
+
+                        if(
+                            !Number.isFinite(value)||
+                            value<=0
+                        )
+                            return;
+
+                        data.size[axis]=
+                            value;
+
+                        item.mesh.scale[axis]=
+                            value/2;
+
+                        saveCurrentGameSilently();
+
+                    }
+                );
+
+        }
+    );
+
+
+    const rotationInputs=[
+        ["propRotX","x"],
+        ["propRotY","y"],
+        ["propRotZ","z"]
+    ];
+
+
+    rotationInputs.forEach(
+        ([inputId,axis])=>{
+
+            document
+                .getElementById(inputId)
+                .addEventListener(
+                    "input",
+                    event=>{
+
+                        const value=
+                            Number(event.target.value);
+
+                        if(!Number.isFinite(value))
+                            return;
+
+                        data.rotation[axis]=
+                            value;
+
+                        item.mesh.rotation[axis]=
+                            value;
+
+                        saveCurrentGameSilently();
+
+                    }
+                );
+
+        }
+    );
+
+
+    if(
+        transformControls &&
+        item.type==="part"
+    ){
+
+        transformControls.attach(
+            item.mesh
+        );
+
+    }
+
+}
+
+
+/* ==================================
+   DELETE
+================================== */
+
+window.deleteSelectedPart=function(){
+
+    if(!selectedObject)
+        return;
+
+    const item=
+        objects[selectedObject];
+
+    if(
+        !item||
+        item.type!=="part"
+    )
+        return;
+
+
+    if(transformControls)
+        transformControls.detach();
+
+
+    scene.remove(
+        item.mesh
+    );
+
+
+    if(item.mesh.geometry)
+        item.mesh.geometry.dispose();
+
+    if(item.mesh.material)
+        item.mesh.material.dispose();
+
+
+    currentGame.parts=
+        currentGame.parts.filter(
+            part=>
+                part.id!==selectedObject
+        );
+
+
+    delete objects[selectedObject];
+
+    selectedObject=null;
+
+    saveCurrentGameSilently();
+
+    updateExplorer();
+
+    document
+        .getElementById("propertiesPanel")
+        .innerHTML=
+            '<div style="padding:14px;color:#7f899d">Nothing selected.</div>';
+
+};
+
+
+/* ==================================
+   EXPLORER
+================================== */
+
+function updateExplorer(){
+
+    const tree=
+        document.getElementById(
+            "explorerTree"
+        );
+
+    tree.innerHTML="";
+
+
+    const base=
+        document.createElement("div");
+
+    base.className=
+        "explorer-item";
+
+    if(selectedObject==="baseplate")
+        base.classList.add("selected");
+
+    base.textContent=
+        "▣ Baseplate";
+
+    base.onclick=function(){
+
+        selectObject("baseplate");
+
+    };
+
+    tree.appendChild(base);
+
+
+    const spawn=
+        document.createElement("div");
+
+    spawn.className=
+        "explorer-item";
+
+    if(selectedObject==="spawn")
+        spawn.classList.add("selected");
+
+    spawn.textContent=
+        "◎ Spawn Location";
+
+    spawn.onclick=function(){
+
+        selectObject("spawn");
+
+    };
+
+    tree.appendChild(spawn);
+
+
+    if(currentGame){
+
+        currentGame.parts=
+            currentGame.parts||[];
+
+        currentGame.parts.forEach(
+            part=>{
+
+                const item=
+                    document.createElement("div");
+
+                item.className=
+                    "explorer-item explorer-child";
+
+                if(
+                    selectedObject===part.id
+                )
+                    item.classList.add("selected");
+
+                item.textContent=
+                    "■ "+part.name;
+
+                item.onclick=function(){
+
+                    selectObject(part.id);
+
+                };
+
+                tree.appendChild(item);
+
+            }
+        );
+
+    }
+
+}
+
+
+/* ==================================
+   SAVE
+================================== */
+
+function saveCurrentGameSilently(){
+
+    if(!currentGame)
+        return;
+
+    const games=
+        getGames();
+
+    const index=
+        games.findIndex(
+            game=>
+                game.name===currentGame.name
+        );
+
+    if(index<0)
+        return;
+
+    games[index]=currentGame;
+
+    saveGames(games);
+
+}
+
+
+window.openSaveModal=function(){
+
+    if(!currentGame)
+        return;
+
+    document
+        .getElementById("publishName")
+        .value=
+            currentGame.name||"";
+
+    document
+        .getElementById("publishDescription")
+        .value=
+            currentGame.description||"";
+
+    document
+        .getElementById("publishImage")
+        .value=
+            currentGame.image||"";
+
+    openModal("publishModal");
+
+};
+
+
+/* ==================================
+   PUBLISH
+================================== */
+
+window.openPublishModal=function(){
+
+    if(!currentGame)
+        return;
+
+    document
+        .getElementById("publishName")
+        .value=
+            currentGame.name||"";
+
+    document
+        .getElementById("publishDescription")
+        .value=
+            currentGame.description||"";
+
+    document
+        .getElementById("publishImage")
+        .value=
+            currentGame.image||"";
+
+    openModal("publishModal");
+
+};
+
+
+window.publishGame=function(){
+
+    if(!currentGame)
+        return;
+
+
+    const oldName=
+        currentGame.name;
+
+
+    const name=
+        document
+            .getElementById("publishName")
+            .value
+            .trim();
+
+
+    const description=
+        document
+            .getElementById("publishDescription")
+            .value
+            .trim();
+
+
+    const image=
+        document
+            .getElementById("publishImage")
+            .value
+            .trim();
+
+
+    if(!name){
+
+        alert("Enter a game name.");
+
+        return;
+
+    }
+
+
+    currentGame.name=
+        name;
+
+    currentGame.description=
+        description;
+
+    currentGame.image=
+        image;
+
+
+    const games=
+        getGames();
+
+    const index=
+        games.findIndex(
+            game=>
+                game.name===oldName
+        );
+
+
+    if(index>=0){
+
+        games[index]=
+            currentGame;
+
+        saveGames(games);
+
+    }
+
+
+    document
+        .getElementById("studioTitle")
+        .textContent=
+            "Veria Studio — "+name;
+
+
+    closeModal("publishModal");
+
+    alert(
+        "Game saved/published."
+    );
+
+    renderGames();
+
+};
+
+
+/* ==================================
+   OPTIONS
+================================== */
+
+window.openOptions=function(){
+
+    openModal(
+        "optionsModal"
+    );
+
+};
+
+
+/* ==================================
+   CLOSE STUDIO
+================================== */
+
+window.closeStudio=function(){
+
+    saveCurrentGameSilently();
+
+    if(transformControls)
+        transformControls.detach();
+
+    document
+        .getElementById("studio")
+        .classList.remove("active");
+
+    currentGame=null;
+
+    selectedObject=null;
+
+    renderCreatedGames();
+
+    renderGames();
+
+};
+
+
+/* ==================================
+   PLAY GAME
+================================== */
+
+window.playGame=function(gameName){
+
+    const games=
+        getGames();
+
+    const game=
+        games.find(
+            g=>g.name===gameName
+        );
+
+    if(!game)
+        return;
+
+
+    let played=
+        JSON.parse(
+            localStorage.getItem(
+                "veriaPlayedGames"
+            )||"[]"
+        );
+
+
+    if(!played.includes(game.name))
+        played.unshift(game.name);
+
+    played=
+        played.slice(
+            0,
+            20
+        );
+
+
+    localStorage.setItem(
+        "veriaPlayedGames",
+        JSON.stringify(played)
+    );
+
+
+    startPlayView(game);
+
+};
+
+
+/* ==================================
+   PLAY VIEW
+================================== */
+
+let playRenderer;
+let playScene;
+let playCamera;
+let playControls;
+
+
+function startPlayView(game){
+
+    const view=
+        document.getElementById(
+            "playView"
+        );
+
+    const canvas=
+        document.getElementById(
+            "playCanvas"
+        );
+
+
+    document
+        .getElementById(
+            "playGameName"
+        )
+        .textContent=
+            game.name;
+
+
+    view.classList.add("active");
+
+
+    if(!playRenderer){
+
+        playRenderer=
+            new THREE.WebGLRenderer({
+                canvas:canvas,
+                antialias:true
+            });
+
+        playRenderer.setPixelRatio(
+            Math.min(
+                window.devicePixelRatio||1,
+                2
+            )
+        );
+
+
+        playScene=
+            new THREE.Scene();
+
+        playScene.background=
+            new THREE.Color(
+                "#75bdf0"
+            );
+
+
+        playCamera=
+            new THREE.PerspectiveCamera(
+                60,
+                1,
+                .1,
+                2000
+            );
+
+
+        playControls=
+            new OrbitControls(
+                playCamera,
+                canvas
+            );
+
+        playControls.enableDamping=true;
+
+        playControls.mouseButtons.LEFT=
+            THREE.MOUSE.ROTATE;
+
+        playControls.mouseButtons.MIDDLE=
+            THREE.MOUSE.DOLLY;
+
+        playControls.mouseButtons.RIGHT=
+            THREE.MOUSE.PAN;
+
+
+        const light=
+            new THREE.HemisphereLight(
+                0xffffff,
+                0x506070,
+                1.8
+            );
+
+        playScene.add(
+            light
+        );
+
+
+        const sun=
+            new THREE.DirectionalLight(
+                0xffffff,
+                2
+            );
+
+        sun.position.set(
+            20,
+            40,
+            20
+        );
+
+        playScene.add(
+            sun
+        );
+
+
+        window.addEventListener(
+            "resize",
+            resizePlay
+        );
+
+    }
+
+
+    while(
+        playScene.children.length>2
+    ){
+
+        const child=
+            playScene.children[
+                playScene.children.length-1
+            ];
+
+        playScene.remove(
+            child
+        );
+
+    }
+
+
+    const base=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                40,
+                1,
+                40
+            ),
+            new THREE.MeshStandardMaterial({
+                color:"#4d8c4a"
+            })
+        );
+
+    base.position.y=-.5;
+
+    playScene.add(base);
+
+
+    const spawn=
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                2.2,
+                2.2,
+                .3,
+                32
+            ),
+            new THREE.MeshStandardMaterial({
+                color:"#4e8cff"
+            })
+        );
+
+    spawn.position.y=.15;
+
+    playScene.add(spawn);
+
+
+    (game.parts||[]).forEach(
+        data=>{
+
+            const mesh=
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        2,
+                        2,
+                        2
+                    ),
+                    new THREE.MeshStandardMaterial({
+                        color:
+                            data.color||
+                            "#ff5252"
+                    })
+                );
+
+
+            mesh.position.set(
+                Number(data.position?.x)||0,
+                Number(data.position?.y)||0,
+                Number(data.position?.z)||0
+            );
+
+
+            mesh.scale.set(
+                (Number(data.size?.x)||2)/2,
+                (Number(data.size?.y)||2)/2,
+                (Number(data.size?.z)||2)/2
+            );
+
+
+            mesh.rotation.set(
+                Number(data.rotation?.x)||0,
+                Number(data.rotation?.y)||0,
+                Number(data.rotation?.z)||0
+            );
+
+
+            mesh.castShadow=true;
+
+            mesh.receiveShadow=true;
+
+            playScene.add(mesh);
+
+        }
+    );
+
+
+    playCamera.position.set(
+        22,
+        15,
+        22
+    );
+
+    playControls.target.set(
+        0,
+        0,
+        0
+    );
+
+    playControls.update();
+
+
+    resizePlay();
+
+}
+
+
+function resizePlay(){
+
+    if(!playRenderer)
+        return;
+
+    const canvas=
+        document.getElementById(
+            "playCanvas"
+        );
+
+    const width=
+        canvas.clientWidth;
+
+    const height=
+        canvas.clientHeight;
+
+
+    playRenderer.setSize(
+        width,
+        height,
+        false
+    );
+
+    playCamera.aspect=
+        width/height;
+
+    playCamera.updateProjectionMatrix();
+
+}
+
+
+window.closePlayView=function(){
+
+    document
+        .getElementById(
+            "playView"
+        )
+        .classList.remove("active");
+
+};
+
+
+/* ==================================
+   KEYBOARD
+================================== */
+
+function studioKeyboard(event){
+
+    if(
+        !document
+            .getElementById("studio")
+            .classList.contains("active")
+    )
+        return;
+
+
+    const tag=
+        document.activeElement?.tagName;
+
+    if(
+        tag==="INPUT"||
+        tag==="TEXTAREA"
+    )
+        return;
+
+
+    const key=
+        event.key.toLowerCase();
+
+
+    if(key==="w"){
+
+        setTransformMode(
+            "translate"
+        );
+
+    }
+
+
+    if(key==="e"){
+
+        setTransformMode(
+            "rotate"
+        );
+
+    }
+
+
+    if(key==="r"){
+
+        setTransformMode(
+            "scale"
+        );
+
+    }
+
+}
+
+
+/* ==================================
+   ANIMATION
+================================== */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    if(controls)
+        controls.update();
+
+
+    if(playControls)
+        playControls.update();
+
+
+    if(
+        renderer&&
+        scene&&
+        camera
+    ){
+
+        renderer.render(
+            scene,
+            camera
+        );
+
+    }
+
+
+    if(
+        playRenderer&&
+        playScene&&
+        playCamera
+    ){
+
+        playRenderer.render(
+            playScene,
+            playCamera
+        );
+
+    }
+
+}
+
+
+animate();
+
+
+/* ==================================
+   ESCAPE HTML
+================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ==================================
+   START
+================================== */
+
+function initialize(){
+
+    updateAccountUI();
+
+    renderGames();
+
+}
+
+
+initialize();
+
+</script>
+
+</body>
+</html>

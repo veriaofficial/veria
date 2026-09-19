@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Veria</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #10131f;
+        color: white;
+    }
+
+    .topbar {
+        height: 70px;
+        background: #171b2b;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        border-bottom: 1px solid #292f47;
+    }
+
+    .logo {
+        font-size: 32px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .nav {
+        margin-left: 40px;
+        display: flex;
+        gap: 25px;
+    }
+
+    .nav button {
+        background: none;
+        border: none;
+        color: #b9bfd3;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .nav button:hover {
+        color: white;
+    }
+
+    .login {
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
+    }
+
+    .login button {
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .login-button {
+        background: #292f47;
+        color: white;
+    }
+
+    .signup-button {
+        background: #6c63ff;
+        color: white;
+    }
+
+    .hero {
+        padding: 80px 30px;
+        text-align: center;
+        background: linear-gradient(180deg, #171b2b, #10131f);
+    }
+
+    .hero h1 {
+        font-size: 64px;
+        margin: 0 0 15px;
+    }
+
+    .hero p {
+        color: #aeb5ca;
+        font-size: 21px;
+        margin-bottom: 35px;
+    }
+
+    .play-button {
+        background: #6c63ff;
+        color: white;
+        border: none;
+        padding: 16px 35px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .play-button:hover {
+        background: #7c74ff;
+    }
+
+    .section {
+        padding: 35px 30px;
+    }
+
+    .section h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .games {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .game {
+        background: #191e30;
+        border: 1px solid #292f47;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+
+    .game:hover {
+        transform: translateY(-4px);
+    }
+
+    .game-image {
+        height: 130px;
+        background: #292f47;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+    }
+
+    .game-info {
+        padding: 15px;
+    }
+
+    .game-info h3 {
+        margin: 0 0 6px;
+    }
+
+    .game-info p {
+        margin: 0;
+        color: #9299ad;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-box {
+        width: 380px;
+        max-width: 90%;
+        background: #191e30;
+        border: 1px solid #343b59;
+        border-radius: 16px;
+        padding: 30px;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-box h2 {
+        margin-top: 0;
+        font-size: 28px;
+    }
+
+    .modal-box p {
+        color: #9299ad;
+        margin-bottom: 25px;
+    }
+
+    .modal-box input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 12px;
+        border: 1px solid #343b59;
+        border-radius: 8px;
+        background: #10131f;
+        color: white;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .modal-box input:focus {
+        border-color: #6c63ff;
+    }
+
+    .create-account {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background: #6c63ff;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .create-account:hover {
+        background: #7c74ff;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        border: none;
+        background: none;
+        color: #9299ad;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    .close-button:hover {
+        color: white;
+    }
+
+    #signupMessage {
+        margin-top: 15px;
+        color: white;
+        min-height: 20px;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="topbar">
+
+    <div class="logo">
+        VERIA
+    </div>
+
+    <div class="nav">
+        <button>Home</button>
+        <button>Games</button>
+        <button>Create</button>
+    </div>
+
+    <div class="login">
+        <button class="login-button">
+            Log In
+        </button>
+
+        <button
+            class="signup-button"
+            onclick="openSignup()">
+            Sign Up
+        </button>
+    </div>
+
+</div>
+
+
+<div class="hero">
+
+    <h1>
+        Welcome to Veria
+    </h1>
+
+    <p>
+        Play games. Create worlds. Build anything.
+    </p>
+
+    <button class="play-button">
+        Explore Games
+    </button>
+
+</div>
+
+
+<div class="section">
+
+    <h2>
+        Featured Games
+    </h2>
+
+    <div class="games">
+
+        <div class="game">
+
+            <div class="game-image">
+                🌎
+            </div>
+
+            <div class="game-info">
+                <h3>
+                    Coming Soon
+                </h3>
+
+                <p>
+                    More games are coming.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="game">
+
+            <div class="game-image">
+                ⚔️
+            </div>
+
+            <div class="game-info">
+                <h3>
+                    Coming Soon
+                </h3>
+
+                <p>
+                    Someone will make this.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="game">
+
+            <div class="game-image">
+                🏝️
+            </div>
+
+            <div class="game-info">
+                <h3>
+                    Coming Soon
+                </h3>
+
+                <p>
+                    Create your own game.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="game">
+
+            <div class="game-image">
+                🚀
+            </div>
+
+            <div class="game-info">
+                <h3>
+                    Coming Soon
+                </h3>
+
+                <p>
+                    Your next adventure.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SIGN UP WINDOW -->
+
+<div
+    id="signupModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <button
+            class="close-button"
+            onclick="closeSignup()">
+            ×
+        </button>
+
+        <h2>
+            Create your Veria account
+        </h2>
+
+        <p>
+            Join Veria and start playing.
+        </p>
+
+        <input
+            id="signupUsername"
+            type="text"
+            placeholder="Username"
+            autocomplete="username"
+        >
+
+        <input
+            id="signupPassword"
+            type="password"
+            placeholder="Password"
+            autocomplete="new-password"
+        >
+
+        <button
+            class="create-account"
+            onclick="createAccount()">
+            Create Account
+        </button>
+
+        <div id="signupMessage"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function openSignup() {
+
+        document.getElementById("signupModal").style.display = "flex";
+
+        document.getElementById("signupUsername").focus();
+    }
+
+
+    function closeSignup() {
+
+        document.getElementById("signupModal").style.display = "none";
+
+    }
+
+
+    async function createAccount() {
+
+        const username =
+            document
+            .getElementById("signupUsername")
+            .value
+            .trim();
+
+        const password =
+            document
+            .getElementById("signupPassword")
+            .value;
+
+        const message =
+            document
+            .getElementById("signupMessage");
+
+
+        if (username.length < 3) {
+
+            message.textContent =
+                "Username must be at least 3 characters.";
+
+            return;
+        }
+
+
+        if (password.length < 4) {
+
+            message.textContent =
+                "Password must be at least 4 characters.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Creating account...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:5000/signup",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                message.textContent =
+                    "Account created! Welcome to Veria, "
+                    + data.username
+                    + "!";
+
+            } else {
+
+                message.textContent =
+                    data.error ||
+                    "Something went wrong.";
+
+            }
+
+        } catch (error) {
+
+            message.textContent =
+                "Could not connect to the Veria account server.";
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "click",
+        function(event) {
+
+            const modal =
+                document.getElementById("signupModal");
+
+            if (event.target === modal) {
+
+                closeSignup();
+
+            }
+
+        }
+    );
+
+</script>
+```
+
+</body>
+</html>

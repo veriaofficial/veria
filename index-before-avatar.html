@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veria</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#10131c;
+color:white;
+}
+
+nav{
+height:70px;
+background:#171b27;
+display:flex;
+align-items:center;
+padding:0 35px;
+gap:30px;
+border-bottom:1px solid #292f40;
+}
+
+.logo{
+font-size:30px;
+font-weight:bold;
+color:#7c8cff;
+margin-right:20px;
+}
+
+nav button{
+background:none;
+border:0;
+color:#cbd0df;
+font-size:16px;
+cursor:pointer;
+}
+
+nav button:hover{
+color:white;
+}
+
+.account{
+margin-left:auto;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.account button{
+border-radius:10px;
+padding:12px 20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.login{
+background:#292f40;
+color:white;
+border:0;
+}
+
+.signup{
+background:#7c8cff;
+color:white;
+border:0;
+}
+
+.profile{
+display:none;
+align-items:center;
+gap:10px;
+background:#202636;
+border:1px solid #343b50;
+border-radius:30px;
+padding:5px 12px 5px 5px;
+cursor:pointer;
+}
+
+.avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+background:#7c8cff;
+}
+
+.profile-name{
+font-weight:bold;
+color:white;
+}
+
+.hero{
+text-align:center;
+padding:90px 20px 70px;
+background:linear-gradient(135deg,#161b2b,#20294b);
+}
+
+.hero h1{
+font-size:64px;
+margin:0 0 15px;
+}
+
+.hero p{
+font-size:20px;
+color:#b9c0d2;
+margin-bottom:30px;
+}
+
+.hero button{
+background:#7c8cff;
+color:white;
+border:0;
+border-radius:10px;
+font-size:18px;
+font-weight:bold;
+padding:15px 35px;
+cursor:pointer;
+}
+
+.section{
+padding:45px 35px;
+}
+
+.section h2{
+text-align:center;
+font-size:30px;
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+max-width:1000px;
+margin:30px auto;
+}
+
+.game{
+background:#191e2b;
+border:1px solid #2b3245;
+border-radius:15px;
+padding:25px;
+text-align:center;
+}
+
+.game-icon{
+height:130px;
+border-radius:12px;
+background:#252c40;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:50px;
+margin-bottom:18px;
+}
+
+.game h3{
+margin:10px 0;
+}
+
+.game p{
+color:#9fa7bb;
+}
+
+.game button{
+background:#7c8cff;
+color:white;
+border:0;
+border-radius:8px;
+padding:10px 20px;
+cursor:pointer;
+font-weight:bold;
+}
+
+footer{
+text-align:center;
+padding:30px;
+color:#737b90;
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:10;
+}
+
+.box{
+background:#191e2b;
+width:100%;
+max-width:420px;
+padding:30px;
+border-radius:18px;
+border:1px solid #343b50;
+}
+
+.box h2{
+margin-top:0;
+}
+
+.box input{
+width:100%;
+padding:14px;
+margin:8px 0;
+background:#10131c;
+color:white;
+border:1px solid #343b50;
+border-radius:8px;
+}
+
+.box button{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:0;
+border-radius:8px;
+background:#7c8cff;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.close{
+background:#292f40!important;
+}
+
+.message{
+text-align:center;
+min-height:24px;
+margin-top:12px;
+}
+
+.profile-box{
+text-align:center;
+}
+
+.big-avatar{
+width:110px;
+height:110px;
+border-radius:50%;
+object-fit:cover;
+margin:10px auto 20px;
+background:#7c8cff;
+}
+
+.logout{
+background:#d9534f!important;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">VERIA</div>
+
+<button onclick="home()">Home</button>
+<button onclick="games()">Games</button>
+<button onclick="create()">Create</button>
+
+<div class="account">
+
+<button id="loginButton" class="login" onclick="openLogin()">Log In</button>
+
+<button id="signupButton" class="signup" onclick="openSignup()">Sign Up</button>
+
+<button id="profileButton" class="profile" onclick="openProfile()">
+<img id="navAvatar" class="avatar" src="">
+<span id="navUsername" class="profile-name"></span>
+</button>
+
+</div>
+
+</nav>
+
+
+<section class="hero">
+
+<h1>Welcome to Veria</h1>
+
+<p>Play games. Create worlds. Build your own adventure.</p>
+
+<button onclick="openSignup()">Create Account</button>
+
+</section>
+
+
+<section class="section">
+
+<h2>Featured Games</h2>
+
+<div class="games">
+
+<div class="game">
+<div class="game-icon">🌎</div>
+<h3>Veria Worlds</h3>
+<p>Explore a world built by creators.</p>
+<button onclick="playGame('Veria Worlds')">Play</button>
+</div>
+
+<div class="game">
+<div class="game-icon">⚔️</div>
+<h3>Adventure</h3>
+<p>Enter a new adventure.</p>
+<button onclick="playGame('Adventure')">Play</button>
+</div>
+
+<div class="game">
+<div class="game-icon">🏗️</div>
+<h3>Build Zone</h3>
+<p>Create and build your ideas.</p>
+<button onclick="playGame('Build Zone')">Play</button>
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+© 2026 Veria
+</footer>
+
+
+<div class="modal" id="signupModal">
+
+<div class="box">
+
+<h2>Create your Veria account</h2>
+
+<input id="signupUsername" placeholder="Username">
+
+<input id="signupPassword" type="password" placeholder="Password">
+
+<button onclick="signup()">Create Account</button>
+
+<button class="close" onclick="closeModals()">Cancel</button>
+
+<div class="message" id="signupMessage"></div>
+
+</div>
+
+</div>
+
+
+<div class="modal" id="loginModal">
+
+<div class="box">
+
+<h2>Log in to Veria</h2>
+
+<input id="loginUsername" placeholder="Username">
+
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">Log In</button>
+
+<button class="close" onclick="closeModals()">Cancel</button>
+
+<div class="message" id="loginMessage"></div>
+
+</div>
+
+</div>
+
+
+<div class="modal" id="profileModal">
+
+<div class="box profile-box">
+
+<h2>Your Veria Profile</h2>
+
+<img id="bigAvatar" class="big-avatar" src="">
+
+<h3 id="profileUsername"></h3>
+
+<button onclick="changeAvatar()">Change Avatar</button>
+
+<button class="logout" onclick="logout()">Log Out</button>
+
+<button class="close" onclick="closeModals()">Close</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API="http://localhost:5000";
+
+let currentUser=localStorage.getItem("veriaUsername");
+
+let currentAvatar=localStorage.getItem("veriaAvatar");
+
+
+function makeAvatar(username){
+
+let letter=username.charAt(0).toUpperCase();
+
+return "data:image/svg+xml,"+
+encodeURIComponent(
+"<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>"+
+"<rect width='200' height='200' fill='#7c8cff'/>"+
+"<text x='100' y='130' text-anchor='middle' font-size='100' fill='white' font-family='Arial'>"+
+letter+
+"</text>"+
+"</svg>"
+);
+
+}
+
+
+function updateProfile(){
+
+const loginButton=document.getElementById("loginButton");
+const signupButton=document.getElementById("signupButton");
+const profileButton=document.getElementById("profileButton");
+
+if(currentUser){
+
+loginButton.style.display="none";
+signupButton.style.display="none";
+profileButton.style.display="flex";
+
+if(!currentAvatar){
+currentAvatar=makeAvatar(currentUser);
+localStorage.setItem("veriaAvatar",currentAvatar);
+}
+
+document.getElementById("navUsername").textContent=currentUser;
+document.getElementById("navAvatar").src=currentAvatar;
+
+document.getElementById("profileUsername").textContent=currentUser;
+document.getElementById("bigAvatar").src=currentAvatar;
+
+}else{
+
+loginButton.style.display="block";
+signupButton.style.display="block";
+profileButton.style.display="none";
+
+}
+
+}
+
+
+function openSignup(){
+
+document.getElementById("signupModal").style.display="flex";
+
+}
+
+
+function openLogin(){
+
+document.getElementById("loginModal").style.display="flex";
+
+}
+
+
+function openProfile(){
+
+document.getElementById("profileModal").style.display="flex";
+
+}
+
+
+function closeModals(){
+
+document.getElementById("signupModal").style.display="none";
+document.getElementById("loginModal").style.display="none";
+document.getElementById("profileModal").style.display="none";
+
+}
+
+
+function home(){
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+function games(){
+
+document.querySelector(".section").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+function create(){
+
+alert("The Veria game creator is coming next!");
+
+}
+
+
+function playGame(name){
+
+alert(name+" will be playable when the Veria game system is connected!");
+
+}
+
+
+async function signup(){
+
+const username=document.getElementById("signupUsername").value.trim();
+
+const password=document.getElementById("signupPassword").value;
+
+const message=document.getElementById("signupMessage");
+
+if(!username||!password){
+
+message.textContent="Enter a username and password.";
+
+return;
+
+}
+
+message.textContent="Creating account...";
+
+try{
+
+const response=await fetch(API+"/signup",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+username:username,
+password:password
+})
+
+});
+
+const data=await response.json();
+
+if(data.success){
+
+currentUser=data.username;
+
+currentAvatar=makeAvatar(currentUser);
+
+localStorage.setItem("veriaUsername",currentUser);
+localStorage.setItem("veriaAvatar",currentAvatar);
+
+message.textContent="Account created!";
+
+updateProfile();
+
+setTimeout(closeModals,800);
+
+}else{
+
+message.textContent=data.message;
+
+}
+
+}catch(error){
+
+message.textContent="Could not connect to Veria.";
+
+}
+
+}
+
+
+async function login(){
+
+const username=document.getElementById("loginUsername").value.trim();
+
+const password=document.getElementById("loginPassword").value;
+
+const message=document.getElementById("loginMessage");
+
+if(!username||!password){
+
+message.textContent="Enter a username and password.";
+
+return;
+
+}
+
+message.textContent="Logging in...";
+
+try{
+
+const response=await fetch(API+"/login",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+username:username,
+password:password
+})
+
+});
+
+const data=await response.json();
+
+if(data.success){
+
+currentUser=data.username;
+
+currentAvatar=localStorage.getItem("veriaAvatar");
+
+if(!currentAvatar){
+
+currentAvatar=makeAvatar(currentUser);
+
+localStorage.setItem("veriaAvatar",currentAvatar);
+
+}
+
+localStorage.setItem("veriaUsername",currentUser);
+
+message.textContent="Welcome back, "+currentUser+"!";
+
+updateProfile();
+
+setTimeout(closeModals,800);
+
+}else{
+
+message.textContent=data.message;
+
+}
+
+}catch(error){
+
+message.textContent="Could not connect to Veria.";
+
+}
+
+}
+
+
+function logout(){
+
+currentUser=null;
+currentAvatar=null;
+
+localStorage.removeItem("veriaUsername");
+localStorage.removeItem("veriaAvatar");
+
+closeModals();
+
+updateProfile();
+
+}
+
+
+function changeAvatar(){
+
+alert("The full avatar creator is coming next!");
+
+}
+
+
+updateProfile();
+
+</script>
+
+</body>
+</html>

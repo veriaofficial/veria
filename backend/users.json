@@ -1,0 +1,39 @@
+[
+  {
+    "username": "dvef",
+    "password": "efefwefw"
+  },
+  {
+    "username": "TheRarity",
+    "password": "Levi12321456789",
+    "friends": [
+      "Noob"
+    ],
+    "incomingRequests": [],
+    "outgoingRequests": []
+  },
+  {
+    "username": "Noob",
+    "password": "HIIAMNOOB",
+    "friends": [
+      "TheRarity"
+    ],
+    "incomingRequests": [],
+    "outgoingRequests": [
+      "VeriaStudios"
+    ]
+  },
+  {
+    "username": "Veria",
+    "password": "12321456789"
+  },
+  {
+    "username": "VeriaStudios",
+    "password": "12321456789",
+    "friends": [],
+    "incomingRequests": [
+      "Noob"
+    ],
+    "outgoingRequests": []
+  }
+]
