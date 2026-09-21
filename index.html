@@ -704,82 +704,6 @@ h1{
 <div class="section-title">Discover Games</div>
 
 <div id="publishedGames" class="game-grid"></div>
-
-<div class="game-grid">
-
-<div class="game-card">
-<div class="game-image">🏝️</div>
-<div class="game-info">
-<div class="game-name">Island Adventure</div>
-<div class="game-description">Explore a mysterious island.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">🧱</div>
-<div class="game-info">
-<div class="game-name">Block Builder</div>
-<div class="game-description">Build whatever you can imagine.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">☁️</div>
-<div class="game-info">
-<div class="game-name">Sky Islands</div>
-<div class="game-description">Survive above the clouds.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">🌲</div>
-<div class="game-info">
-<div class="game-name">Survival World</div>
-<div class="game-description">Gather resources and survive.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">🏙️</div>
-<div class="game-info">
-<div class="game-name">City Life</div>
-<div class="game-description">Build and live in your own city.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">⚔️</div>
-<div class="game-info">
-<div class="game-name">Dungeon Quest</div>
-<div class="game-description">Fight through dangerous dungeons.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">🌊</div>
-<div class="game-info">
-<div class="game-name">Ocean Explorer</div>
-<div class="game-description">Discover what lies beneath.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-<div class="game-card">
-<div class="game-image">🏗️</div>
-<div class="game-info">
-<div class="game-name">Build & Battle</div>
-<div class="game-description">Build your base and defend it.</div>
-<button class="play-button">Play</button>
-</div>
-</div>
-
-</div>
 </div>
 </div>
 </main>
@@ -1053,88 +977,10 @@ window.goHome=function(){
     document.getElementById("homePage").style.display="block";
     document.getElementById("createPage").style.display="none";
     window.scrollTo(0,0);
+
+    loadPublishedGames();
 };
 
-
-async function loadPublishedGames(){
-    const container = document.getElementById("publishedGames");
-    if(!container) return;
-
-    try{
-        const response = await fetch(API + "/games");
-        if(!response.ok) throw new Error("Failed to load games");
-
-        const games = await response.json();
-
-        container.innerHTML = "";
-
-        games.forEach(game => {
-            const card = document.createElement("div");
-            card.className = "game-card";
-
-            card.innerHTML = `
-                <div class="game-image">🎮</div>
-                <div class="game-info">
-                    <div class="game-name">${escapeHtml(game.name || "Untitled Game")}</div>
-                    <div class="game-description">${escapeHtml(game.description || "A game made on Veria.")}</div>
-                    <button class="play-button" onclick="joinPublishedGame('${String(game.id).replace(/'/g,"\\'")}')">Play</button>
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
-
-    }catch(error){
-        console.error("Could not load published games:", error);
-    }
-}
-
-function escapeHtml(value){
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-async function joinPublishedGame(gameId){
-    const username = localStorage.getItem("veriaUsername");
-
-    if(!username){
-        openLogin();
-        return;
-    }
-
-    try{
-        const response = await fetch(API + "/games/join", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                gameId:gameId,
-                username:username
-            })
-        });
-
-        const result = await response.json();
-
-        if(!response.ok){
-            alert(result.error || "Could not join game.");
-            return;
-        }
-
-        console.log("Joined game:", result);
-
-        // Game player screen will use this later.
-        localStorage.setItem("veriaCurrentGame", JSON.stringify(result));
-
-        alert("Joined " + (result.game?.name || "game") + "!");
-
-    }catch(error){
-        console.error(error);
-        alert("Could not connect to the Veria game server.");
-    }
-}
 
 window.showGames=function(){
     document.getElementById("homePage").style.display="block";
@@ -2559,7 +2405,7 @@ window.openPublishModal=function(){
     openModal("publishModal");
 };
 
-window.publishStudioGame=function(){
+window.publishStudioGame=async function(){
 
     if(!currentGame)return;
 
@@ -2585,11 +2431,61 @@ window.publishStudioGame=function(){
         .textContent=name;
 
     document.getElementById("publishMessage")
-        .textContent="Game published!";
+        .textContent="Publishing...";
 
-    setTimeout(()=>{
-        closeModal("publishModal");
-    },700);
+    try{
+
+        const username =
+            localStorage.getItem("veriaUsername") || "Unknown";
+
+        const response = await fetch(
+            API + "/games/publish",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    id:currentGame.id,
+                    name:currentGame.name,
+                    description:currentGame.description,
+                    creator:username,
+                    template:currentGame.template || "baseplate",
+                    parts:Array.isArray(currentGame.parts)
+                        ? currentGame.parts
+                        : [],
+                    published:true
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if(!response.ok){
+
+            document.getElementById("publishMessage")
+                .textContent =
+                result.error || "Could not publish game.";
+
+            return;
+        }
+
+        document.getElementById("publishMessage")
+            .textContent="Game published!";
+
+        setTimeout(()=>{
+            closeModal("publishModal");
+        },700);
+
+    }catch(error){
+
+        console.error("Publish error:",error);
+
+        document.getElementById("publishMessage")
+            .textContent=
+            "Could not connect to Veria server.";
+
+    }
 };
 
 window.toggleOptions=function(){
@@ -2617,6 +2513,170 @@ window.exitStudio=function(){
 
     window.scrollTo(0,0);
 };
+
+
+async function loadPublishedGames(){
+
+    const sections =
+        document.querySelectorAll(".section");
+
+    let discoverSection = null;
+
+    sections.forEach(section => {
+
+        const title =
+            section.querySelector(".section-title");
+
+        if(
+            title &&
+            title.textContent.trim() === "Discover Games"
+        ){
+            discoverSection = section;
+        }
+
+    });
+
+    if(!discoverSection)return;
+
+    const grid =
+        discoverSection.querySelector(".game-grid");
+
+    if(!grid)return;
+
+    // Remove all fake/static games.
+    grid.innerHTML = "";
+
+    try{
+
+        const response =
+            await fetch(API + "/games");
+
+        if(!response.ok){
+            throw new Error("Games request failed");
+        }
+
+        const games =
+            await response.json();
+
+        games.forEach(game => {
+
+            const card =
+                document.createElement("div");
+
+            card.className="game-card";
+
+            card.innerHTML=`
+                <div class="game-image">🎮</div>
+
+                <div class="game-info">
+
+                    <div class="game-name">
+                        ${escapeHtml(game.name || "Untitled Game")}
+                    </div>
+
+                    <div class="game-description">
+                        ${escapeHtml(game.description || "")}
+                    </div>
+
+                    <div style="
+                        font-size:12px;
+                        color:#8e96aa;
+                        margin-bottom:10px;
+                    ">
+                        Made by ${escapeHtml(game.creator || "Unknown")}
+                    </div>
+
+                    <button class="play-button">
+                        Play
+                    </button>
+
+                </div>
+            `;
+
+            const button =
+                card.querySelector(".play-button");
+
+            button.onclick=()=>{
+                joinPublishedGame(game.id);
+            };
+
+            grid.appendChild(card);
+
+        });
+
+    }catch(error){
+
+        console.error(
+            "Could not load published games:",
+            error
+        );
+
+    }
+}
+
+
+async function joinPublishedGame(gameId){
+
+    const username =
+        localStorage.getItem("veriaUsername");
+
+    if(!username){
+
+        openLogin();
+
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/games/join",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        gameId:gameId,
+                        username:username
+                    })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if(!response.ok){
+
+            alert(
+                result.error ||
+                "Could not join game."
+            );
+
+            return;
+        }
+
+        localStorage.setItem(
+            "veriaCurrentGame",
+            JSON.stringify(result)
+        );
+
+        alert(
+            "Joined " +
+            (result.game?.name || "game")
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Could not connect to the Veria server."
+        );
+
+    }
+}
 
 window.playGame=function(game){
 
@@ -2698,6 +2758,5 @@ updateAccountUI();
 
 </script>
 
-<script>loadPublishedGames();</script>
 </body>
 </html>
