@@ -703,6 +703,8 @@ h1{
 <div class="section">
 <div class="section-title">Discover Games</div>
 
+<div id="publishedGames" class="game-grid"></div>
+
 <div class="game-grid">
 
 <div class="game-card">
@@ -1052,6 +1054,87 @@ window.goHome=function(){
     document.getElementById("createPage").style.display="none";
     window.scrollTo(0,0);
 };
+
+
+async function loadPublishedGames(){
+    const container = document.getElementById("publishedGames");
+    if(!container) return;
+
+    try{
+        const response = await fetch(API + "/games");
+        if(!response.ok) throw new Error("Failed to load games");
+
+        const games = await response.json();
+
+        container.innerHTML = "";
+
+        games.forEach(game => {
+            const card = document.createElement("div");
+            card.className = "game-card";
+
+            card.innerHTML = `
+                <div class="game-image">🎮</div>
+                <div class="game-info">
+                    <div class="game-name">${escapeHtml(game.name || "Untitled Game")}</div>
+                    <div class="game-description">${escapeHtml(game.description || "A game made on Veria.")}</div>
+                    <button class="play-button" onclick="joinPublishedGame('${String(game.id).replace(/'/g,"\\'")}')">Play</button>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+    }catch(error){
+        console.error("Could not load published games:", error);
+    }
+}
+
+function escapeHtml(value){
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+async function joinPublishedGame(gameId){
+    const username = localStorage.getItem("veriaUsername");
+
+    if(!username){
+        openLogin();
+        return;
+    }
+
+    try{
+        const response = await fetch(API + "/games/join", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                gameId:gameId,
+                username:username
+            })
+        });
+
+        const result = await response.json();
+
+        if(!response.ok){
+            alert(result.error || "Could not join game.");
+            return;
+        }
+
+        console.log("Joined game:", result);
+
+        // Game player screen will use this later.
+        localStorage.setItem("veriaCurrentGame", JSON.stringify(result));
+
+        alert("Joined " + (result.game?.name || "game") + "!");
+
+    }catch(error){
+        console.error(error);
+        alert("Could not connect to the Veria game server.");
+    }
+}
 
 window.showGames=function(){
     document.getElementById("homePage").style.display="block";
@@ -2615,5 +2698,6 @@ updateAccountUI();
 
 </script>
 
+<script>loadPublishedGames();</script>
 </body>
 </html>
