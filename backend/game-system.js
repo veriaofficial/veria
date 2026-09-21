@@ -1,19 +1,18 @@
 const games = new Map();
 const players = new Map();
 
-function createGameId() {
+function makeId() {
     return "game_" + Date.now() + "_" +
-        Math.random().toString(36).slice(2,8);
+        Math.random().toString(36).substring(2, 8);
 }
 
 function publishGame(game) {
-
     if (!game.id) {
-        game.id = createGameId();
+        game.id = makeId();
     }
 
     game.published = true;
-    game.updatedAt = Date.now();
+    game.createdAt = game.createdAt || Date.now();
 
     games.set(game.id, game);
 
@@ -21,91 +20,68 @@ function publishGame(game) {
 }
 
 function getPublishedGames() {
-
     return Array.from(games.values())
-        .filter(game => game.published)
-        .map(game => ({
-            id: game.id,
-            name: game.name,
-            description: game.description || "",
-            creator: game.creator || "Unknown",
-            template: game.template || "Empty World",
-            parts: Array.isArray(game.parts)
-                ? game.parts
-                : [],
-            createdAt: game.createdAt || Date.now(),
-            updatedAt: game.updatedAt || Date.now()
-        }));
+        .filter(game => game.published);
 }
 
 function joinGame(gameId, username) {
+    const game = games.get(gameId);
 
-    if (!games.has(gameId)) {
+    if (!game) {
         return null;
     }
 
-    const key = gameId + ":" + username;
+    if (!players.has(gameId)) {
+        players.set(gameId, new Map());
+    }
 
-    players.set(key, {
-        gameId,
-        username,
+    players.get(gameId).set(username, {
+        username: username,
         x: 0,
-        y: 1,
+        y: 0,
         z: 0,
-        updatedAt: Date.now()
+        lastUpdate: Date.now()
     });
 
-    return players.get(key);
+    return game;
 }
 
 function updatePlayer(gameId, username, position) {
-
-    const key = gameId + ":" + username;
-
-    if (!players.has(key)) {
-        return null;
+    if (!players.has(gameId)) {
+        players.set(gameId, new Map());
     }
 
-    const player = players.get(key);
-
-    player.x = Number(position.x) || 0;
-    player.y = Number(position.y) || 1;
-    player.z = Number(position.z) || 0;
-    player.updatedAt = Date.now();
-
-    return player;
+    players.get(gameId).set(username, {
+        username: username,
+        x: Number(position.x) || 0,
+        y: Number(position.y) || 0,
+        z: Number(position.z) || 0,
+        lastUpdate: Date.now()
+    });
 }
 
 function getPlayers(gameId) {
+    const gamePlayers = players.get(gameId);
+
+    if (!gamePlayers) {
+        return [];
+    }
 
     const now = Date.now();
-    const result = [];
 
-    for (const [key, player] of players) {
-
-        if (now - player.updatedAt > 15000) {
-            players.delete(key);
-            continue;
-        }
-
-        if (player.gameId === gameId) {
-            result.push({
-                username: player.username,
-                x: player.x,
-                y: player.y,
-                z: player.z
-            });
+    for (const [username, player] of gamePlayers) {
+        if (now - player.lastUpdate > 15000) {
+            gamePlayers.delete(username);
         }
     }
 
-    return result;
+    return Array.from(gamePlayers.values());
 }
 
 function leaveGame(gameId, username) {
-
-    players.delete(
-        gameId + ":" + username
-    );
+    if (players.has(gameId)) {
+        players.get(gameId).delete(username);
+    }
 }
 
 module.exports = {

@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 5000;
+const gameSystem = require("./game-system");
 
 const DATA_DIR = path.join(__dirname);
 const USERS_FILE = path.join(DATA_DIR, "users.json");
@@ -1073,6 +1074,248 @@ const server = http.createServer(
                     {
                         error:
                             "Could not decline request."
+                    }
+                );
+
+            }
+
+            return;
+        }
+
+
+
+        /*
+         * PUBLISHED GAMES
+         */
+
+        if (
+            req.method === "GET" &&
+            req.url === "/games"
+        ) {
+
+            sendJSON(
+                res,
+                200,
+                gameSystem.getPublishedGames()
+            );
+
+            return;
+        }
+
+
+        /*
+         * PUBLISH GAME
+         */
+
+        if (
+            req.method === "POST" &&
+            req.url === "/games/publish"
+        ) {
+
+            try {
+
+                const body =
+                    await getBody(req);
+
+                const game =
+                    gameSystem.publishGame({
+                        id: body.id,
+                        name: body.name || "Untitled Game",
+                        description:
+                            body.description ||
+                            "A game made on Veria.",
+                        creator:
+                            body.creator || "Unknown",
+                        template:
+                            body.template || "baseplate",
+                        parts:
+                            Array.isArray(body.parts)
+                                ? body.parts
+                                : [],
+                        published: true,
+                        createdAt: Date.now()
+                    });
+
+                sendJSON(
+                    res,
+                    200,
+                    {
+                        success: true,
+                        game: game
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                sendJSON(
+                    res,
+                    500,
+                    {
+                        error:
+                            "Could not publish game."
+                    }
+                );
+
+            }
+
+            return;
+        }
+
+
+        /*
+         * JOIN GAME
+         */
+
+        if (
+            req.method === "POST" &&
+            req.url === "/games/join"
+        ) {
+
+            try {
+
+                const body =
+                    await getBody(req);
+
+                const game =
+                    gameSystem.joinGame(
+                        body.gameId,
+                        body.username
+                    );
+
+                if (!game) {
+
+                    sendJSON(
+                        res,
+                        404,
+                        {
+                            error:
+                                "Game not found."
+                        }
+                    );
+
+                    return;
+                }
+
+                sendJSON(
+                    res,
+                    200,
+                    {
+                        success: true,
+                        game: game,
+                        username: body.username
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                sendJSON(
+                    res,
+                    500,
+                    {
+                        error:
+                            "Could not join game."
+                    }
+                );
+
+            }
+
+            return;
+        }
+
+
+        /*
+         * UPDATE PLAYER
+         */
+
+        if (
+            req.method === "POST" &&
+            req.url === "/games/player"
+        ) {
+
+            try {
+
+                const body =
+                    await getBody(req);
+
+                gameSystem.updatePlayer(
+                    body.gameId,
+                    body.username,
+                    body.position || {}
+                );
+
+                sendJSON(
+                    res,
+                    200,
+                    {
+                        success: true
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                sendJSON(
+                    res,
+                    500,
+                    {
+                        error:
+                            "Could not update player."
+                    }
+                );
+
+            }
+
+            return;
+        }
+
+
+        /*
+         * GET PLAYERS
+         */
+
+        if (
+            req.method === "GET" &&
+            req.url.startsWith(
+                "/games/players"
+            )
+        ) {
+
+            try {
+
+                const url =
+                    new URL(
+                        req.url,
+                        `http://localhost:${PORT}`
+                    );
+
+                const gameId =
+                    url.searchParams.get(
+                        "gameId"
+                    );
+
+                sendJSON(
+                    res,
+                    200,
+                    gameSystem.getPlayers(
+                        gameId
+                    )
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                sendJSON(
+                    res,
+                    500,
+                    {
+                        error:
+                            "Could not get players."
                     }
                 );
 
