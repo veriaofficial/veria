@@ -2928,40 +2928,75 @@ overflow:hidden;
     "></canvas>
 
     <div id="gameControls" style="
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+height:180px;
+pointer-events:none;
+z-index:50;
+">
+
+    <!-- LEFT THUMBSTICK -->
+    <div id="mobileJoystick" style="
     position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    height:150px;
-    pointer-events:none;
+    left:25px;
+    bottom:25px;
+    width:135px;
+    height:135px;
+    border-radius:50%;
+    background:rgba(255,255,255,.12);
+    border:2px solid rgba(255,255,255,.30);
+    box-shadow:0 5px 20px rgba(0,0,0,.35);
+    backdrop-filter:blur(5px);
+    display:none;
+    pointer-events:auto;
+    touch-action:none;
+    user-select:none;
     ">
 
-        <div id="mobileJoystick" style="
+        <div id="joystickKnob" style="
         position:absolute;
-        left:30px;
-        bottom:25px;
-        width:105px;
-        height:105px;
+        left:50%;
+        top:50%;
+        width:62px;
+        height:62px;
+        margin-left:-31px;
+        margin-top:-31px;
         border-radius:50%;
-        background:rgba(255,255,255,.12);
-        border:2px solid rgba(255,255,255,.25);
-        display:none;
-        pointer-events:auto;
+        background:rgba(255,255,255,.72);
+        border:2px solid rgba(255,255,255,.9);
+        box-shadow:0 4px 12px rgba(0,0,0,.3);
+        pointer-events:none;
         ">
-
-            <div style="
-            position:absolute;
-            width:45px;
-            height:45px;
-            left:28px;
-            top:28px;
-            border-radius:50%;
-            background:rgba(255,255,255,.35);
-            "></div>
-
         </div>
 
     </div>
+
+    <!-- RIGHT JUMP BUTTON -->
+    <button id="mobileJumpButton" style="
+    position:absolute;
+    right:28px;
+    bottom:35px;
+    width:92px;
+    height:92px;
+    border:0;
+    border-radius:50%;
+    background:#5c8df6;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+    display:none;
+    pointer-events:auto;
+    touch-action:none;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    ">
+        JUMP
+    </button>
+
+</div></div>
 
 </div>
 
@@ -2971,7 +3006,200 @@ import * as THREE from "three";
 
 let veriaGame3D = null;
 
+let veriaMobileJoystickX = 0;
+let veriaMobileJoystickY = 0;
+let veriaMobileJump = false;
+let veriaJumpVelocity = 0;
+let veriaOnGround = true;
+let veriaMobileControlsReady = false;
+
+
+
+
+function setupVeriaMobileControls() {
+
+    if (veriaMobileControlsReady) return;
+
+    const joystick =
+        document.getElementById("mobileJoystick");
+
+    const knob =
+        document.getElementById("joystickKnob");
+
+    const jump =
+        document.getElementById("mobileJumpButton");
+
+    if (!joystick || !knob || !jump) {
+        console.error("Mobile controls missing.");
+        return;
+    }
+
+    const touchDevice =
+        window.matchMedia("(pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0 ||
+        "ontouchstart" in window;
+
+    if (!touchDevice) {
+        return;
+    }
+
+    joystick.style.display = "block";
+    jump.style.display = "block";
+
+    veriaMobileControlsReady = true;
+
+    let joystickPointer = null;
+
+    const maxDistance = 36;
+
+    function moveJoystick(event) {
+
+        const rect =
+            joystick.getBoundingClientRect();
+
+        const centerX =
+            rect.left + rect.width / 2;
+
+        const centerY =
+            rect.top + rect.height / 2;
+
+        let dx =
+            event.clientX - centerX;
+
+        let dy =
+            event.clientY - centerY;
+
+        const distance =
+            Math.hypot(dx, dy);
+
+        if (distance > maxDistance) {
+
+            dx =
+                dx / distance *
+                maxDistance;
+
+            dy =
+                dy / distance *
+                maxDistance;
+        }
+
+        veriaMobileJoystickX =
+            dx / maxDistance;
+
+        veriaMobileJoystickY =
+            dy / maxDistance;
+
+        knob.style.transform =
+            "translate(" +
+            dx +
+            "px," +
+            dy +
+            "px)";
+    }
+
+    function resetJoystick() {
+
+        joystickPointer = null;
+
+        veriaMobileJoystickX = 0;
+        veriaMobileJoystickY = 0;
+
+        knob.style.transform =
+            "translate(0px,0px)";
+    }
+
+    joystick.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            event.preventDefault();
+
+            joystickPointer =
+                event.pointerId;
+
+            joystick.setPointerCapture(
+                event.pointerId
+            );
+
+            moveJoystick(event);
+        },
+        {passive:false}
+    );
+
+    joystick.addEventListener(
+        "pointermove",
+        function(event) {
+
+            if (
+                joystickPointer !==
+                event.pointerId
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            moveJoystick(event);
+        },
+        {passive:false}
+    );
+
+    joystick.addEventListener(
+        "pointerup",
+        function(event) {
+
+            if (
+                joystickPointer ===
+                event.pointerId
+            ) {
+                resetJoystick();
+            }
+        }
+    );
+
+    joystick.addEventListener(
+        "pointercancel",
+        resetJoystick
+    );
+
+    jump.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            event.preventDefault();
+
+            veriaMobileJump = true;
+
+            jump.style.transform =
+                "scale(.92)";
+        },
+        {passive:false}
+    );
+
+    function releaseJump(event) {
+
+        event.preventDefault();
+
+        jump.style.transform =
+            "scale(1)";
+    }
+
+    jump.addEventListener(
+        "pointerup",
+        releaseJump
+    );
+
+    jump.addEventListener(
+        "pointercancel",
+        releaseJump
+    );
+}
+
 window.startVeriaGame = function(game) {
+
+    setupVeriaMobileControls();
+
+
 
     const page = document.getElementById("playGamePage");
     const canvas = document.getElementById("veriaGameCanvas");
