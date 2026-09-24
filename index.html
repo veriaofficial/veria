@@ -3031,14 +3031,9 @@ let veriaMobileControlsReady = false;
 
 function setupVeriaMobileControls() {
 
-    const joystick =
-        document.getElementById("mobileJoystick");
-
-    const knob =
-        document.getElementById("joystickKnob");
-
-    const jump =
-        document.getElementById("mobileJumpButton");
+    const joystick = document.getElementById("mobileJoystick");
+    const knob = document.getElementById("joystickKnob");
+    const jump = document.getElementById("mobileJumpButton");
 
     if (!joystick || !knob || !jump) {
         console.error("Veria mobile controls not found.");
@@ -3059,22 +3054,26 @@ function setupVeriaMobileControls() {
     joystick.style.display = "block";
     jump.style.display = "block";
 
+    /* Stop the phone from scrolling/zooming while playing */
+    const playPage = document.getElementById("playGamePage");
+
+    if (playPage) {
+        playPage.style.touchAction = "none";
+    }
+
     const maxDistance = 36;
 
     let joystickTouchId = null;
 
     function updateJoystick(touch) {
 
-        const rect =
-            joystick.getBoundingClientRect();
+        const rect = joystick.getBoundingClientRect();
 
         const centerX =
-            rect.left +
-            rect.width / 2;
+            rect.left + rect.width / 2;
 
         const centerY =
-            rect.top +
-            rect.height / 2;
+            rect.top + rect.height / 2;
 
         let dx =
             touch.clientX - centerX;
@@ -3121,50 +3120,76 @@ function setupVeriaMobileControls() {
             "translate(0px,0px)";
     }
 
-    /* THUMBSTICK TOUCH START */
+    /*
+       IMPORTANT:
+       Touch events are handled on the DOCUMENT instead
+       of only on the joystick. This means the joystick
+       keeps working even when the finger moves outside
+       the joystick circle.
+    */
 
-    joystick.addEventListener(
+    document.addEventListener(
         "touchstart",
         function(event) {
 
-            event.preventDefault();
-
-            if (joystickTouchId !== null) {
+            if (
+                document.getElementById("playGamePage")?.style.display === "none"
+            ) {
                 return;
             }
 
-            const touch =
-                event.changedTouches[0];
-
-            joystickTouchId =
-                touch.identifier;
-
-            updateJoystick(touch);
-
-        },
-        {passive:false}
-    );
-
-    /* THUMBSTICK TOUCH MOVE */
-
-    joystick.addEventListener(
-        "touchmove",
-        function(event) {
-
-            event.preventDefault();
-
             for (
                 const touch of event.changedTouches
             ) {
 
+                const rect =
+                    joystick.getBoundingClientRect();
+
+                const insideJoystick =
+                    touch.clientX >= rect.left &&
+                    touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top &&
+                    touch.clientY <= rect.bottom;
+
                 if (
-                    touch.identifier ===
-                    joystickTouchId
+                    insideJoystick &&
+                    joystickTouchId === null
                 ) {
+
+                    event.preventDefault();
+
+                    joystickTouchId =
+                        touch.identifier;
 
                     updateJoystick(touch);
 
-                    break;
+                    return;
+                }
+            }
+
+            const jumpRect =
+                jump.getBoundingClientRect();
+
+            for (
+                const touch of event.changedTouches
+            ) {
+
+                const insideJump =
+                    touch.clientX >= jumpRect.left &&
+                    touch.clientX <= jumpRect.right &&
+                    touch.clientY >= jumpRect.top &&
+                    touch.clientY <= jumpRect.bottom;
+
+                if (insideJump) {
+
+                    event.preventDefault();
+
+                    veriaMobileJump = true;
+
+                    jump.style.transform =
+                        "scale(.90)";
+
+                    return;
                 }
             }
 
@@ -3172,13 +3197,13 @@ function setupVeriaMobileControls() {
         {passive:false}
     );
 
-    /* THUMBSTICK TOUCH END */
-
-    joystick.addEventListener(
-        "touchend",
+    document.addEventListener(
+        "touchmove",
         function(event) {
 
-            event.preventDefault();
+            if (joystickTouchId === null) {
+                return;
+            }
 
             for (
                 const touch of event.changedTouches
@@ -3189,9 +3214,11 @@ function setupVeriaMobileControls() {
                     joystickTouchId
                 ) {
 
-                    resetJoystick();
+                    event.preventDefault();
 
-                    break;
+                    updateJoystick(touch);
+
+                    return;
                 }
             }
 
@@ -3199,57 +3226,50 @@ function setupVeriaMobileControls() {
         {passive:false}
     );
 
-    joystick.addEventListener(
-        "touchcancel",
+    document.addEventListener(
+        "touchend",
         function(event) {
 
-            event.preventDefault();
+            for (
+                const touch of event.changedTouches
+            ) {
 
-            resetJoystick();
+                if (
+                    touch.identifier ===
+                    joystickTouchId
+                ) {
+
+                    event.preventDefault();
+
+                    resetJoystick();
+
+                    return;
+                }
+            }
+
+            jump.style.transform =
+                "scale(1)";
 
         },
         {passive:false}
     );
 
-    /* JUMP */
-
-    function jumpPressed(event) {
-
-        event.preventDefault();
-
-        veriaMobileJump = true;
-
-        jump.style.transform =
-            "scale(.90)";
-    }
-
-    function jumpReleased(event) {
-
-        event.preventDefault();
-
-        jump.style.transform =
-            "scale(1)";
-    }
-
-    jump.addEventListener(
-        "touchstart",
-        jumpPressed,
-        {passive:false}
-    );
-
-    jump.addEventListener(
-        "touchend",
-        jumpReleased,
-        {passive:false}
-    );
-
-    jump.addEventListener(
+    document.addEventListener(
         "touchcancel",
-        jumpReleased,
+        function(event) {
+
+            if (joystickTouchId !== null) {
+                resetJoystick();
+            }
+
+            jump.style.transform =
+                "scale(1)";
+
+        },
         {passive:false}
     );
 
-    /* Also support pointer/click input */
+    /* Also support tapping the jump button */
 
     jump.addEventListener(
         "click",
