@@ -1141,6 +1141,7 @@ const server = http.createServer(
                     200,
                     {
                         success: true,
+                        published: true,
                         game: game
                     }
                 );
@@ -1148,6 +1149,27 @@ const server = http.createServer(
             } catch (error) {
 
                 console.error(error);
+
+                if (
+                    error &&
+                    error.code ===
+                    "GAME_MODERATION_REJECTED"
+                ) {
+
+                    sendJSON(
+                        res,
+                        400,
+                        {
+                            success: false,
+                            published: false,
+                            moderationRejected: true,
+                            error:
+                                error.message
+                        }
+                    );
+
+                    return;
+                }
 
                 sendJSON(
                     res,
