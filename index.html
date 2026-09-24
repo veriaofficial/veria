@@ -659,6 +659,19 @@ h1{
     .create-templates{grid-template-columns:1fr}
 }
 </style>
+<style>
+/* VERIA MOBILE CONTROL VISIBILITY */
+@media (pointer: coarse) {
+    #mobileJoystick {
+        display:block !important;
+    }
+
+    #mobileJumpButton {
+        display:block !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -2934,7 +2947,7 @@ right:0;
 bottom:0;
 height:180px;
 pointer-events:none;
-z-index:50;
+z-index:1000;
 ">
 
     <!-- LEFT THUMBSTICK -->
@@ -3035,16 +3048,17 @@ function setupVeriaMobileControls() {
     }
 
     const touchDevice =
-        window.matchMedia("(pointer: coarse)").matches ||
         navigator.maxTouchPoints > 0 ||
-        "ontouchstart" in window;
+        "ontouchstart" in window ||
+        window.matchMedia("(pointer: coarse)").matches;
 
-    if (!touchDevice) {
-        return;
+    if (touchDevice) {
+        joystick.style.display = "block";
+        jump.style.display = "block";
+    } else {
+        joystick.style.display = "none";
+        jump.style.display = "none";
     }
-
-    joystick.style.display = "block";
-    jump.style.display = "block";
 
     veriaMobileControlsReady = true;
 
@@ -3197,10 +3211,6 @@ function setupVeriaMobileControls() {
 
 window.startVeriaGame = function(game) {
 
-    setupVeriaMobileControls();
-
-
-
     const page = document.getElementById("playGamePage");
     const canvas = document.getElementById("veriaGameCanvas");
 
@@ -3210,6 +3220,8 @@ window.startVeriaGame = function(game) {
     }
 
     page.style.display = "block";
+
+    setupVeriaMobileControls();
 
     if (veriaGame3D && veriaGame3D.renderer) {
         veriaGame3D.renderer.dispose();
