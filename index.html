@@ -938,6 +938,8 @@ placeholder="Game description..." maxlength="300"></textarea>
     }
 }
 </script>
+<script>
+</script>
 
 <script type="module">
 
@@ -2409,80 +2411,177 @@ window.publishStudioGame=async function(){
 
     if(!currentGame)return;
 
-    const name=document.getElementById("publishName").value.trim();
-    const description=document.getElementById("publishDescription").value.trim();
+    const name=
+        document.getElementById("publishName")
+            .value
+            .trim();
+
+    const description=
+        document.getElementById("publishDescription")
+            .value
+            .trim();
+
+    const message=
+        document.getElementById("publishMessage");
 
     if(!name){
 
-        document.getElementById("publishMessage")
-            .textContent="Enter a game name.";
+        message.textContent=
+            "Enter a game name.";
 
         return;
     }
 
-    currentGame.name=name;
-    currentGame.description=description;
-    currentGame.published=true;
-    currentGame.updatedAt=Date.now();
-
-    saveCurrentGameSilently();
-
-    document.getElementById("studioGameName")
-        .textContent=name;
-
-    document.getElementById("publishMessage")
-        .textContent="Publishing...";
+    message.textContent=
+        "Checking game...";
 
     try{
 
         const username =
-            localStorage.getItem("veriaUsername") || "Unknown";
+            localStorage.getItem("veriaUsername") ||
+            "Unknown";
 
-        const response = await fetch(
-            API + "/games/publish",
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    id:currentGame.id,
-                    name:currentGame.name,
-                    description:currentGame.description,
-                    creator:username,
-                    template:currentGame.template || "baseplate",
-                    parts:Array.isArray(currentGame.parts)
-                        ? currentGame.parts
-                        : [],
-                    published:true
-                })
-            }
-        );
+        const response =
+            await fetch(
+                API + "/games/publish",
+                {
+                    method:"POST",
 
-        const result = await response.json();
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        id:currentGame.id,
+
+                        name:name,
+
+                        description:description,
+
+                        creator:username,
+
+                        template:
+                            currentGame.template ||
+                            "baseplate",
+
+                        parts:
+                            Array.isArray(
+                                currentGame.parts
+                            )
+                                ? currentGame.parts
+                                : [],
+
+                        published:true
+                    })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        /*
+         * MODERATION REJECTED
+         */
 
         if(!response.ok){
 
-            document.getElementById("publishMessage")
-                .textContent =
-                result.error || "Could not publish game.";
+            message.textContent =
+                result.error ||
+                "This game could not be published.";
 
             return;
         }
 
-        document.getElementById("publishMessage")
-            .textContent="Game published!";
+        /*
+         * ONLY MARK THE LOCAL GAME
+         * AS PUBLISHED AFTER THE SERVER
+         * APPROVES IT.
+         */
+
+        currentGame.name =
+            result.game?.name ||
+            name;
+
+        currentGame.description =
+            result.game?.description ||
+            description;
+
+        currentGame.id =
+            result.game?.id ||
+            currentGame.id;
+
+        currentGame.published=true;
+
+        currentGame.updatedAt=
+            Date.now();
+
+        /*
+         * Save the approved version locally.
+         */
+
+        saveCurrentGameSilently();
+
+        document.getElementById(
+            "studioGameName"
+        ).textContent =
+            currentGame.name;
+
+        message.textContent =
+            "Game published!";
+
+        /*
+         * Refresh the published-games list
+         * immediately.
+         */
+
+        await loadPublishedGames();
+
+        /*
+         * Close the publish window.
+         */
 
         setTimeout(()=>{
-            closeModal("publishModal");
+
+            closeModal(
+                "publishModal"
+            );
+
+            /*
+             * Go straight back to Home
+             * and show the newly published game.
+             */
+
+            document.getElementById(
+                "studioPage"
+            ).style.display="none";
+
+            document.getElementById(
+                "homePage"
+            ).style.display="block";
+
+            document.getElementById(
+                "mainNavbar"
+            ).style.display="flex";
+
+            window.scrollTo(
+                0,
+                0
+            );
+
+            loadPublishedGames();
+
         },700);
 
     }catch(error){
 
-        console.error("Publish error:",error);
+        console.error(
+            "Publish error:",
+            error
+        );
 
-        document.getElementById("publishMessage")
-            .textContent=
+        message.textContent =
             "Could not connect to Veria server.";
 
     }
@@ -2662,10 +2761,16 @@ async function joinPublishedGame(gameId){
             JSON.stringify(result)
         );
 
-        alert(
-            "Joined " +
-            (result.game?.name || "game")
-        );
+        const game = result.game || {};
+
+        document.getElementById("homePage").style.display = "none";
+        document.getElementById("createPage").style.display = "none";
+        document.getElementById("playGamePage").style.display = "block";
+
+        document.getElementById("playingGameName").textContent =
+            game.name || "Game";
+
+        startVeriaGame(game);
 
     }catch(error){
 
@@ -2756,6 +2861,765 @@ function escapeHtml(value){
 
 updateAccountUI();
 
+</script>
+
+
+<!-- VERIA PLAY GAME SCREEN -->
+<div id="playGamePage" style="
+display:none;
+position:fixed;
+inset:0;
+background:#10131c;
+z-index:9999;
+overflow:hidden;
+">
+
+    <div id="gameTopBar" style="
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:64px;
+    background:#171b27;
+    display:flex;
+    align-items:center;
+    padding:0 20px;
+    z-index:20;
+    ">
+
+        <button onclick="leavePlayedGame()" style="
+        background:#5c8df6;
+        color:white;
+        border:0;
+        border-radius:8px;
+        padding:10px 18px;
+        font-size:15px;
+        cursor:pointer;
+        ">
+            ← Leave
+        </button>
+
+        <div id="playingGameName" style="
+        color:white;
+        font-size:20px;
+        font-weight:bold;
+        margin-left:20px;
+        ">
+            Game
+        </div>
+
+    </div>
+
+    <canvas id="veriaGameCanvas" style="
+    position:absolute;
+    left:0;
+    top:64px;
+    width:100%;
+    height:calc(100% - 64px);
+    display:block;
+    "></canvas>
+
+    <div id="gameControls" style="
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:150px;
+    pointer-events:none;
+    ">
+
+        <div id="mobileJoystick" style="
+        position:absolute;
+        left:30px;
+        bottom:25px;
+        width:105px;
+        height:105px;
+        border-radius:50%;
+        background:rgba(255,255,255,.12);
+        border:2px solid rgba(255,255,255,.25);
+        display:none;
+        pointer-events:auto;
+        ">
+
+            <div style="
+            position:absolute;
+            width:45px;
+            height:45px;
+            left:28px;
+            top:28px;
+            border-radius:50%;
+            background:rgba(255,255,255,.35);
+            "></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+import * as THREE from "three";
+
+let veriaGame3D = null;
+
+window.startVeriaGame = function(game) {
+
+    const page = document.getElementById("playGamePage");
+    const canvas = document.getElementById("veriaGameCanvas");
+
+    if (!page || !canvas) {
+        console.error("Veria game elements are missing.");
+        return;
+    }
+
+    page.style.display = "block";
+
+    if (veriaGame3D && veriaGame3D.renderer) {
+        veriaGame3D.renderer.dispose();
+    }
+
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true
+    });
+
+    renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio || 1, 2)
+    );
+
+    const width = window.innerWidth;
+    const height = Math.max(1, window.innerHeight - 64);
+
+    renderer.setSize(width, height);
+    renderer.shadowMap.enabled = true;
+
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x87ceeb);
+
+    const camera = new THREE.PerspectiveCamera(
+        70,
+        width / height,
+        0.1,
+        2000
+    );
+
+    camera.position.set(10, 8, 12);
+
+    const ambient = new THREE.HemisphereLight(
+        0xffffff,
+        0x557755,
+        2
+    );
+
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(
+        0xffffff,
+        2
+    );
+
+    sun.position.set(100, 150, 100);
+    sun.castShadow = true;
+
+    scene.add(sun);
+
+    /* BASEPLATE */
+
+    const ground = new THREE.Mesh(
+        new THREE.BoxGeometry(200, 2, 200),
+        new THREE.MeshStandardMaterial({
+            color: 0x6aaa52
+        })
+    );
+
+    ground.position.y = -1;
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+    /* SPAWN */
+
+    const spawn = new THREE.Mesh(
+        new THREE.BoxGeometry(8, 0.25, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0x4d90ff
+        })
+    );
+
+    spawn.position.y = 0.15;
+
+    scene.add(spawn);
+
+    /* PLAYER */
+
+    const player = new THREE.Group();
+
+    player.position.set(0, 0, 0);
+
+    scene.add(player);
+
+    const red = new THREE.MeshStandardMaterial({
+        color: 0xe53935
+    });
+
+    const yellow = new THREE.MeshStandardMaterial({
+        color: 0xf5c542
+    });
+
+    const black = new THREE.MeshStandardMaterial({
+        color: 0x111111
+    });
+
+    function addPart(
+        width,
+        height,
+        depth,
+        material,
+        x,
+        y,
+        z
+    ) {
+
+        const mesh = new THREE.Mesh(
+            new THREE.BoxGeometry(
+                width,
+                height,
+                depth
+            ),
+            material
+        );
+
+        mesh.position.set(x, y, z);
+
+        mesh.castShadow = true;
+
+        player.add(mesh);
+
+        return mesh;
+    }
+
+    /* R6 BODY */
+
+    addPart(
+        0.65,
+        1.6,
+        0.7,
+        black,
+        -0.42,
+        0.8,
+        0
+    );
+
+    addPart(
+        0.65,
+        1.6,
+        0.7,
+        black,
+        0.42,
+        0.8,
+        0
+    );
+
+    addPart(
+        1.5,
+        1.8,
+        0.8,
+        red,
+        0,
+        2.45,
+        0
+    );
+
+    addPart(
+        0.55,
+        1.8,
+        0.65,
+        yellow,
+        -1.05,
+        2.45,
+        0
+    );
+
+    addPart(
+        0.55,
+        1.8,
+        0.65,
+        yellow,
+        1.05,
+        2.45,
+        0
+    );
+
+    addPart(
+        1.35,
+        1.35,
+        1.35,
+        yellow,
+        0,
+        4.0,
+        0
+    );
+
+    /* USERNAME */
+
+    const username =
+        localStorage.getItem("veriaUsername") ||
+        "Player";
+
+    const labelCanvas =
+        document.createElement("canvas");
+
+    labelCanvas.width = 512;
+    labelCanvas.height = 128;
+
+    const ctx =
+        labelCanvas.getContext("2d");
+
+    ctx.font = "bold 48px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 8;
+
+    ctx.strokeText(
+        username,
+        256,
+        70
+    );
+
+    ctx.fillText(
+        username,
+        256,
+        70
+    );
+
+    const labelTexture =
+        new THREE.CanvasTexture(
+            labelCanvas
+        );
+
+    const label =
+        new THREE.Sprite(
+            new THREE.SpriteMaterial({
+                map: labelTexture,
+                transparent: true
+            })
+        );
+
+    label.scale.set(4, 1, 1);
+
+    label.position.set(
+        0,
+        5.4,
+        0
+    );
+
+    player.add(label);
+
+    /* LOAD CREATOR PARTS */
+
+    if (game && Array.isArray(game.parts)) {
+
+        game.parts.forEach(data => {
+
+            if (!data) return;
+
+            const size = data.size || {
+                x: 2,
+                y: 2,
+                z: 2
+            };
+
+            const position =
+                data.position || {
+                    x: 0,
+                    y: 1,
+                    z: 0
+                };
+
+            let color = 0x888888;
+
+            if (data.color) {
+
+                try {
+
+                    if (
+                        typeof data.color === "string" &&
+                        data.color.startsWith("#")
+                    ) {
+                        color =
+                            parseInt(
+                                data.color.slice(1),
+                                16
+                            );
+                    }
+
+                } catch (e) {}
+            }
+
+            const part = new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    Number(size.x) || 2,
+                    Number(size.y) || 2,
+                    Number(size.z) || 2
+                ),
+                new THREE.MeshStandardMaterial({
+                    color: color
+                })
+            );
+
+            part.position.set(
+                Number(position.x) || 0,
+                Number(position.y) || 1,
+                Number(position.z) || 0
+            );
+
+            if (data.rotation) {
+
+                part.rotation.set(
+                    Number(data.rotation.x) || 0,
+                    Number(data.rotation.y) || 0,
+                    Number(data.rotation.z) || 0
+                );
+            }
+
+            part.castShadow = true;
+            part.receiveShadow = true;
+
+            scene.add(part);
+        });
+    }
+
+    /* KEYBOARD */
+
+    const keys = {};
+
+    function keyDown(event) {
+        keys[event.key.toLowerCase()] = true;
+    }
+
+    function keyUp(event) {
+        keys[event.key.toLowerCase()] = false;
+    }
+
+    window.addEventListener(
+        "keydown",
+        keyDown
+    );
+
+    window.addEventListener(
+        "keyup",
+        keyUp
+    );
+
+    /* ===============================
+       RIGHT CLICK CAMERA LOOK
+    =============================== */
+
+    let looking = false;
+    let yaw = 0;
+    let pitch = 0;
+
+    canvas.addEventListener("contextmenu", event => {
+        event.preventDefault();
+    });
+
+    canvas.addEventListener("mousedown", event => {
+
+        if (event.button !== 2) return;
+
+        looking = true;
+
+        // Keep the camera exactly where it was left.
+        // DO NOT reset yaw or pitch here.
+
+        canvas.requestPointerLock();
+    });
+
+    document.addEventListener("mouseup", event => {
+
+        if (event.button !== 2) return;
+
+        looking = false;
+
+        if (document.pointerLockElement === canvas) {
+            document.exitPointerLock();
+        }
+    });
+
+    document.addEventListener("mousemove", event => {
+
+        if (!looking) return;
+
+        yaw -= event.movementX * 0.0025;
+        pitch -= event.movementY * 0.0025;
+
+        pitch = THREE.MathUtils.clamp(
+            pitch,
+            -1.25,
+            1.25
+        );
+    });
+
+    const clock =
+        new THREE.Clock();
+
+    function animate() {
+
+        if (
+            document.getElementById(
+                "playGamePage"
+            )?.style.display === "none"
+        ) {
+            return;
+        }
+
+        requestAnimationFrame(
+            animate
+        );
+
+        const delta =
+            Math.min(
+                clock.getDelta(),
+                0.05
+            );
+
+        let forward = 0;
+        let sideways = 0;
+
+        if (
+            keys["w"] ||
+            keys["arrowup"]
+        ) {
+            forward += 1;
+        }
+
+        if (
+            keys["s"] ||
+            keys["arrowdown"]
+        ) {
+            forward -= 1;
+        }
+
+        if (
+            keys["a"] ||
+            keys["arrowleft"]
+        ) {
+            sideways -= 1;
+        }
+
+        if (
+            keys["d"] ||
+            keys["arrowright"]
+        ) {
+            sideways += 1;
+        }
+
+        const length =
+            Math.hypot(
+                forward,
+                sideways
+            );
+
+        if (length > 0) {
+
+            forward /= length;
+            sideways /= length;
+
+            /*
+               CAMERA-RELATIVE MOVEMENT
+
+               W = forward where camera looks
+               S = backwards
+               A = camera-left
+               D = camera-right
+            */
+
+            const cameraForward =
+                new THREE.Vector3();
+
+            camera.getWorldDirection(
+                cameraForward
+            );
+
+            cameraForward.y = 0;
+
+            if (cameraForward.lengthSq() > 0) {
+                cameraForward.normalize();
+            }
+
+            const cameraRight =
+                new THREE.Vector3(
+                    -cameraForward.z,
+                    0,
+                    cameraForward.x
+                );
+
+            const movement =
+                new THREE.Vector3();
+
+            movement.addScaledVector(
+                cameraForward,
+                forward
+            );
+
+            movement.addScaledVector(
+                cameraRight,
+                sideways
+            );
+
+            if (movement.lengthSq() > 0) {
+
+                movement.normalize();
+
+                const speed =
+                    8 * delta;
+
+                player.position.x +=
+                    movement.x * speed;
+
+                player.position.z +=
+                    movement.z * speed;
+
+                /*
+                   Face the exact direction
+                   the character is moving.
+                */
+
+                const targetRotation =
+                    Math.atan2(
+                        movement.x,
+                        movement.z
+                    );
+
+                player.rotation.y =
+                    THREE.MathUtils.lerp(
+                        player.rotation.y,
+                        targetRotation,
+                        Math.min(
+                            1,
+                            12 * delta
+                        )
+                    );
+            }
+        }
+
+        player.position.x =
+            THREE.MathUtils.clamp(
+                player.position.x,
+                -95,
+                95
+            );
+
+        player.position.z =
+            THREE.MathUtils.clamp(
+                player.position.z,
+                -95,
+                95
+            );
+
+        /* THIRD PERSON CAMERA + RIGHT CLICK LOOK */
+
+        const target = new THREE.Vector3(
+            player.position.x,
+            player.position.y + 2,
+            player.position.z
+        );
+
+        const distance = 14;
+
+        const horizontal =
+            Math.cos(pitch) * distance;
+
+        const desiredCamera =
+            new THREE.Vector3(
+                player.position.x +
+                    Math.sin(yaw) * horizontal,
+                player.position.y +
+                    7 -
+                    Math.sin(pitch) * distance,
+                player.position.z +
+                    Math.cos(yaw) * horizontal
+            );
+
+        camera.position.lerp(
+            desiredCamera,
+            0.12
+        );
+
+        camera.lookAt(target);
+
+        renderer.render(
+            scene,
+            camera
+        );
+    }
+
+    function resize() {
+
+        const w =
+            window.innerWidth;
+
+        const h =
+            Math.max(
+                1,
+                window.innerHeight - 64
+            );
+
+        renderer.setSize(
+            w,
+            h
+        );
+
+        camera.aspect =
+            w / h;
+
+        camera.updateProjectionMatrix();
+    }
+
+    window.addEventListener(
+        "resize",
+        resize
+    );
+
+    veriaGame3D = {
+        renderer,
+        scene,
+        camera,
+        player,
+        keys
+    };
+
+    resize();
+    animate();
+};
+
+window.leavePlayedGame = function() {
+
+    const page =
+        document.getElementById(
+            "playGamePage"
+        );
+
+    if (page) {
+        page.style.display = "none";
+    }
+
+    if (veriaGame3D) {
+
+        Object.keys(
+            veriaGame3D.keys
+        ).forEach(key => {
+            veriaGame3D.keys[key] = false;
+        });
+    }
+
+    if (window.goHome) {
+        window.goHome();
+    }
+};
 </script>
 
 </body>
