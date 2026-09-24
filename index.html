@@ -3031,8 +3031,6 @@ let veriaMobileControlsReady = false;
 
 function setupVeriaMobileControls() {
 
-    if (veriaMobileControlsReady) return;
-
     const joystick =
         document.getElementById("mobileJoystick");
 
@@ -3043,45 +3041,46 @@ function setupVeriaMobileControls() {
         document.getElementById("mobileJumpButton");
 
     if (!joystick || !knob || !jump) {
-        console.error("Mobile controls missing.");
+        console.error("Veria mobile controls not found.");
         return;
     }
 
-    const touchDevice =
+    const isMobile =
         navigator.maxTouchPoints > 0 ||
         "ontouchstart" in window ||
         window.matchMedia("(pointer: coarse)").matches;
 
-    if (touchDevice) {
-        joystick.style.display = "block";
-        jump.style.display = "block";
-    } else {
+    if (!isMobile) {
         joystick.style.display = "none";
         jump.style.display = "none";
+        return;
     }
 
-    veriaMobileControlsReady = true;
-
-    let joystickPointer = null;
+    joystick.style.display = "block";
+    jump.style.display = "block";
 
     const maxDistance = 36;
 
-    function moveJoystick(event) {
+    let joystickTouchId = null;
+
+    function updateJoystick(touch) {
 
         const rect =
             joystick.getBoundingClientRect();
 
         const centerX =
-            rect.left + rect.width / 2;
+            rect.left +
+            rect.width / 2;
 
         const centerY =
-            rect.top + rect.height / 2;
+            rect.top +
+            rect.height / 2;
 
         let dx =
-            event.clientX - centerX;
+            touch.clientX - centerX;
 
         let dy =
-            event.clientY - centerY;
+            touch.clientY - centerY;
 
         const distance =
             Math.hypot(dx, dy);
@@ -3113,7 +3112,7 @@ function setupVeriaMobileControls() {
 
     function resetJoystick() {
 
-        joystickPointer = null;
+        joystickTouchId = null;
 
         veriaMobileJoystickX = 0;
         veriaMobileJoystickY = 0;
@@ -3122,75 +3121,109 @@ function setupVeriaMobileControls() {
             "translate(0px,0px)";
     }
 
+    /* THUMBSTICK TOUCH START */
+
     joystick.addEventListener(
-        "pointerdown",
+        "touchstart",
         function(event) {
 
             event.preventDefault();
 
-            joystickPointer =
-                event.pointerId;
-
-            joystick.setPointerCapture(
-                event.pointerId
-            );
-
-            moveJoystick(event);
-        },
-        {passive:false}
-    );
-
-    joystick.addEventListener(
-        "pointermove",
-        function(event) {
-
-            if (
-                joystickPointer !==
-                event.pointerId
-            ) {
+            if (joystickTouchId !== null) {
                 return;
             }
 
-            event.preventDefault();
+            const touch =
+                event.changedTouches[0];
 
-            moveJoystick(event);
+            joystickTouchId =
+                touch.identifier;
+
+            updateJoystick(touch);
+
         },
         {passive:false}
     );
 
+    /* THUMBSTICK TOUCH MOVE */
+
     joystick.addEventListener(
-        "pointerup",
+        "touchmove",
         function(event) {
 
-            if (
-                joystickPointer ===
-                event.pointerId
+            event.preventDefault();
+
+            for (
+                const touch of event.changedTouches
             ) {
-                resetJoystick();
+
+                if (
+                    touch.identifier ===
+                    joystickTouchId
+                ) {
+
+                    updateJoystick(touch);
+
+                    break;
+                }
             }
-        }
-    );
 
-    joystick.addEventListener(
-        "pointercancel",
-        resetJoystick
-    );
-
-    jump.addEventListener(
-        "pointerdown",
-        function(event) {
-
-            event.preventDefault();
-
-            veriaMobileJump = true;
-
-            jump.style.transform =
-                "scale(.92)";
         },
         {passive:false}
     );
 
-    function releaseJump(event) {
+    /* THUMBSTICK TOUCH END */
+
+    joystick.addEventListener(
+        "touchend",
+        function(event) {
+
+            event.preventDefault();
+
+            for (
+                const touch of event.changedTouches
+            ) {
+
+                if (
+                    touch.identifier ===
+                    joystickTouchId
+                ) {
+
+                    resetJoystick();
+
+                    break;
+                }
+            }
+
+        },
+        {passive:false}
+    );
+
+    joystick.addEventListener(
+        "touchcancel",
+        function(event) {
+
+            event.preventDefault();
+
+            resetJoystick();
+
+        },
+        {passive:false}
+    );
+
+    /* JUMP */
+
+    function jumpPressed(event) {
+
+        event.preventDefault();
+
+        veriaMobileJump = true;
+
+        jump.style.transform =
+            "scale(.90)";
+    }
+
+    function jumpReleased(event) {
 
         event.preventDefault();
 
@@ -3199,13 +3232,38 @@ function setupVeriaMobileControls() {
     }
 
     jump.addEventListener(
-        "pointerup",
-        releaseJump
+        "touchstart",
+        jumpPressed,
+        {passive:false}
     );
 
     jump.addEventListener(
-        "pointercancel",
-        releaseJump
+        "touchend",
+        jumpReleased,
+        {passive:false}
+    );
+
+    jump.addEventListener(
+        "touchcancel",
+        jumpReleased,
+        {passive:false}
+    );
+
+    /* Also support pointer/click input */
+
+    jump.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            veriaMobileJump = true;
+
+        }
+    );
+
+    console.log(
+        "Veria mobile controls ready."
     );
 }
 
