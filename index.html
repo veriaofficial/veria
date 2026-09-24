@@ -3637,6 +3637,8 @@ window.startVeriaGame = function(game) {
         let forward = 0;
         let sideways = 0;
 
+        /* DESKTOP MOVEMENT */
+
         if (
             keys["w"] ||
             keys["arrowup"]
@@ -3663,6 +3665,64 @@ window.startVeriaGame = function(game) {
             keys["arrowright"]
         ) {
             sideways += 1;
+        }
+
+        /* MOBILE THUMBSTICK */
+
+        if (
+            Math.abs(veriaMobileJoystickY) > 0.05 ||
+            Math.abs(veriaMobileJoystickX) > 0.05
+        ) {
+
+            forward +=
+                -veriaMobileJoystickY;
+
+            sideways +=
+                veriaMobileJoystickX;
+        }
+
+        /* MOBILE JUMP */
+
+        if (
+            veriaMobileJump &&
+            veriaOnGround
+        ) {
+
+            veriaJumpVelocity = 8;
+            veriaOnGround = false;
+            veriaMobileJump = false;
+        }
+
+        /* GRAVITY */
+
+        veriaJumpVelocity -=
+            20 * delta;
+
+        player.position.y +=
+            veriaJumpVelocity * delta;
+
+        /*
+           Keep the character at its original
+           ground height instead of forcing Y=0.
+        */
+
+        if (
+            player.userData.groundY === undefined
+        ) {
+            player.userData.groundY =
+                player.position.y;
+        }
+
+        if (
+            player.position.y <=
+            player.userData.groundY
+        ) {
+
+            player.position.y =
+                player.userData.groundY;
+
+            veriaJumpVelocity = 0;
+            veriaOnGround = true;
         }
 
         const length =
