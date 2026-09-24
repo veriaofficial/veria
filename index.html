@@ -975,6 +975,14 @@ window.closeModal=function(id){
     document.getElementById(id).classList.remove("open");
 };
 
+window.loadPublishedGamesOnStartup=function(){
+    setTimeout(()=>{
+        if(typeof loadPublishedGames === "function"){
+            loadPublishedGames();
+        }
+    },300);
+};
+
 window.goHome=function(){
     document.getElementById("homePage").style.display="block";
     document.getElementById("createPage").style.display="none";
@@ -3620,6 +3628,10 @@ window.leavePlayedGame = function() {
         window.goHome();
     }
 };
+
+window.addEventListener("load",()=>{
+    loadPublishedGamesOnStartup();
+});
 </script>
 
 </body>
