@@ -2,4015 +2,658 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Veria</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veria — Play Something Amazing</title>
 <style>
+:root {
+  --bg:#090a0f;
+  --panel:#11131b;
+  --panel2:#171a25;
+  --text:#f7f8ff;
+  --muted:#8d92a5;
+  --accent:#8b70ff;
+  --line:rgba(255,255,255,.075);
+}
 *{box-sizing:border-box}
-
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    font-family:Arial,sans-serif;
-    background:#10131c;
-    color:white;
-    overflow:hidden;
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
 }
-
-button,input,textarea{font-family:inherit}
+button,input{font:inherit}
 button{cursor:pointer}
+.layout{min-height:100vh}
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:224px;
+  padding:27px 17px;background:#0c0d13;
+  border-right:1px solid var(--line);z-index:5;
+  display:flex;flex-direction:column;
+}
+.logo{display:flex;align-items:center;gap:11px;padding:0 10px 37px;
+font-size:25px;font-weight:850;letter-spacing:-1.2px}
+.logo-mark{
+  width:35px;height:35px;border-radius:12px;
+  display:grid;place-items:center;background:linear-gradient(140deg,#a38aff,#6847f5);
+  box-shadow:0 5px 25px #7657ff50;color:white;font-size:20px;
+}
+.nav-label{font-size:10px;color:#626779;font-weight:800;letter-spacing:1.7px;
+padding:0 12px;margin:0 0 12px}
+.nav{display:grid;gap:6px}
+.nav button{
+  display:flex;align-items:center;gap:13px;width:100%;padding:12px;
+  border:0;border-radius:10px;background:transparent;color:#969bad;
+  text-align:left;font-size:13px;font-weight:650;transition:.2s;
+}
+.nav button:hover{background:#ffffff09;color:white}
+.nav button.active{background:#8b70ff19;color:#b8a7ff}
+.nav-icon{width:20px;text-align:center;font-size:17px}
+.sidebar-bottom{margin-top:auto}
+.profile-mini{border-top:1px solid var(--line);padding:18px 5px 0;
+display:flex;align-items:center;gap:10px}
+.avatar{width:35px;height:35px;border-radius:12px;background:linear-gradient(135deg,#53d6ff,#7560ff);
+display:grid;place-items:center;font-weight:900}
+.profile-name{font-size:12px;font-weight:750}
+.profile-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.main{margin-left:224px;min-height:100vh}
+.topbar{
+height:76px;display:flex;align-items:center;justify-content:space-between;
+padding:0 42px;border-bottom:1px solid var(--line);gap:20px;
+position:sticky;top:0;z-index:4;background:#090a0feF;backdrop-filter:blur(18px);
+}
+.top-links{display:flex;gap:26px;align-items:center}
+.top-links button{background:none;border:0;color:#85899a;font-size:12px;font-weight:700}
+.top-links button:hover{color:white}
+.search{width:min(320px,34vw);position:relative}
+.search span{position:absolute;left:13px;top:9px;color:#85899a}
+.search input{width:100%;border:1px solid var(--line);background:#12141c;
+border-radius:10px;padding:10px 12px 10px 36px;color:white;outline:none;font-size:12px}
+.search input:focus{border-color:#8b70ff88}
+.top-right{display:flex;align-items:center;gap:14px}
+.icon-btn{border:1px solid var(--line);background:#141620;color:#c4c7d4;
+width:36px;height:36px;border-radius:10px}
+.content{max-width:1550px;margin:auto;padding:32px 42px 55px}
+.welcome{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a998ff;font-weight:850}
+h1{font-size:29px;letter-spacing:-1.1px;margin:8px 0 0;font-weight:800}
+.subtitle{font-size:12px;color:var(--muted);margin-top:7px}
+.hero{
+  position:relative;overflow:hidden;min-height:310px;border:1px solid #ffffff12;
+  border-radius:20px;padding:38px;display:flex;align-items:center;
+  background:
+  radial-gradient(ellipse at 78% 38%,#9b65ff66,transparent 32%),
+  radial-gradient(ellipse at 85% 100%,#ff4c9e44,transparent 38%),
+  linear-gradient(112deg,#17152b 0%,#242044 48%,#151324 100%);
+}
+.hero:before{
+ content:"";position:absolute;width:330px;height:330px;border-radius:45%;
+ right:11%;top:10px;transform:rotate(28deg);
+ border:1px solid #ffffff20;
+ box-shadow:0 0 0 24px #ffffff05,0 0 0 58px #ffffff04;
+}
+.hero:after{
+ content:"";position:absolute;width:130px;height:130px;right:19%;top:76px;
+ border-radius:32px;transform:rotate(25deg);
+ background:linear-gradient(145deg,#e1d7ff,#8662ff 52%,#4023a5);
+ box-shadow:0 25px 75px #0008,inset 0 2px 2px #ffffff90;
+}
+.hero-art{position:absolute;right:16%;top:98px;z-index:1;font-size:55px;
+filter:drop-shadow(0 8px 15px #261452);transform:rotate(-8deg)}
+.hero-copy{position:relative;z-index:2;max-width:420px}
+.tag{display:inline-flex;align-items:center;gap:7px;background:#ffffff12;
+border:1px solid #ffffff1d;padding:7px 10px;border-radius:7px;font-size:9px;
+font-weight:850;letter-spacing:1.2px}
+.tag-dot{width:6px;height:6px;border-radius:50%;background:#b8a4ff}
+.hero h2{font-size:clamp(30px,4vw,49px);line-height:1.02;letter-spacing:-2px;
+margin:20px 0 13px;max-width:390px}
+.hero p{font-size:12px;line-height:1.8;color:#c0bdd4;max-width:300px;margin:0 0 23px}
+.primary{
+background:#f6f4ff;color:#171323;border:0;border-radius:9px;
+padding:12px 19px;font-size:12px;font-weight:850;
+box-shadow:0 5px 20px #0002;transition:transform .2s;
+}
+.primary:hover{transform:translateY(-2px)}
+.secondary{background:#ffffff12;color:white;border:1px solid #ffffff20;
+border-radius:9px;padding:11px 16px;font-size:12px;font-weight:750;margin-left:7px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:35px 0 16px}
+.section-head h2{font-size:17px;letter-spacing:-.4px;margin:0}
+.section-head p{font-size:11px;color:var(--muted);margin:6px 0 0}
+.view-all{background:none;border:0;color:#b4a3ff;font-size:11px;font-weight:750}
+.games{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.game-card{min-width:0;cursor:pointer}
+.game-art{height:155px;position:relative;overflow:hidden;border-radius:13px;
+border:1px solid #ffffff12;transition:transform .2s,border-color .2s}
+.game-card:hover .game-art{transform:translateY(-4px);border-color:#ffffff35}
+.art1{background:radial-gradient(circle at 70% 30%,#ffe5a0,transparent 19%),linear-gradient(135deg,#ff8b6a,#c64b8a 55%,#38225d)}
+.art2{background:radial-gradient(circle at 35% 30%,#b4faff,transparent 19%),linear-gradient(145deg,#1aabc0,#2866a9 55%,#20244f)}
+.art3{background:radial-gradient(circle at 75% 20%,#ffcaff,transparent 20%),linear-gradient(140deg,#aa77ff,#533bd0 60%,#251d5b)}
+.art4{background:radial-gradient(circle at 50% 20%,#b4ffce,transparent 22%),linear-gradient(140deg,#45bc91,#20775d 58%,#153b42)}
+.art5{background:radial-gradient(circle at 70% 30%,#fff0a3,transparent 19%),linear-gradient(140deg,#e8a04c,#a34d42 55%,#462a4c)}
+.art6{background:radial-gradient(circle at 25% 30%,#a5c6ff,transparent 20%),linear-gradient(140deg,#4555a9,#30275e 55%,#17182f)}
+.art7{background:radial-gradient(circle at 70% 30%,#ffb2da,transparent 20%),linear-gradient(140deg,#d95e9b,#8142a2 55%,#33235b)}
+.art8{background:radial-gradient(circle at 50% 25%,#ffe8a3,transparent 20%),linear-gradient(140deg,#c8a34d,#7d6139 55%,#373049)}
+.shape{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);
+width:75px;height:75px;border-radius:22px;background:linear-gradient(145deg,#ffffffc9,#ffffff27);
+border:1px solid #ffffffa0;box-shadow:0 18px 25px #0003,inset 0 1px 1px white}
+.shape.circle{border-radius:50%;width:68px;height:68px}
+.shape.diamond{border-radius:13px;transform:translate(-50%,-50%) rotate(45deg);width:65px;height:65px}
+.shape.small{width:45px;height:45px;left:68%;top:68%;opacity:.8}
+.shape.back{width:55px;height:55px;left:34%;top:62%;opacity:.6}
+.game-symbol{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+font-size:36px;filter:drop-shadow(0 4px 5px #0005)}
+.online{position:absolute;bottom:10px;left:10px;background:#080a12aa;
+padding:5px 7px;border-radius:6px;font-size:9px;color:#e3e5ef}
+.online:before{content:"";display:inline-block;width:5px;height:5px;
+background:#6ce4ad;border-radius:50%;margin-right:5px}
+.game-title{font-size:12px;font-weight:750;margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-meta{display:flex;justify-content:space-between;gap:5px;color:var(--muted);font-size:10px}
+.stars{color:#e8c77b}
+.empty{display:none;color:var(--muted);font-size:13px;padding:24px 0}
+.footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;
+font-size:10px;color:#686d7e;display:flex;justify-content:space-between}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);
+background:#222331;border:1px solid #ffffff20;color:white;border-radius:10px;
+padding:12px 18px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){.games{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:26px}.topbar{padding:0 26px}.hero:after{right:10%}.hero-art{right:15%}}
+@media(max-width:700px){
+.sidebar{width:65px;padding:20px 8px}.logo{padding:0 6px 28px;font-size:0}.logo-mark{flex-shrink:0}
+.nav-label,.nav-text,.sidebar-bottom .profile-name,.sidebar-bottom .profile-sub{display:none}
+.nav button{justify-content:center;padding:13px 0}.nav-icon{font-size:18px}
+.main{margin-left:65px}.topbar{height:62px;padding:0 14px}.top-links{display:none}
+.search{width:100%}.top-right{gap:7px}.content{padding:22px 14px}
+h1{font-size:23px}.hero{padding:23px;min-height:310px}.hero:before{right:-25%;top:65px}
+.hero:after{right:5%;top:45px;width:85px;height:85px}.hero-art{right:7%;top:63px;font-size:35px}
+.hero-copy{max-width:80%}.hero h2{font-size:34px}.hero p{max-width:235px}
+.games{gap:12px}.game-art{height:120px}.shape{width:55px;height:55px}.shape.circle{width:50px;height:50px}
+.game-symbol{font-size:27px}.section-head h2{font-size:15px}.footer{gap:10px;flex-wrap:wrap}
+}
+
+#veria-auth-modal{position:fixed;inset:0;z-index:100;background:#05060bdc;
+display:none;place-items:center;padding:18px;backdrop-filter:blur(12px)}
+#veria-auth-modal.open{display:grid}
+.va-panel{width:min(420px,100%);background:#11131c;border:1px solid #ffffff18;
+border-radius:20px;padding:30px;box-shadow:0 25px 100px #0009;position:relative}
+.va-close{position:absolute;right:18px;top:15px;background:none;border:0;color:#aaa;font-size:25px}
+.va-logo{font-size:24px;font-weight:900;letter-spacing:-1px;margin-bottom:26px}
+.va-logo span{color:#a995ff}
+.va-panel h2{font-size:25px;margin:0 0 8px;letter-spacing:-.8px}
+.va-muted{color:#9297a9;font-size:12px;line-height:1.6;margin-bottom:23px}
+.va-field{display:block;margin:14px 0;color:#c8cad5;font-size:12px;font-weight:700}
+.va-field input{display:block;width:100%;margin-top:8px;padding:13px;border-radius:9px;
+border:1px solid #ffffff18;background:#090b12;color:white;outline:none}
+.va-field input:focus{border-color:#a995ff}
+.va-submit{width:100%;margin-top:12px;padding:13px;border:0;border-radius:9px;
+background:#a995ff;color:#171124;font-weight:850;cursor:pointer}
+.va-switch{margin-top:19px;text-align:center;color:#969bad;font-size:12px}
+.va-switch button{background:none;border:0;color:#b9a8ff;font-weight:800}
+.va-message{font-size:12px;color:#ff9eaa;margin-top:13px;min-height:17px}
+
+
+/* VERIA_STUDIO_V1 */
+.vs-shell{color:#f7f8ff;min-width:0}
+.vs-toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:10px;background:#10121b;border:1px solid #292d3d;border-radius:12px;margin-bottom:12px}
+.vs-spacer{flex:1}
+.vs-btn,.vs-play{background:#222637;color:#e9ecf7;border:1px solid #343a50;border-radius:8px;padding:9px 11px;font-size:12px;font-weight:750}
+.vs-btn.chosen{background:#5541a8;border-color:#8b70ff}
+.vs-play{background:#287b5b;color:white;border-color:#3a9e76}
+.vs-btn:disabled{opacity:.4}
+.vs-shell kbd{font-size:10px;color:#c0c7da}
+.vs-layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:12px}
+.vs-viewport-wrap{height:590px;position:relative;overflow:hidden;border:1px solid #292d3d;border-radius:12px;background:#0b1020;min-width:0}
+#vs-viewport{position:absolute;inset:0}
+#vs-viewport canvas{width:100%;height:100%;display:block}
+.vs-label,.vs-hud{position:absolute;top:12px;left:12px;background:#0d1019df;border:1px solid #30364a;border-radius:7px;padding:8px;font-size:9px;letter-spacing:1px;color:#c1c9e0;pointer-events:none}
+.vs-hud{left:auto;right:12px;background:#11251fdd;border-color:#3c8e70;font-size:11px}
+.vs-inspector{background:#10121b;border:1px solid #292d3d;border-radius:12px;padding:12px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.vs-inspector h3{font-size:10px;letter-spacing:1.5px;color:#aeb6cc;border-bottom:1px solid #292d3d;padding-bottom:8px;margin:2px 0}
+.vs-inspector label{display:grid;gap:5px;color:#c2c8da;font-size:11px}
+.vs-inspector input:not([type=checkbox]),.vs-inspector textarea{width:100%;min-width:0;background:#171a26;color:white;border:1px solid #34394d;border-radius:7px;padding:8px}
+.vs-inspector input[type=color]{width:100%;height:32px}
+.vs-inspector textarea{min-height:60px;resize:vertical}
+.vs-object{width:100%;text-align:left;background:transparent;color:#dfe3f2;border:1px solid transparent;border-radius:6px;padding:8px;font-size:12px}
+.vs-object.chosen{background:#292440;border-color:#6d58c7}
+.vs-checks{display:grid;gap:8px;background:#171a26;border-radius:7px;padding:9px}
+.vs-checks label{display:flex;align-items:center;gap:7px}
+.vs-axes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.vs-prop-title{font-size:10px;letter-spacing:1px;color:#aeb6cc;margin-top:6px}
+.vs-status,.vs-note{font-size:11px;line-height:1.5;color:#b9b0ff;overflow-wrap:anywhere}
+.vs-note{color:#8d92a5;margin-top:10px}
+@media(max-width:850px){.vs-layout{grid-template-columns:1fr}.vs-viewport-wrap{height:440px}.vs-inspector{min-height:300px}}
 
-.navbar{
-    height:64px;
-    background:#171b27;
-    border-bottom:1px solid #292f40;
-    display:flex;
-    align-items:center;
-    padding:0 22px;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:1000;
-}
-
-.logo{
-    font-size:28px;
-    font-weight:800;
-    color:#6ea8ff;
-    margin-right:32px;
-    letter-spacing:-1px;
-}
-
-.nav-left,.nav-right{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.nav-left{flex:1}
-
-.nav-button{
-    border:0;
-    background:transparent;
-    color:#d7dbea;
-    font-size:15px;
-    padding:10px 14px;
-    border-radius:8px;
-}
-
-.nav-button:hover{
-    background:#232938;
-    color:white;
-}
-
-.account-button{
-    border:0;
-    padding:10px 15px;
-    border-radius:8px;
-    font-weight:700;
-    color:white;
-    background:#252b3a;
-}
-
-.account-button:hover{background:#30384c}
-.signup-button{background:#5c8df6}
-
-#homePage{
-    height:100vh;
-    overflow-y:auto;
-    padding:105px 32px 50px;
-}
-
-.home-inner{
-    max-width:1500px;
-    margin:auto;
-}
-
-h1{
-    font-size:34px;
-    margin:0 0 30px;
-}
-
-.section{margin-bottom:42px}
-
-.section-title{
-    font-size:22px;
-    font-weight:800;
-    margin-bottom:16px;
-}
-
-.played-row{
-    display:flex;
-    gap:18px;
-    overflow-x:auto;
-    padding-bottom:12px;
-}
-
-.game-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
-    gap:22px;
-}
-
-.game-card{
-    background:#181d29;
-    border:1px solid #272e40;
-    border-radius:12px;
-    overflow:hidden;
-    transition:.15s;
-}
-
-.game-card:hover{
-    transform:translateY(-4px);
-    border-color:#4c74b8;
-}
-
-.played-row .game-card{flex:0 0 220px}
-
-.game-image{
-    height:125px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:42px;
-    font-weight:900;
-    background:linear-gradient(135deg,#293b65,#1b2231);
-}
-
-.game-info{padding:13px}
-
-.game-name{
-    font-weight:800;
-    font-size:17px;
-    margin-bottom:6px;
-}
-
-.game-description{
-    color:#9fa8bb;
-    font-size:13px;
-    min-height:34px;
-}
-
-.play-button{
-    width:100%;
-    border:0;
-    margin-top:12px;
-    padding:9px;
-    border-radius:7px;
-    background:#5c8df6;
-    color:white;
-    font-weight:800;
-}
-
-#createPage{
-    display:none;
-    height:100vh;
-    overflow-y:auto;
-    padding:105px 32px 50px;
-}
-
-.create-inner{
-    max-width:900px;
-    margin:auto;
-}
-
-.create-title{
-    font-size:34px;
-    font-weight:800;
-    margin-bottom:10px;
-}
-
-.create-subtitle{
-    color:#9fa8bb;
-    margin-bottom:30px;
-}
-
-.create-box{
-    background:#181d29;
-    border:1px solid #272e40;
-    border-radius:12px;
-    padding:24px;
-}
-
-.create-label{
-    display:block;
-    font-size:14px;
-    font-weight:800;
-    margin-bottom:8px;
-}
-
-.create-input,.create-textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #343c50;
-    border-radius:8px;
-    background:#10141e;
-    color:white;
-    outline:none;
-    margin-bottom:18px;
-}
-
-.create-textarea{
-    min-height:130px;
-    resize:vertical;
-}
-
-.create-templates{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    margin-bottom:22px;
-}
-
-.create-template{
-    border:1px solid #343c50;
-    background:#202533;
-    color:white;
-    border-radius:9px;
-    padding:16px;
-    text-align:left;
-}
-
-.create-template.selected{
-    border-color:#5c8df6;
-    background:#293653;
-}
-
-.create-template-name{
-    font-weight:800;
-    margin-bottom:5px;
-}
-
-.create-template-description{
-    font-size:12px;
-    color:#9fa8bb;
-}
-
-.primary-button{
-    width:100%;
-    border:0;
-    border-radius:8px;
-    padding:12px;
-    background:#5c8df6;
-    color:white;
-    font-weight:800;
-}
-
-#studioPage{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:#11151f;
-    z-index:5000;
-}
-
-.studio-top{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:64px;
-    background:#171b27;
-    border-bottom:1px solid #303749;
-    display:flex;
-    align-items:center;
-    padding:0 12px;
-    z-index:20;
-}
-
-.studio-logo{
-    color:#6ea8ff;
-    font-size:20px;
-    font-weight:900;
-    margin-right:25px;
-}
-
-.studio-game-name{
-    flex:1;
-    color:#dce2f0;
-    font-size:14px;
-}
-
-.studio-top-button{
-    border:0;
-    background:#252b3a;
-    color:white;
-    border-radius:7px;
-    padding:9px 14px;
-    margin-left:8px;
-}
-
-.studio-top-button:hover{background:#34405a}
-
-.studio-layout{
-    position:absolute;
-    top:64px;
-    bottom:0;
-    left:0;
-    right:0;
-    display:grid;
-    grid-template-columns:240px 1fr 275px;
-}
-
-.explorer{
-    background:#151923;
-    border-right:1px solid #303749;
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-}
-
-.panel-title{
-    height:44px;
-    display:flex;
-    align-items:center;
-    padding:0 14px;
-    font-weight:800;
-    border-bottom:1px solid #303749;
-}
-
-.workspace-tree{
-    padding:12px 10px;
-    overflow:auto;
-    flex:1;
-}
-
-.tree-root{
-    font-weight:800;
-    padding:8px;
-    color:#e8edf8;
-}
-
-.tree-item{
-    padding:9px 10px 9px 26px;
-    border-radius:6px;
-    margin-top:3px;
-    color:#cbd3e3;
-    cursor:pointer;
-    font-size:14px;
-}
-
-.tree-item:hover{background:#222b3e}
-
-.tree-item.selected{
-    background:#31588e;
-    color:white;
-}
-
-.tree-icon{
-    display:inline-block;
-    width:22px;
-}
-
-.explorer-bottom{
-    padding:10px;
-    border-top:1px solid #303749;
-}
-
-.add-part-button{
-    width:100%;
-    border:0;
-    border-radius:7px;
-    padding:11px;
-    background:#6ea8ff;
-    color:#07101f;
-    font-weight:900;
-}
-
-.viewport{
-    position:relative;
-    min-width:0;
-    min-height:0;
-    background:#79bde7;
-    overflow:hidden;
-}
-
-#studioCanvas{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    display:block;
-}
-
-.controls-help{
-    position:absolute;
-    top:12px;
-    left:12px;
-    background:rgba(15,20,30,.88);
-    border:1px solid #37435a;
-    border-radius:7px;
-    padding:9px 12px;
-    font-size:12px;
-    color:#dce3ef;
-    z-index:5;
-    pointer-events:none;
-}
-
-.viewport-status{
-    position:absolute;
-    left:12px;
-    bottom:12px;
-    background:rgba(15,20,30,.88);
-    border:1px solid #37435a;
-    border-radius:7px;
-    padding:8px 11px;
-    font-size:12px;
-    color:#cbd5e5;
-    z-index:5;
-    pointer-events:none;
-}
-
-.properties{
-    background:#151923;
-    border-left:1px solid #303749;
-    overflow-y:auto;
-}
-
-.properties-content{padding:14px}
-
-.property-section{margin-bottom:20px}
-
-.property-heading{
-    color:#8d9ab1;
-    font-size:11px;
-    font-weight:900;
-    letter-spacing:.5px;
-    margin-bottom:9px;
-}
-
-.property-label{
-    color:#aeb8c9;
-    font-size:12px;
-    margin-bottom:5px;
-}
-
-.property-input{
-    width:100%;
-    background:#0f131d;
-    border:1px solid #343d51;
-    color:white;
-    padding:9px;
-    border-radius:6px;
-    outline:none;
-    margin-bottom:10px;
-}
-
-.property-row{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:6px;
-}
-
-.color-row{
-    display:flex;
-    gap:8px;
-    align-items:center;
-}
-
-#partColor{
-    width:54px;
-    height:36px;
-    padding:2px;
-}
-
-.delete-button{
-    width:100%;
-    border:0;
-    background:#963b48;
-    color:white;
-    padding:10px;
-    border-radius:7px;
-    font-weight:800;
-}
-
-.empty-properties{
-    color:#7f899c;
-    text-align:center;
-    padding:30px 10px;
-    font-size:13px;
-}
-
-.transform-tools{
-    display:flex;
-    gap:6px;
-    margin-bottom:15px;
-}
-
-.transform-tool{
-    flex:1;
-    border:1px solid #343d51;
-    background:#202533;
-    color:#cbd5e5;
-    padding:9px 5px;
-    border-radius:6px;
-    font-weight:800;
-    font-size:12px;
-}
-
-.transform-tool:hover{
-    background:#293653;
-}
-
-.transform-tool.active{
-    background:#31588e;
-    border-color:#6ea8ff;
-    color:white;
-}
-
-.studio-options{
-    position:absolute;
-    left:10px;
-    bottom:10px;
-    z-index:30;
-}
-
-.options-button{
-    border:0;
-    background:#171c28;
-    color:white;
-    padding:11px 18px;
-    border-radius:8px;
-    font-weight:800;
-    box-shadow:0 5px 20px rgba(0,0,0,.3);
-}
-
-.options-menu{
-    display:none;
-    position:absolute;
-    left:0;
-    bottom:48px;
-    width:190px;
-    background:#181d29;
-    border:1px solid #394258;
-    border-radius:9px;
-    padding:7px;
-    box-shadow:0 10px 40px rgba(0,0,0,.5);
-}
-
-.options-menu.open{display:block}
-
-.options-menu button{
-    width:100%;
-    text-align:left;
-    border:0;
-    background:transparent;
-    color:white;
-    padding:11px;
-    border-radius:6px;
-}
-
-.options-menu button:hover{background:#29334a}
-
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.72);
-    z-index:10000;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.modal.open{display:flex}
-
-.modal-box{
-    width:100%;
-    max-width:480px;
-    max-height:88vh;
-    overflow-y:auto;
-    background:#181d29;
-    border:1px solid #30384b;
-    border-radius:14px;
-    padding:24px;
-    box-shadow:0 20px 70px rgba(0,0,0,.55);
-}
-
-.modal-title{
-    font-size:24px;
-    font-weight:800;
-    margin-bottom:18px;
-}
-
-.close-button{
-    float:right;
-    border:0;
-    background:transparent;
-    color:#9da7bb;
-    font-size:24px;
-}
-
-.modal-input,.modal-textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #343c50;
-    border-radius:8px;
-    background:#10141e;
-    color:white;
-    outline:none;
-    margin-bottom:13px;
-}
-
-.modal-textarea{
-    min-height:110px;
-    resize:vertical;
-}
-
-.image-upload{
-    width:100%;
-    padding:12px;
-    border:1px dashed #47536a;
-    border-radius:8px;
-    background:#10141e;
-    color:#aeb8ca;
-    margin-bottom:15px;
-}
-
-.modal-message{
-    min-height:20px;
-    color:#aeb8ca;
-    margin-top:10px;
-}
-
-.modal-actions{
-    display:flex;
-    gap:10px;
-    margin-top:10px;
-}
-
-.modal-actions button{flex:1}
-
-.secondary-button{
-    border:0;
-    border-radius:8px;
-    padding:11px;
-    background:#292f40;
-    color:white;
-    font-weight:700;
-}
-
-@media(max-width:800px){
-    .studio-layout{grid-template-columns:190px 1fr}
-    .properties{display:none}
-    .nav-left .nav-button{display:none}
-    .create-templates{grid-template-columns:1fr}
-}
 </style>
-<style>
-/* VERIA MOBILE CONTROL VISIBILITY */
-@media (pointer: coarse) {
-    #mobileJoystick {
-        display:block !important;
-    }
-
-    #mobileJumpButton {
-        display:block !important;
-    }
-}
-</style>
-
 </head>
-
 <body>
-
-<nav class="navbar" id="mainNavbar">
-<div class="logo">Veria</div>
-
-<div class="nav-left">
-<button class="nav-button" onclick="goHome()">Home</button>
-<button class="nav-button" onclick="showGames()">Games</button>
-<button class="nav-button" onclick="showCreate()">Create</button>
-</div>
-
-<div class="nav-right">
-<button id="loginButton" class="account-button" onclick="openLogin()">Login</button>
-<button id="signupButton" class="account-button signup-button" onclick="openSignup()">Sign Up</button>
-<button id="profileButton" class="account-button" onclick="openProfile()" style="display:none">Profile</button>
-<button id="signoutButton" class="account-button" onclick="signOut()" style="display:none">Sign Out</button>
-</div>
-</nav>
-
-<main id="homePage">
-<div class="home-inner">
-
-<h1>Welcome to Veria</h1>
-
-<div class="section">
-<div class="section-title">Games Played</div>
-
-<div class="played-row">
-<div class="game-card">
-<div class="game-image">V</div>
-<div class="game-info">
-<div class="game-name">Veyra</div>
-<div class="game-description">Explore, survive and build your own world.</div>
-<button class="play-button" onclick="playGame('Veyra')">Play</button>
-</div>
-</div>
-</div>
-</div>
-
-<div class="section">
-<div class="section-title">Discover Games</div>
-
-<div id="publishedGames" class="game-grid"></div>
-</div>
-</div>
+<div class="layout">
+<aside class="sidebar">
+  <div class="logo"><span class="logo-mark">V</span>VERIA</div>
+  <div class="nav-label">EXPLORE</div>
+  <nav class="nav">
+    <button class="active" data-page="Home"><span class="nav-icon">⌂</span><span class="nav-text">Home</span></button>
+    <button data-page="Discover"><span class="nav-icon">◈</span><span class="nav-text">Discover</span></button>
+    <button data-page="Library"><span class="nav-icon">▤</span><span class="nav-text">My Library</span></button>
+  </nav>
+  <div class="nav-label" style="margin-top:32px">YOUR SPACE</div>
+  <nav class="nav">
+    <button data-page="Create"><span class="nav-icon">＋</span><span class="nav-text">Create</span></button>
+    <button data-page="Servers"><span class="nav-icon">◎</span><span class="nav-text">Servers</span></button>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="profile-mini">
+      <div class="avatar">V</div>
+      <div><div class="profile-name">Player</div><div class="profile-sub">Veria account</div></div>
+    </div>
+  </div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div class="top-links">
+      <button data-page="Discover">Discover</button>
+      <button data-page="Library">Library</button>
+    </div>
+    <label class="search"><span>⌕</span><input id="search" placeholder="Search games..." autocomplete="off"></label>
+    <div class="top-right">
+      <button class="icon-btn" id="notice" title="Notifications">♧</button>
+      <button class="secondary" id="veria-signin">Sign In</button>
+      <button class="primary" id="veria-signup">Create Account</button>
+      <button class="secondary" id="veria-account" style="display:none"></button>
+      <button class="secondary" id="veria-signout" style="display:none">Sign Out</button>
+    </div>
+  </header>
+  <div class="content">
+    <div class="welcome">
+      <div><div class="eyebrow">YOUR NEXT ADVENTURE</div><h1>Welcome to Veria.</h1><div class="subtitle">Find your next favourite game.</div></div>
+    </div>
+    <section>
+      <div class="section-head"><div><h2>All Games</h2><p>Explore every game on Veria</p></div><button class="view-all" data-page="Discover">Browse games ↗</button></div>
+      <div class="games" id="games">
+        <article class="game-card" data-name="Neon Rush">
+          <div class="game-art art1"><div class="shape"></div><div class="shape small"></div><div class="game-symbol">⚡</div><div class="online">Trending</div></div>
+          <div class="game-title">Neon Rush</div><div class="game-meta"><span>Arcade · Action</span><span class="stars">★ 4.9</span></div>
+        </article>
+        <article class="game-card" data-name="Skybound">
+          <div class="game-art art2"><div class="shape circle"></div><div class="shape back"></div><div class="game-symbol">☁</div><div class="online">Adventure</div></div>
+          <div class="game-title">Skybound</div><div class="game-meta"><span>Adventure · Explore</span><span class="stars">★ 4.8</span></div>
+        </article>
+        <article class="game-card" data-name="Void Runner">
+          <div class="game-art art3"><div class="shape diamond"></div><div class="shape small"></div><div class="game-symbol">✧</div><div class="online">New</div></div>
+          <div class="game-title">Void Runner</div><div class="game-meta"><span>Platformer · Skill</span><span class="stars">★ 4.9</span></div>
+        </article>
+        <article class="game-card" data-name="Wildlands">
+          <div class="game-art art4"><div class="shape circle"></div><div class="shape back"></div><div class="game-symbol">❋</div><div class="online">Explore</div></div>
+          <div class="game-title">Wildlands</div><div class="game-meta"><span>World · Adventure</span><span class="stars">★ 4.7</span></div>
+        </article>
+        <article class="game-card" data-name="Golden Hour">
+          <div class="game-art art5"><div class="shape"></div><div class="game-symbol">☼</div></div>
+          <div class="game-title">Golden Hour</div><div class="game-meta"><span>Casual · Relaxing</span><span class="stars">★ 4.8</span></div>
+        </article>
+        <article class="game-card" data-name="Afterdark">
+          <div class="game-art art6"><div class="shape diamond"></div><div class="game-symbol">◉</div></div>
+          <div class="game-title">Afterdark</div><div class="game-meta"><span>Survival · Mystery</span><span class="stars">★ 4.7</span></div>
+        </article>
+        <article class="game-card" data-name="Dreamscape">
+          <div class="game-art art7"><div class="shape circle"></div><div class="game-symbol">✿</div></div>
+          <div class="game-title">Dreamscape</div><div class="game-meta"><span>Creative · World</span><span class="stars">★ 4.9</span></div>
+        </article>
+        <article class="game-card" data-name="Lost Temple">
+          <div class="game-art art8"><div class="shape"></div><div class="game-symbol">◇</div></div>
+          <div class="game-title">Lost Temple</div><div class="game-meta"><span>Puzzle · Explore</span><span class="stars">★ 4.6</span></div>
+        </article>
+      </div>
+      <div class="empty" id="empty">No games match that search. Try another name.</div>
+    </section>
+    <footer class="footer"><span>VERIA © 2026</span><span>Discover your next world.</span></footer>
+  </div>
 </main>
-
-<div id="createPage">
-<div class="create-inner">
-
-<div class="create-title">Create</div>
-<div class="create-subtitle">Your games</div>
-
-<div class="create-box">
-
-<label class="create-label">Game Name</label>
-
-<input id="createGameName" class="create-input"
-placeholder="Enter your game name..." maxlength="40">
-
-<label class="create-label">Description</label>
-
-<textarea id="createGameDescription" class="create-textarea"
-placeholder="Describe your game..." maxlength="300"></textarea>
-
-<div style="font-weight:800;margin-bottom:12px">
-Choose a Template
 </div>
-
-<div class="create-templates">
-
-<button id="templateEmpty" class="create-template selected"
-onclick="selectTemplate('Empty World')">
-<div class="create-template-name">Empty World</div>
-<div class="create-template-description">Start with a blank 3D world.</div>
-</button>
-
-<button id="templateObby" class="create-template"
-onclick="selectTemplate('Obby')">
-<div class="create-template-name">Obby</div>
-<div class="create-template-description">Start with an obstacle course.</div>
-</button>
-
-<button id="templateAdventure" class="create-template"
-onclick="selectTemplate('Adventure')">
-<div class="create-template-name">Adventure</div>
-<div class="create-template-description">Start with an adventure world.</div>
-</button>
-
-</div>
-
-<button class="primary-button" onclick="createGame()">Create Game</button>
-
-<div id="createMessage" class="modal-message"></div>
-
-</div>
-</div>
-</div>
-
-<div id="studioPage">
-
-<div class="studio-top">
-
-<div class="studio-logo">Veria Studio</div>
-
-<div id="studioGameName" class="studio-game-name">Untitled Game</div>
-
-<button class="studio-top-button" onclick="addPart()">+ Part</button>
-<button class="studio-top-button" onclick="openSaveModal()">Save</button>
-<button class="studio-top-button" onclick="openPublishModal()">Publish</button>
-
-</div>
-
-<div class="studio-layout">
-
-<div class="explorer">
-
-<div class="panel-title">Workspace</div>
-
-<div class="workspace-tree">
-
-<div class="tree-root">🌎 Workspace</div>
-
-<div class="tree-item" onclick="selectObject('baseplate')">
-<span class="tree-icon">▣</span>Baseplate
-</div>
-
-<div class="tree-item" onclick="selectObject('spawn')">
-<span class="tree-icon">📍</span>Spawn Location
-</div>
-
-<div id="partTree"></div>
-
-</div>
-
-<div class="explorer-bottom">
-<button class="add-part-button" onclick="addPart()">+ Add Part</button>
-</div>
-
-</div>
-
-<div class="viewport">
-
-<canvas id="studioCanvas"></canvas>
-
-<div class="controls-help">
-Left drag: rotate camera
-&nbsp;•&nbsp;
-Right drag: pan
-&nbsp;•&nbsp;
-Wheel: zoom
-&nbsp;•&nbsp;
-Click: select
-</div>
-
-<div id="viewportStatus" class="viewport-status">
-Workspace
-</div>
-
-<div class="studio-options">
-
-<button class="options-button" onclick="toggleOptions()">⚙ Options</button>
-
-<div id="optionsMenu" class="options-menu">
-
-<button onclick="openSaveModal()">💾 Save</button>
-<button onclick="openPublishModal()">📢 Publish</button>
-<button onclick="exitStudio()">🚪 Exit Studio</button>
-
-</div>
-</div>
-</div>
-
-<div class="properties">
-
-<div class="panel-title">Properties</div>
-
-<div id="propertiesContent" class="properties-content">
-<div class="empty-properties">Select an object.</div>
-</div>
-
-</div>
-</div>
-</div>
-
-<div id="saveModal" class="modal">
-<div class="modal-box">
-
-<button class="close-button" onclick="closeModal('saveModal')">×</button>
-
-<div class="modal-title">Save Game</div>
-
-<input id="saveName" class="modal-input"
-placeholder="Game name..." maxlength="40">
-
-<textarea id="saveDescription" class="modal-textarea"
-placeholder="Game description..." maxlength="300"></textarea>
-
-<input id="saveImage" class="image-upload" type="file" accept="image/*">
-
-<div class="modal-actions">
-<button class="secondary-button" onclick="closeModal('saveModal')">Cancel</button>
-<button class="primary-button" onclick="saveStudioGame()">Save</button>
-</div>
-
-<div id="saveMessage" class="modal-message"></div>
-
-</div>
-</div>
-
-<div id="publishModal" class="modal">
-<div class="modal-box">
-
-<button class="close-button" onclick="closeModal('publishModal')">×</button>
-
-<div class="modal-title">Publish Game</div>
-
-<input id="publishName" class="modal-input"
-placeholder="Game name..." maxlength="40">
-
-<textarea id="publishDescription" class="modal-textarea"
-placeholder="Game description..." maxlength="300"></textarea>
-
-<input id="publishImage" class="image-upload" type="file" accept="image/*">
-
-<div class="modal-actions">
-<button class="secondary-button" onclick="closeModal('publishModal')">Cancel</button>
-<button class="primary-button" onclick="publishStudioGame()">Publish</button>
-</div>
-
-<div id="publishMessage" class="modal-message"></div>
-
-</div>
-</div>
-
-<div id="loginModal" class="modal">
-<div class="modal-box">
-
-<button class="close-button" onclick="closeModal('loginModal')">×</button>
-
-<div class="modal-title">Login</div>
-
-<input id="loginUsername" class="modal-input" placeholder="Username">
-<input id="loginPassword" class="modal-input" type="password" placeholder="Password">
-
-<button class="primary-button" onclick="login()">Login</button>
-
-<div id="loginMessage" class="modal-message"></div>
-
-</div>
-</div>
-
-<div id="signupModal" class="modal">
-<div class="modal-box">
-
-<button class="close-button" onclick="closeModal('signupModal')">×</button>
-
-<div class="modal-title">Create Account</div>
-
-<input id="signupUsername" class="modal-input" placeholder="Username">
-<input id="signupPassword" class="modal-input" type="password" placeholder="Password">
-
-<button class="primary-button" onclick="signup()">Create Account</button>
-
-<div id="signupMessage" class="modal-message"></div>
-
-</div>
-</div>
-
-<script type="importmap">
-{
-    "imports":{
-        "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
-        "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.1/examples/jsm/"
-    }
-}
-</script>
+<div class="toast" id="toast"></div>
 <script>
+const toast = document.getElementById('toast');
+let toastTimer;
+function message(text) {
+  toast.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+const API = 'http://localhost:5000';
+const currentUser = () => {
+  try { return JSON.parse(localStorage.getItem('veriaUser') || 'null'); }
+  catch { return null; }
+};
+let publishedGames = [];
+let activePage = 'Home';
+
+const content = document.querySelector('.content');
+const originalContent = content.innerHTML;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[ch]));
+}
+function pageShell(title, subtitle, body) {
+  content.innerHTML = `
+    <section class="section-head" style="margin:12px 0 24px">
+      <div><h2>${escapeHTML(title)}</h2><p>${escapeHTML(subtitle)}</p></div>
+      <button class="view-all" data-page="Home">← Home</button>
+    </section>${body}
+    <footer class="footer"><span>VERIA © 2026</span><span>Discover your next world.</span></footer>`;
+  bindNavigation();
+}
+function gameCards(games) {
+  if (!games.length) return '<p>No published games yet. Visit Create to publish your first game.</p>';
+  return `<div class="games">${games.map(g => `
+    <article class="game-card" style="cursor:default">
+      <div class="game-art art${(String(g.id).length % 8) + 1}">
+        <div class="shape circle"></div>
+        <div class="game-symbol">◇</div>
+        <div class="online">Published</div>
+      </div>
+      <div class="game-title">${escapeHTML(g.name || 'Untitled Game')}</div>
+      <div class="game-meta"><span>By ${escapeHTML(g.creator || 'Unknown')}</span></div>
+      <p style="font-size:12px;color:#a9aec2;margin:8px 0">${escapeHTML(g.description || 'A game made on Veria.')}</p>
+      <button class="primary" data-join="${escapeHTML(g.id)}" style="margin-top:8px">Join Session</button>
+    </article>`).join('')}</div>`;
+}
+async function loadGames() {
+  try {
+    const res = await fetch(API + '/games');
+    if (!res.ok) throw new Error('Could not load games.');
+    const data = await res.json();
+    publishedGames = Array.isArray(data) ? data : [];
+    return true;
+  } catch (e) {
+    message('Cannot reach the game server. Make sure the backend is running on port 5000.');
+    return false;
+  }
+}
+
+function renderStudioEditor(user) {
+  pageShell('Veria Studio', 'Build, test, and publish a 3D world', `
+    <button class="view-all" id="vs-back-dashboard" style="margin-bottom:16px">← My Games</button>
+    <div class="vs-shell" id="veria-studio-v1">
+      <div class="vs-toolbar">
+        <button class="primary" id="vs-add-block">＋ Block</button>
+        <button class="vs-btn" id="vs-add-platform">＋ Platform</button>
+        <button class="vs-btn" id="vs-add-wall">＋ Wall</button>
+        <span class="vs-spacer"></span>
+        <button class="vs-btn chosen" id="vs-move">Move <kbd>W</kbd></button>
+        <button class="vs-btn" id="vs-rotate">Rotate <kbd>E</kbd></button>
+        <button class="vs-btn" id="vs-scale">Scale <kbd>R</kbd></button>
+        <button class="vs-play" id="vs-play">▶ Play Test</button>
+        <button class="vs-btn" id="vs-stop" disabled>■ Stop</button>
+      </div>
+      <div class="vs-layout">
+        <div class="vs-viewport-wrap">
+          <div id="vs-viewport"></div>
+          <div class="vs-label">3D WORKSPACE · DRAG TO ORBIT · SCROLL TO ZOOM</div>
+          <div id="vs-hud" class="vs-hud" hidden>WASD / ARROWS · SPACE TO JUMP</div>
+        </div>
+        <aside class="vs-inspector">
+          <h3>EXPLORER</h3><div id="vs-list"></div>
+          <h3>PROPERTIES</h3><div id="vs-properties"></div>
+          <hr>
+          <label>Game name<input id="vs-game-name" maxlength="60" placeholder="My awesome game"></label>
+          <label>Description<textarea id="vs-game-description" maxlength="300" placeholder="Describe your world"></textarea></label>
+          <button class="primary" id="vs-publish">Publish World</button>
+          <div id="vs-status" class="vs-status" role="status"></div>
+        </aside>
+      </div>
+      <p class="vs-note">Prototype: local play testing and saved world parts. Live multiplayer is not included yet.</p>
+    </div>`);
+
+  document.getElementById('vs-back-dashboard').onclick = () => {
+    window.showVeriaPage('Create');
+  };
+
+  window.setTimeout(() => {
+    if (window.startVeriaStudio) {
+      window.startVeriaStudio({api:API, creator:user.username});
+    } else {
+      const status = document.getElementById('vs-status');
+      if (status) status.textContent =
+        'Studio engine is loading. If this remains, refresh the page.';
+    }
+  }, 0);
+}
+
+async function showPage(page) {
+  activePage = page;
+  document.querySelectorAll('.nav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.page === page));
+  if (page === 'Home') {
+    content.innerHTML = originalContent;
+    bindNavigation();
+    bindSearch();
+    renderPublishedOnHome();
+    return;
+  }
+  if (page === 'Discover') {
+    await loadGames();
+    pageShell('Discover', 'Real games published by the Veria community', `
+      <label class="search" style="display:flex;margin-bottom:20px">
+        <span>⌕</span><input id="published-search" placeholder="Search published games..." autocomplete="off">
+      </label><div id="published-list">${gameCards(publishedGames)}</div>`);
+    document.getElementById('published-search').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase().trim();
+      document.getElementById('published-list').innerHTML =
+        gameCards(publishedGames.filter(g => (g.name || '').toLowerCase().includes(q)));
+      bindJoinButtons();
+    });
+    bindJoinButtons();
+  } else if (page === 'Library') {
+    await loadGames();
+    const user = currentUser();
+    if (!user) {
+      pageShell('My Library', 'Sign in to see games you published', `
+        <p>Your published games will appear here.</p>
+        <button class="primary" id="library-signin">Sign In</button>`);
+      document.getElementById('library-signin').onclick =
+        () => document.getElementById('veria-signin').click();
+    } else {
+      const own = publishedGames.filter(g =>
+        (g.creator || '').toLowerCase() === user.username.toLowerCase());
+      pageShell('My Library', 'Games published by your account', gameCards(own));
+      bindJoinButtons();
+    }
+  } else if (page === 'Create') {
+    const user = currentUser();
+    if (!user) {
+      pageShell('My Games', 'Sign in to create and see your games', `
+        <p>Sign in to build, publish, and play your worlds.</p>
+        <button class="primary" id="create-signin">Sign In</button>`);
+      document.getElementById('create-signin').onclick =
+        () => document.getElementById('veria-signin').click();
+    } else {
+      await loadGames();
+      const own = publishedGames.filter(g =>
+        (g.creator || '').toLowerCase() === user.username.toLowerCase());
+
+      pageShell('My Games', 'Your published worlds, all in one place', `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+          <p style="color:#a9aec2;margin:0">Create a new world or open one of your published games.</p>
+          <button class="primary" id="vs-new-game">＋ New Game</button>
+        </div>
+        <div id="vs-my-games">
+          ${own.length ? gameCards(own) : `
+            <div style="padding:32px;border:1px dashed #41465c;border-radius:16px;text-align:center">
+              <h3 style="margin-top:0">Your first world starts here</h3>
+              <p style="color:#a9aec2">Press New Game to open the 3D editor.</p>
+            </div>`}
+        </div>`);
+
+      document.getElementById('vs-new-game').onclick =
+        () => renderStudioEditor(user);
+      bindJoinButtons();
+    }
+  } else if (page === 'Servers') {
+    await loadGames();
+    pageShell('Servers', 'Join a published game session', `
+      <p style="color:#a9aec2;margin-bottom:20px">Joining registers your account in the server system. Live multiplayer gameplay depends on a game runtime that is not yet connected.</p>
+      <div id="server-list">${gameCards(publishedGames)}</div>`);
+    bindJoinButtons();
+  }
+}
+window.showVeriaPage = showPage;
+function bindJoinButtons() {
+  document.querySelectorAll('[data-join]').forEach(btn => {
+    btn.onclick = async () => {
+      const user = currentUser();
+      if (!user || !user.username) {
+        message('Please sign in before joining a session.');
+        document.getElementById('veria-signin').click();
+        return;
+      }
+      btn.disabled = true;
+      try {
+        const res = await fetch(API + '/games/join', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({gameId:btn.dataset.join, username:user.username})
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Could not join session.');
+        if (window.playVeriaGame) window.playVeriaGame(data.game);
+        else message('Game engine is still loading. Try again.');
+      } catch (e) {
+        message(e.message === 'Failed to fetch' ? 'Cannot reach the backend.' : e.message);
+      } finally { btn.disabled = false; }
+    };
+  });
+}
+function bindNavigation() {
+  document.querySelectorAll('[data-page]').forEach(btn => {
+    btn.onclick = () => showPage(btn.dataset.page);
+  });
+}
+function bindSearch() {
+  const search = document.getElementById('search');
+  if (!search) return;
+  search.oninput = e => {
+    const q = e.target.value.toLowerCase().trim();
+    let count = 0;
+    document.querySelectorAll('.game-card[data-name]').forEach(card => {
+      const show = card.dataset.name.toLowerCase().includes(q);
+      card.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    const empty = document.getElementById('empty');
+    if (empty) empty.style.display = count ? 'none' : 'block';
+  };
+  document.querySelectorAll('.game-card[data-name]').forEach(card => {
+    card.onclick = () => message(card.dataset.name + ' is a sample showcase card, not a playable published game yet.');
+  });
+}
+async function renderPublishedOnHome() {
+  try {
+    const res = await fetch(API + '/games');
+    if (!res.ok) return;
+    const games = await res.json();
+    if (!Array.isArray(games) || !games.length) return;
+    const section = document.createElement('section');
+    section.innerHTML = `<div class="section-head"><div><h2>Community Games</h2><p>Published by Veria creators</p></div><button class="view-all" data-page="Discover">Browse games ↗</button></div>${gameCards(games)}`;
+    const footer = content.querySelector('.footer');
+    content.insertBefore(section, footer);
+    bindNavigation();
+    bindJoinButtons();
+  } catch (_) {}
+}
+document.getElementById('notice').onclick = () => message('You have no new notifications.');
+bindNavigation();
+bindSearch();
+renderPublishedOnHome();
 </script>
 
-<script type="module">
-
-import * as THREE from "three";
-import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-import {TransformControls} from "three/addons/controls/TransformControls.js";
-
-const API="https://veria-server-sl4e.onrender.com";
-
-let currentUsername=localStorage.getItem("veriaUsername")||"";
-let selectedTemplate="Empty World";
-let currentGame=null;
-let selectedObjectId=null;
-
-let scene;
-let camera;
-let renderer;
-let controls;
-let transformControls;
-let raycaster;
-let mouse;
-
-const objects={};
-let partNumber=0;
-let transformMode="translate";
-
-
-window.openModal=function(id){
-    document.getElementById(id).classList.add("open");
-};
-
-window.closeModal=function(id){
-    document.getElementById(id).classList.remove("open");
-};
-
-window.loadPublishedGamesOnStartup=function(){
-    setTimeout(()=>{
-        if(typeof loadPublishedGames === "function"){
-            loadPublishedGames();
-        }
-    },300);
-};
-
-window.goHome=function(){
-    document.getElementById("homePage").style.display="block";
-    document.getElementById("createPage").style.display="none";
-    window.scrollTo(0,0);
-
-    loadPublishedGames();
-};
-
-
-window.showGames=function(){
-    document.getElementById("homePage").style.display="block";
-    document.getElementById("createPage").style.display="none";
-
-    const sections=document.querySelectorAll("#homePage .section");
-
-    if(sections[1]){
-        sections[1].scrollIntoView({behavior:"smooth"});
-    }
-};
-
-window.showCreate=function(){
-    document.getElementById("homePage").style.display="none";
-    document.getElementById("createPage").style.display="block";
-
-    renderCreatedGames();
-    window.scrollTo(0,0);
-};
-
-window.openLogin=function(){
-    openModal("loginModal");
-};
-
-window.openSignup=function(){
-    openModal("signupModal");
-};
-
-function updateAccountUI(){
-
-    const loggedIn=!!currentUsername;
-
-    document.getElementById("loginButton").style.display=
-        loggedIn?"none":"";
-
-    document.getElementById("signupButton").style.display=
-        loggedIn?"none":"";
-
-    document.getElementById("profileButton").style.display=
-        loggedIn?"":"none";
-
-    document.getElementById("signoutButton").style.display=
-        loggedIn?"":"none";
-}
-
-window.signOut=function(){
-
-    currentUsername="";
-    localStorage.removeItem("veriaUsername");
-
-    updateAccountUI();
-    goHome();
-};
-
-window.login=async function(){
-
-    const username=document.getElementById("loginUsername").value.trim();
-    const password=document.getElementById("loginPassword").value;
-    const message=document.getElementById("loginMessage");
-
-    message.textContent="";
-
-    if(!username||!password){
-        message.textContent="Enter your username and password.";
-        return;
-    }
-
-    try{
-
-        const response=await fetch(API+"/login",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({username,password})
-        });
-
-        const data=await response.json();
-
-        if(!response.ok){
-            message.textContent=data.error||"Login failed.";
-            return;
-        }
-
-        currentUsername=
-            data.username||
-            (data.user&&data.user.username)||
-            username;
-
-        localStorage.setItem("veriaUsername",currentUsername);
-
-        closeModal("loginModal");
-        updateAccountUI();
-
-    }catch(error){
-
-        console.error(error);
-        message.textContent="Could not connect to Veria server.";
-    }
-};
-
-window.signup=async function(){
-
-    const username=document.getElementById("signupUsername").value.trim();
-    const password=document.getElementById("signupPassword").value;
-    const message=document.getElementById("signupMessage");
-
-    message.textContent="";
-
-    if(!username||!password){
-        message.textContent="Enter a username and password.";
-        return;
-    }
-
-    try{
-
-        const response=await fetch(API+"/signup",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({username,password})
-        });
-
-        const data=await response.json();
-
-        if(!response.ok){
-            message.textContent=data.error||"Could not create account.";
-            return;
-        }
-
-        message.textContent="Account created! You can now log in.";
-
-    }catch(error){
-
-        console.error(error);
-        message.textContent="Could not connect to Veria server.";
-    }
-};
-
-window.openProfile=function(){
-
-    if(!currentUsername){
-        openLogin();
-        return;
-    }
-
-    alert("Logged in as: "+currentUsername);
-};
-
-window.selectTemplate=function(template){
-
-    selectedTemplate=template;
-
-    document.querySelectorAll(".create-template")
-        .forEach(button=>button.classList.remove("selected"));
-
-    if(template==="Empty World")
-        document.getElementById("templateEmpty").classList.add("selected");
-
-    if(template==="Obby")
-        document.getElementById("templateObby").classList.add("selected");
-
-    if(template==="Adventure")
-        document.getElementById("templateAdventure").classList.add("selected");
-};
-
-window.createGame=function(){
-
-    const name=document.getElementById("createGameName").value.trim();
-    const description=document.getElementById("createGameDescription").value.trim();
-    const message=document.getElementById("createMessage");
-
-    message.textContent="";
-
-    if(!currentUsername){
-        message.textContent="You need to log in before creating a game.";
-        return;
-    }
-
-    if(!name){
-        message.textContent="Enter a game name.";
-        return;
-    }
-
-    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
-
-    const game={
-        id:"game_"+Date.now(),
-        name,
-        description,
-        creator:currentUsername,
-        template:selectedTemplate,
-        published:false,
-        parts:[],
-        createdAt:Date.now()
-    };
-
-    games.push(game);
-
-    localStorage.setItem("veriaGames",JSON.stringify(games));
-
-    message.textContent="Opening Veria Studio...";
-
-    setTimeout(()=>{
-
-        document.getElementById("createGameName").value="";
-        document.getElementById("createGameDescription").value="";
-
-        openStudio(game);
-
-    },300);
-};
-
-function renderCreatedGames(){
-
-    const box=document.querySelector(".create-box");
-    if(!box)return;
-
-    let old=document.getElementById("myGames");
-    if(old)old.remove();
-
-    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
-
-    const mine=games.filter(game=>game.creator===currentUsername);
-
-    if(!currentUsername||mine.length===0)return;
-
-    const section=document.createElement("div");
-
-    section.id="myGames";
-    section.style.marginTop="30px";
-
-    section.innerHTML=`
-        <div style="
-            font-size:20px;
-            font-weight:800;
-            margin-bottom:15px;
-        ">Your Games</div>
-
-        <div style="
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
-            gap:15px;
-        ">
-            ${mine.map(game=>`
-                <div style="
-                    background:#202533;
-                    border:1px solid #343c50;
-                    border-radius:10px;
-                    padding:15px;
-                ">
-                    <div style="
-                        height:100px;
-                        border-radius:7px;
-                        background:linear-gradient(135deg,#293b65,#1b2231);
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        font-size:35px;
-                        margin-bottom:10px;
-                    ">
-                        ${game.published?"🎮":"🛠️"}
-                    </div>
-
-                    <div style="
-                        font-weight:800;
-                        margin-bottom:5px;
-                    ">
-                        ${escapeHtml(game.name)}
-                    </div>
-
-                    <div style="
-                        color:#9fa8bb;
-                        font-size:12px;
-                        margin-bottom:10px;
-                    ">
-                        ${game.published?"Published":"Not published"}
-                    </div>
-
-                    <button
-                        style="
-                        width:100%;
-                        border:0;
-                        padding:9px;
-                        border-radius:7px;
-                        background:#5c8df6;
-                        color:white;
-                        font-weight:800;
-                        "
-                        onclick="openExistingGame('${game.id}')"
-                    >Edit</button>
-                </div>
-            `).join("")}
-        </div>
-    `;
-
-    box.appendChild(section);
-}
-
-window.openExistingGame=function(id){
-
-    const games=JSON.parse(localStorage.getItem("veriaGames")||"[]");
-    const game=games.find(g=>g.id===id);
-
-    if(!game)return;
-
-    openStudio(game);
-};
-
-function openStudio(game){
-
-    currentGame=game;
-
-    document.getElementById("homePage").style.display="none";
-    document.getElementById("createPage").style.display="none";
-    document.getElementById("mainNavbar").style.display="none";
-    document.getElementById("studioPage").style.display="block";
-
-    document.getElementById("studioGameName").textContent=game.name;
-
-    selectedObjectId=null;
-
-    startStudio();
-    loadWorld(game);
-}
-
-function startStudio(){
-
-    if(renderer){
-        resizeStudio();
-        return;
-    }
-
-    const canvas=document.getElementById("studioCanvas");
-
-    scene=new THREE.Scene();
-    scene.background=new THREE.Color("#79bde7");
-
-    camera=new THREE.PerspectiveCamera(50,1,.1,1000);
-    camera.position.set(18,15,20);
-
-    renderer=new THREE.WebGLRenderer({
-        canvas,
-        antialias:true
-    });
-
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.shadowMap.enabled=true;
-
-    controls=new OrbitControls(camera,renderer.domElement);
-
-    controls.enableDamping=true;
-    controls.dampingFactor=.08;
-    controls.enablePan=true;
-    controls.enableZoom=true;
-    controls.enableRotate=true;
-    controls.minDistance=5;
-    controls.maxDistance=80;
-    controls.minPolarAngle=.25;
-    controls.maxPolarAngle=1.48;
-    controls.target.set(0,0,0);
-    controls.update();
-
-    controls.mouseButtons.LEFT=THREE.MOUSE.ROTATE;
-    controls.mouseButtons.RIGHT=THREE.MOUSE.PAN;
-    controls.mouseButtons.MIDDLE=THREE.MOUSE.DOLLY;
-
-    /*
-       TRANSFORM CONTROLS
-       W = Move
-       E = Rotate
-       R = Scale
-    */
-
-    transformControls=new TransformControls(
-        camera,
-        renderer.domElement
-    );
-
-    transformControls.setMode("translate");
-    transformControls.setSize(.8);
-
-    transformControls.addEventListener("dragging-changed",event=>{
-        controls.enabled=!event.value;
-    });
-
-    transformControls.addEventListener("objectChange",()=>{
-        updateSelectedPartFromMesh();
-    });
-
-    scene.add(transformControls);
-
-    const hemi=new THREE.HemisphereLight(
-        0xffffff,
-        0x607080,
-        2.2
-    );
-
-    scene.add(hemi);
-
-    const sun=new THREE.DirectionalLight(
-        0xffffff,
-        2.4
-    );
-
-    sun.position.set(12,25,10);
-    sun.castShadow=true;
-
-    scene.add(sun);
-
-    const grid=new THREE.GridHelper(
-        30,
-        30,
-        0x60758b,
-        0x8ca8ba
-    );
-
-    grid.position.y=.015;
-    scene.add(grid);
-
-    raycaster=new THREE.Raycaster();
-    mouse=new THREE.Vector2();
-
-    canvas.addEventListener(
-        "pointerdown",
-        onViewportClick
-    );
-
-    window.addEventListener(
-        "resize",
-        resizeStudio
-    );
-
-    animate();
-}
-
-function resizeStudio(){
-
-    if(!renderer)return;
-
-    const canvas=document.getElementById("studioCanvas");
-
-    const width=canvas.clientWidth;
-    const height=canvas.clientHeight;
-
-    if(width<=0||height<=0)return;
-
-    renderer.setSize(width,height,false);
-
-    camera.aspect=width/height;
-    camera.updateProjectionMatrix();
-}
-
-function loadWorld(game){
-
-    clearWorld();
-
-    const baseGeometry=new THREE.BoxGeometry(30,.5,30);
-
-    const baseMaterial=new THREE.MeshStandardMaterial({
-        color:0x707070,
-        roughness:.85
-    });
-
-    const base=new THREE.Mesh(
-        baseGeometry,
-        baseMaterial
-    );
-
-    base.position.set(0,-.25,0);
-    base.receiveShadow=true;
-
-    base.userData={
-        id:"baseplate",
-        type:"baseplate"
-    };
-
-    scene.add(base);
-    objects.baseplate=base;
-
-    createSpawn();
-
-    if(Array.isArray(game.parts)){
-        game.parts.forEach(savedPart=>{
-            createPartFromData(savedPart);
-        });
-    }
-
-    updateTree();
-    showProperties(null);
-
-    camera.position.set(18,15,20);
-
-    controls.target.set(0,0,0);
-    controls.update();
-}
-
-function clearWorld(){
-
-    if(transformControls){
-        transformControls.detach();
-    }
-
-    Object.keys(objects).forEach(key=>{
-
-        const object=objects[key];
-
-        if(object&&object.parent){
-
-            object.parent.remove(object);
-
-            if(object.geometry)
-                object.geometry.dispose();
-
-            if(object.material){
-
-                if(Array.isArray(object.material)){
-                    object.material.forEach(m=>m.dispose());
-                }else{
-                    object.material.dispose();
-                }
-            }
-        }
-    });
-
-    Object.keys(objects).forEach(
-        key=>delete objects[key]
-    );
-
-    scene.children
-        .filter(obj=>obj.isMesh)
-        .forEach(obj=>{
-            scene.remove(obj);
-        });
-}
-
-function createSpawn(){
-
-    const group=new THREE.Group();
-
-    group.position.set(0,.15,0);
-
-    group.userData={
-        id:"spawn",
-        type:"spawn"
-    };
-
-    const pad=new THREE.Mesh(
-        new THREE.CylinderGeometry(1.6,1.6,.18,32),
-        new THREE.MeshStandardMaterial({
-            color:0x36d56f
-        })
-    );
-
-    group.add(pad);
-
-    const arrow=new THREE.Mesh(
-        new THREE.ConeGeometry(.7,1.7,4),
-        new THREE.MeshStandardMaterial({
-            color:0xffffff
-        })
-    );
-
-    arrow.position.y=1;
-    arrow.rotation.y=Math.PI/4;
-
-    group.add(arrow);
-
-    scene.add(group);
-    objects.spawn=group;
-}
-
-window.addPart=function(){
-
-    if(!currentGame)return;
-
-    partNumber++;
-
-    const part={
-        id:"part_"+Date.now()+"_"+partNumber,
-        name:"Part"+partNumber,
-        color:"#ff7070",
-
-        position:{
-            x:0,
-            y:1,
-            z:0
-        },
-
-        size:{
-            x:2,
-            y:2,
-            z:2
-        },
-
-        rotation:{
-            x:0,
-            y:0,
-            z:0
-        }
-    };
-
-    currentGame.parts=
-        Array.isArray(currentGame.parts)
-        ?currentGame.parts
-        :[];
-
-    currentGame.parts.push(part);
-
-    createPartFromData(part);
-
-    selectedObjectId=part.id;
-
-    updateTree();
-    showProperties(part);
-    attachTransform(part.id);
-
-    saveCurrentGameSilently();
-};
-
-function createPartFromData(data){
-
-    if(!data.rotation){
-        data.rotation={
-            x:0,
-            y:0,
-            z:0
-        };
-    }
-
-    const geometry=new THREE.BoxGeometry(
-        2,2,2
-    );
-
-    const material=new THREE.MeshStandardMaterial({
-        color:data.color||"#ff7070",
-        roughness:.65
-    });
-
-    const mesh=new THREE.Mesh(
-        geometry,
-        material
-    );
-
-    mesh.position.set(
-        Number(data.position.x)||0,
-        Number(data.position.y)||1,
-        Number(data.position.z)||0
-    );
-
-    mesh.scale.set(
-        (Number(data.size.x)||2)/2,
-        (Number(data.size.y)||2)/2,
-        (Number(data.size.z)||2)/2
-    );
-
-    mesh.rotation.set(
-        Number(data.rotation.x)||0,
-        Number(data.rotation.y)||0,
-        Number(data.rotation.z)||0
-    );
-
-    mesh.castShadow=true;
-    mesh.receiveShadow=true;
-
-    mesh.userData={
-        id:data.id,
-        type:"part"
-    };
-
-    scene.add(mesh);
-
-    objects[data.id]=mesh;
-}
-
-window.selectObject=function(id){
-
-    selectedObjectId=id;
-
-    if(id==="baseplate"){
-
-        detachTransform();
-
-        showProperties({
-            id:"baseplate",
-            name:"Baseplate",
-            type:"baseplate"
-        });
-
-        updateTree();
-        return;
-    }
-
-    if(id==="spawn"){
-
-        detachTransform();
-
-        showProperties({
-            id:"spawn",
-            name:"Spawn Location",
-            type:"spawn"
-        });
-
-        updateTree();
-        return;
-    }
-
-    const part=currentGame.parts.find(
-        p=>p.id===id
-    );
-
-    if(part){
-
-        showProperties(part);
-        attachTransform(id);
-        updateTree();
-    }
-};
-
-function attachTransform(id){
-
-    if(!transformControls)return;
-
-    const mesh=objects[id];
-
-    if(mesh){
-        transformControls.attach(mesh);
-    }
-}
-
-function detachTransform(){
-
-    if(transformControls){
-        transformControls.detach();
-    }
-}
-
-function updateSelectedPartFromMesh(){
-
-    if(!currentGame||!selectedObjectId)return;
-
-    const part=currentGame.parts.find(
-        p=>p.id===selectedObjectId
-    );
-
-    const mesh=objects[selectedObjectId];
-
-    if(!part||!mesh)return;
-
-    part.position.x=Number(mesh.position.x.toFixed(3));
-    part.position.y=Number(mesh.position.y.toFixed(3));
-    part.position.z=Number(mesh.position.z.toFixed(3));
-
-    part.size.x=Number((mesh.scale.x*2).toFixed(3));
-    part.size.y=Number((mesh.scale.y*2).toFixed(3));
-    part.size.z=Number((mesh.scale.z*2).toFixed(3));
-
-    part.rotation.x=Number(mesh.rotation.x.toFixed(3));
-    part.rotation.y=Number(mesh.rotation.y.toFixed(3));
-    part.rotation.z=Number(mesh.rotation.z.toFixed(3));
-
-    updatePropertyInputs(part);
-    saveCurrentGameSilently();
-}
-
-function updatePropertyInputs(data){
-
-    const ids=[
-        ["posX",data.position.x],
-        ["posY",data.position.y],
-        ["posZ",data.position.z],
-        ["sizeX",data.size.x],
-        ["sizeY",data.size.y],
-        ["sizeZ",data.size.z]
-    ];
-
-    ids.forEach(([id,value])=>{
-        const el=document.getElementById(id);
-        if(el&&!el.matches(":focus")){
-            el.value=value;
-        }
-    });
-}
-
-function onViewportClick(event){
-
-    if(event.button!==0)return;
-
-    if(transformControls&&transformControls.dragging)return;
-
-    const rect=renderer.domElement.getBoundingClientRect();
-
-    mouse.x=((event.clientX-rect.left)/rect.width)*2-1;
-    mouse.y=-((event.clientY-rect.top)/rect.height)*2+1;
-
-    raycaster.setFromCamera(mouse,camera);
-
-    const selectable=Object.values(objects).filter(obj=>obj);
-
-    const hits=raycaster.intersectObjects(
-        selectable,
-        true
-    );
-
-    if(hits.length===0)return;
-
-    let selected=hits[0].object;
-
-    while(
-        selected.parent&&
-        !selected.userData.id
-    ){
-        selected=selected.parent;
-    }
-
-    if(selected.userData.id){
-        selectObject(selected.userData.id);
-    }
-}
-
-function showProperties(data){
-
-    const panel=document.getElementById("propertiesContent");
-
-    if(!data){
-
-        panel.innerHTML=`
-            <div class="empty-properties">
-                Select an object.
-            </div>
-        `;
-
-        return;
-    }
-
-    if(data.type==="baseplate"){
-
-        panel.innerHTML=`
-            <div class="property-section">
-                <div class="property-heading">BASEPLATE</div>
-
-                <div class="property-label">Name</div>
-
-                <input
-                    class="property-input"
-                    value="Baseplate"
-                    disabled
-                >
-
-                <div style="
-                    color:#8f9bb0;
-                    font-size:12px;
-                    line-height:1.5;
-                ">
-                    The main floor of your game.
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
-    if(data.type==="spawn"){
-
-        panel.innerHTML=`
-            <div class="property-section">
-
-                <div class="property-heading">
-                    SPAWN LOCATION
-                </div>
-
-                <div style="
-                    color:#8f9bb0;
-                    font-size:12px;
-                    line-height:1.5;
-                ">
-                    Players will start here
-                    when they enter your game.
-                </div>
-
-                <div style="
-                    margin-top:15px;
-                    padding:10px;
-                    background:#202533;
-                    border-radius:7px;
-                    font-size:12px;
-                ">
-                    Position: 0, 0.15, 0
-                </div>
-
-            </div>
-        `;
-
-        return;
-    }
-
-    if(!data.rotation){
-        data.rotation={x:0,y:0,z:0};
-    }
-
-    panel.innerHTML=`
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                TRANSFORM
-            </div>
-
-            <div class="transform-tools">
-
-                <button
-                    id="toolMove"
-                    class="transform-tool active"
-                    onclick="setTransformMode('translate')">
-                    Move
-                </button>
-
-                <button
-                    id="toolRotate"
-                    class="transform-tool"
-                    onclick="setTransformMode('rotate')">
-                    Rotate
-                </button>
-
-                <button
-                    id="toolScale"
-                    class="transform-tool"
-                    onclick="setTransformMode('scale')">
-                    Scale
-                </button>
-
-            </div>
-
-            <div style="
-                color:#7f899c;
-                font-size:11px;
-                line-height:1.5;
-            ">
-                W = Move &nbsp; E = Rotate &nbsp; R = Scale
-            </div>
-
-        </div>
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                PART
-            </div>
-
-            <div class="property-label">
-                Name
-            </div>
-
-            <input
-                id="propName"
-                class="property-input"
-                value="${escapeHtml(data.name)}"
-            >
-
-        </div>
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                APPEARANCE
-            </div>
-
-            <div class="property-label">
-                Color
-            </div>
-
-            <div class="color-row">
-
-                <input
-                    id="partColor"
-                    type="color"
-                    value="${data.color}"
-                >
-
-                <span id="colorText">
-                    ${data.color}
-                </span>
-
-            </div>
-
-        </div>
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                POSITION
-            </div>
-
-            <div class="property-row">
-
-                <div>
-                    <div class="property-label">X</div>
-                    <input
-                        id="posX"
-                        class="property-input"
-                        type="number"
-                        step=".1"
-                        value="${data.position.x}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Y</div>
-                    <input
-                        id="posY"
-                        class="property-input"
-                        type="number"
-                        step=".1"
-                        value="${data.position.y}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Z</div>
-                    <input
-                        id="posZ"
-                        class="property-input"
-                        type="number"
-                        step=".1"
-                        value="${data.position.z}"
-                    >
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                SIZE
-            </div>
-
-            <div class="property-row">
-
-                <div>
-                    <div class="property-label">X</div>
-                    <input
-                        id="sizeX"
-                        class="property-input"
-                        type="number"
-                        min=".1"
-                        step=".1"
-                        value="${data.size.x}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Y</div>
-                    <input
-                        id="sizeY"
-                        class="property-input"
-                        type="number"
-                        min=".1"
-                        step=".1"
-                        value="${data.size.y}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Z</div>
-                    <input
-                        id="sizeZ"
-                        class="property-input"
-                        type="number"
-                        min=".1"
-                        step=".1"
-                        value="${data.size.z}"
-                    >
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="property-section">
-
-            <div class="property-heading">
-                ROTATION
-            </div>
-
-            <div class="property-row">
-
-                <div>
-                    <div class="property-label">X</div>
-                    <input
-                        id="rotX"
-                        class="property-input"
-                        type="number"
-                        step="1"
-                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.x))}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Y</div>
-                    <input
-                        id="rotY"
-                        class="property-input"
-                        type="number"
-                        step="1"
-                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.y))}"
-                    >
-                </div>
-
-                <div>
-                    <div class="property-label">Z</div>
-                    <input
-                        id="rotZ"
-                        class="property-input"
-                        type="number"
-                        step="1"
-                        value="${Math.round(THREE.MathUtils.radToDeg(data.rotation.z))}"
-                    >
-                </div>
-
-            </div>
-
-        </div>
-
-        <button
-            class="delete-button"
-            onclick="deleteSelectedPart()">
-            Delete Part
-        </button>
-    `;
-
-    document.getElementById("propName")
-        .addEventListener("input",e=>{
-            data.name=e.target.value;
-            updateTree();
-            saveCurrentGameSilently();
-        });
-
-    document.getElementById("partColor")
-        .addEventListener("input",e=>{
-
-            data.color=e.target.value;
-
-            document.getElementById("colorText")
-                .textContent=e.target.value;
-
-            const mesh=objects[data.id];
-
-            if(mesh){
-                mesh.material.color.set(e.target.value);
-            }
-
-            saveCurrentGameSilently();
-        });
-
-    ["X","Y","Z"].forEach(axis=>{
-
-        document.getElementById("pos"+axis)
-            .addEventListener("input",e=>{
-
-                const key=axis.toLowerCase();
-
-                data.position[key]=
-                    Number(e.target.value)||0;
-
-                const mesh=objects[data.id];
-
-                if(mesh){
-                    mesh.position[key]=
-                        data.position[key];
-                }
-
-                saveCurrentGameSilently();
-            });
-
-        document.getElementById("size"+axis)
-            .addEventListener("input",e=>{
-
-                const key=axis.toLowerCase();
-
-                data.size[key]=Math.max(
-                    .1,
-                    Number(e.target.value)||1
-                );
-
-                const mesh=objects[data.id];
-
-                if(mesh){
-                    mesh.scale[key]=
-                        data.size[key]/2;
-                }
-
-                saveCurrentGameSilently();
-            });
-
-        document.getElementById("rot"+axis)
-            .addEventListener("input",e=>{
-
-                const key=axis.toLowerCase();
-
-                const degrees=
-                    Number(e.target.value)||0;
-
-                data.rotation[key]=
-                    THREE.MathUtils.degToRad(degrees);
-
-                const mesh=objects[data.id];
-
-                if(mesh){
-                    mesh.rotation[key]=
-                        data.rotation[key];
-                }
-
-                saveCurrentGameSilently();
-            });
-    });
-}
-
-window.setTransformMode=function(mode){
-
-    transformMode=mode;
-
-    if(transformControls){
-        transformControls.setMode(mode);
-    }
-
-    ["Move","Rotate","Scale"].forEach(name=>{
-
-        const button=
-            document.getElementById(
-                "tool"+name
-            );
-
-        if(button){
-            button.classList.toggle(
-                "active",
-                (
-                    name==="Move"&&mode==="translate"
-                )||
-                (
-                    name==="Rotate"&&mode==="rotate"
-                )||
-                (
-                    name==="Scale"&&mode==="scale"
-                )
-            );
-        }
-    });
-};
-
-window.deleteSelectedPart=function(){
-
-    if(!selectedObjectId)return;
-
-    if(
-        selectedObjectId==="baseplate"||
-        selectedObjectId==="spawn"
-    ){
-        return;
-    }
-
-    detachTransform();
-
-    const mesh=objects[selectedObjectId];
-
-    if(mesh){
-
-        scene.remove(mesh);
-
-        if(mesh.geometry)
-            mesh.geometry.dispose();
-
-        if(mesh.material)
-            mesh.material.dispose();
-
-        delete objects[selectedObjectId];
-    }
-
-    currentGame.parts=
-        currentGame.parts.filter(
-            p=>p.id!==selectedObjectId
-        );
-
-    selectedObjectId=null;
-
-    updateTree();
-    showProperties(null);
-
-    saveCurrentGameSilently();
-};
-
-function updateTree(){
-
-    const tree=document.getElementById("partTree");
-
-    tree.innerHTML="";
-
-    const base=document.querySelector(
-        '.tree-item[onclick*="baseplate"]'
-    );
-
-    const spawn=document.querySelector(
-        '.tree-item[onclick*="spawn"]'
-    );
-
-    if(base)
-        base.classList.toggle(
-            "selected",
-            selectedObjectId==="baseplate"
-        );
-
-    if(spawn)
-        spawn.classList.toggle(
-            "selected",
-            selectedObjectId==="spawn"
-        );
-
-    if(!currentGame)return;
-
-    currentGame.parts.forEach(part=>{
-
-        const item=document.createElement("div");
-
-        item.className="tree-item";
-
-        if(part.id===selectedObjectId)
-            item.classList.add("selected");
-
-        item.innerHTML=
-            `<span class="tree-icon">🧱</span>`+
-            escapeHtml(part.name);
-
-        item.onclick=()=>{
-            selectObject(part.id);
-        };
-
-        tree.appendChild(item);
-    });
-}
-
-function saveCurrentGameSilently(){
-
-    if(!currentGame)return;
-
-    const games=JSON.parse(
-        localStorage.getItem("veriaGames")||"[]"
-    );
-
-    const index=games.findIndex(
-        g=>g.id===currentGame.id
-    );
-
-    if(index>=0){
-
-        games[index]=currentGame;
-
-        localStorage.setItem(
-            "veriaGames",
-            JSON.stringify(games)
-        );
-    }
-}
-
-window.openSaveModal=function(){
-
-    if(!currentGame)return;
-
-    document.getElementById("saveName").value=
-        currentGame.name||"";
-
-    document.getElementById("saveDescription").value=
-        currentGame.description||"";
-
-    document.getElementById("saveMessage").textContent="";
-
-    openModal("saveModal");
-};
-
-window.saveStudioGame=function(){
-
-    if(!currentGame)return;
-
-    const name=document.getElementById("saveName").value.trim();
-    const description=document.getElementById("saveDescription").value.trim();
-
-    if(!name){
-
-        document.getElementById("saveMessage").textContent=
-            "Enter a game name.";
-
-        return;
-    }
-
-    currentGame.name=name;
-    currentGame.description=description;
-    currentGame.updatedAt=Date.now();
-
-    saveCurrentGameSilently();
-
-    document.getElementById("studioGameName")
-        .textContent=name;
-
-    document.getElementById("saveMessage")
-        .textContent="Game saved!";
-
-    setTimeout(()=>{
-        closeModal("saveModal");
-    },700);
-};
-
-window.openPublishModal=function(){
-
-    if(!currentGame)return;
-
-    document.getElementById("publishName").value=
-        currentGame.name||"";
-
-    document.getElementById("publishDescription").value=
-        currentGame.description||"";
-
-    document.getElementById("publishMessage")
-        .textContent="";
-
-    openModal("publishModal");
-};
-
-window.publishStudioGame=async function(){
-
-    if(!currentGame)return;
-
-    const name=
-        document.getElementById("publishName")
-            .value
-            .trim();
-
-    const description=
-        document.getElementById("publishDescription")
-            .value
-            .trim();
-
-    const message=
-        document.getElementById("publishMessage");
-
-    if(!name){
-
-        message.textContent=
-            "Enter a game name.";
-
-        return;
-    }
-
-    message.textContent=
-        "Checking game...";
-
-    try{
-
-        const username =
-            localStorage.getItem("veriaUsername") ||
-            "Unknown";
-
-        const response =
-            await fetch(
-                API + "/games/publish",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:JSON.stringify({
-
-                        id:currentGame.id,
-
-                        name:name,
-
-                        description:description,
-
-                        creator:username,
-
-                        template:
-                            currentGame.template ||
-                            "baseplate",
-
-                        parts:
-                            Array.isArray(
-                                currentGame.parts
-                            )
-                                ? currentGame.parts
-                                : [],
-
-                        published:true
-                    })
-                }
-            );
-
-        const result =
-            await response.json();
-
-        /*
-         * MODERATION REJECTED
-         */
-
-        if(!response.ok){
-
-            message.textContent =
-                result.error ||
-                "This game could not be published.";
-
-            return;
-        }
-
-        /*
-         * ONLY MARK THE LOCAL GAME
-         * AS PUBLISHED AFTER THE SERVER
-         * APPROVES IT.
-         */
-
-        currentGame.name =
-            result.game?.name ||
-            name;
-
-        currentGame.description =
-            result.game?.description ||
-            description;
-
-        currentGame.id =
-            result.game?.id ||
-            currentGame.id;
-
-        currentGame.published=true;
-
-        currentGame.updatedAt=
-            Date.now();
-
-        /*
-         * Save the approved version locally.
-         */
-
-        saveCurrentGameSilently();
-
-        document.getElementById(
-            "studioGameName"
-        ).textContent =
-            currentGame.name;
-
-        message.textContent =
-            "Game published!";
-
-        /*
-         * Refresh the published-games list
-         * immediately.
-         */
-
-        await loadPublishedGames();
-
-        /*
-         * Close the publish window.
-         */
-
-        setTimeout(()=>{
-
-            closeModal(
-                "publishModal"
-            );
-
-            /*
-             * Go straight back to Home
-             * and show the newly published game.
-             */
-
-            document.getElementById(
-                "studioPage"
-            ).style.display="none";
-
-            document.getElementById(
-                "homePage"
-            ).style.display="block";
-
-            document.getElementById(
-                "mainNavbar"
-            ).style.display="flex";
-
-            window.scrollTo(
-                0,
-                0
-            );
-
-            loadPublishedGames();
-
-        },700);
-
-    }catch(error){
-
-        console.error(
-            "Publish error:",
-            error
-        );
-
-        message.textContent =
-            "Could not connect to Veria server.";
-
-    }
-};
-
-window.toggleOptions=function(){
-
-    document.getElementById("optionsMenu")
-        .classList.toggle("open");
-};
-
-window.exitStudio=function(){
-
-    saveCurrentGameSilently();
-
-    detachTransform();
-
-    document.getElementById("studioPage")
-        .style.display="none";
-
-    document.getElementById("mainNavbar")
-        .style.display="flex";
-
-    document.getElementById("createPage")
-        .style.display="block";
-
-    renderCreatedGames();
-
-    window.scrollTo(0,0);
-};
-
-
-async function loadPublishedGames(){
-
-    const sections =
-        document.querySelectorAll(".section");
-
-    let discoverSection = null;
-
-    sections.forEach(section => {
-
-        const title =
-            section.querySelector(".section-title");
-
-        if(
-            title &&
-            title.textContent.trim() === "Discover Games"
-        ){
-            discoverSection = section;
-        }
-
-    });
-
-    if(!discoverSection)return;
-
-    const grid =
-        discoverSection.querySelector(".game-grid");
-
-    if(!grid)return;
-
-    // Remove all fake/static games.
-    grid.innerHTML = "";
-
-    try{
-
-        const response =
-            await fetch(API + "/games");
-
-        if(!response.ok){
-            throw new Error("Games request failed");
-        }
-
-        const games =
-            await response.json();
-
-        games.forEach(game => {
-
-            const card =
-                document.createElement("div");
-
-            card.className="game-card";
-
-            card.innerHTML=`
-                <div class="game-image">🎮</div>
-
-                <div class="game-info">
-
-                    <div class="game-name">
-                        ${escapeHtml(game.name || "Untitled Game")}
-                    </div>
-
-                    <div class="game-description">
-                        ${escapeHtml(game.description || "")}
-                    </div>
-
-                    <div style="
-                        font-size:12px;
-                        color:#8e96aa;
-                        margin-bottom:10px;
-                    ">
-                        Made by ${escapeHtml(game.creator || "Unknown")}
-                    </div>
-
-                    <button class="play-button">
-                        Play
-                    </button>
-
-                </div>
-            `;
-
-            const button =
-                card.querySelector(".play-button");
-
-            button.onclick=()=>{
-                joinPublishedGame(game.id);
-            };
-
-            grid.appendChild(card);
-
-        });
-
-    }catch(error){
-
-        console.error(
-            "Could not load published games:",
-            error
-        );
-
-    }
-}
-
-
-async function joinPublishedGame(gameId){
-
-    const username =
-        localStorage.getItem("veriaUsername");
-
-    if(!username){
-
-        openLogin();
-
-        return;
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                API + "/games/join",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        gameId:gameId,
-                        username:username
-                    })
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if(!response.ok){
-
-            alert(
-                result.error ||
-                "Could not join game."
-            );
-
-            return;
-        }
-
-        localStorage.setItem(
-            "veriaCurrentGame",
-            JSON.stringify(result)
-        );
-
-        const game = result.game || {};
-
-        document.getElementById("homePage").style.display = "none";
-        document.getElementById("createPage").style.display = "none";
-        document.getElementById("playGamePage").style.display = "block";
-
-        document.getElementById("playingGameName").textContent =
-            game.name || "Game";
-
-        startVeriaGame(game);
-
-    }catch(error){
-
-        console.error(error);
-
-        alert(
-            "Could not connect to the Veria server."
-        );
-
-    }
-}
-
-window.playGame=function(game){
-
-    const games=JSON.parse(
-        localStorage.getItem("veriaGames")||"[]"
-    );
-
-    const created=games.find(
-        g=>g.name===game
-    );
-
-    if(created){
-
-        openStudio(created);
-        return;
-    }
-
-    alert(
-        game+
-        " is ready to connect to the Veria game engine."
-    );
-};
-
-/*
-   Keyboard shortcuts:
-   W = Move
-   E = Rotate
-   R = Scale
-*/
-
-window.addEventListener("keydown",event=>{
-
-    if(!selectedObjectId)return;
-
-    const tag=document.activeElement?.tagName;
-
-    if(tag==="INPUT"||tag==="TEXTAREA")return;
-
-    if(event.key.toLowerCase()==="w"){
-        setTransformMode("translate");
-    }
-
-    if(event.key.toLowerCase()==="e"){
-        setTransformMode("rotate");
-    }
-
-    if(event.key.toLowerCase()==="r"){
-        setTransformMode("scale");
-    }
-});
-
-function animate(){
-
-    requestAnimationFrame(animate);
-
-    if(controls)
-        controls.update();
-
-    if(renderer&&scene&&camera){
-
-        renderer.render(
-            scene,
-            camera
-        );
-    }
-}
-
-function escapeHtml(value){
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-updateAccountUI();
-
-</script>
-
-
-<!-- VERIA PLAY GAME SCREEN -->
-<div id="playGamePage" style="
-display:none;
-position:fixed;
-inset:0;
-background:#10131c;
-z-index:9999;
-overflow:hidden;
-">
-
-    <div id="gameTopBar" style="
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:64px;
-    background:#171b27;
-    display:flex;
-    align-items:center;
-    padding:0 20px;
-    z-index:20;
-    ">
-
-        <button onclick="leavePlayedGame()" style="
-        background:#5c8df6;
-        color:white;
-        border:0;
-        border-radius:8px;
-        padding:10px 18px;
-        font-size:15px;
-        cursor:pointer;
-        ">
-            ← Leave
-        </button>
-
-        <div id="playingGameName" style="
-        color:white;
-        font-size:20px;
-        font-weight:bold;
-        margin-left:20px;
-        ">
-            Game
-        </div>
-
-    </div>
-
-    <canvas id="veriaGameCanvas" style="
-    position:absolute;
-    left:0;
-    top:64px;
-    width:100%;
-    height:calc(100% - 64px);
-    display:block;
-    "></canvas>
-
-    <div id="gameControls" style="
-position:absolute;
-left:0;
-right:0;
-bottom:0;
-height:180px;
-pointer-events:none;
-z-index:1000;
-">
-
-    <!-- LEFT THUMBSTICK -->
-    <div id="mobileJoystick" style="
-    position:absolute;
-    left:25px;
-    bottom:25px;
-    width:135px;
-    height:135px;
-    border-radius:50%;
-    background:rgba(255,255,255,.12);
-    border:2px solid rgba(255,255,255,.30);
-    box-shadow:0 5px 20px rgba(0,0,0,.35);
-    backdrop-filter:blur(5px);
-    display:none;
-    pointer-events:auto;
-    touch-action:none;
-    user-select:none;
-    ">
-
-        <div id="joystickKnob" style="
-        position:absolute;
-        left:50%;
-        top:50%;
-        width:62px;
-        height:62px;
-        margin-left:-31px;
-        margin-top:-31px;
-        border-radius:50%;
-        background:rgba(255,255,255,.72);
-        border:2px solid rgba(255,255,255,.9);
-        box-shadow:0 4px 12px rgba(0,0,0,.3);
-        pointer-events:none;
-        ">
-        </div>
-
-    </div>
-
-    <!-- RIGHT JUMP BUTTON -->
-    <button id="mobileJumpButton" style="
-    position:absolute;
-    right:28px;
-    bottom:35px;
-    width:92px;
-    height:92px;
-    border:0;
-    border-radius:50%;
-    background:#5c8df6;
-    color:white;
-    font-size:17px;
-    font-weight:bold;
-    box-shadow:0 6px 18px rgba(0,0,0,.4);
-    display:none;
-    pointer-events:auto;
-    touch-action:none;
-    user-select:none;
-    -webkit-tap-highlight-color:transparent;
-    ">
-        JUMP
-    </button>
-
-</div></div>
-
+<div id="veria-auth-modal" aria-hidden="true">
+ <section class="va-panel">
+  <button class="va-close" id="va-close" aria-label="Close">&times;</button>
+  <div class="va-logo"><span>V</span> VERIA</div>
+  <h2 id="va-title">Welcome back.</h2>
+  <p class="va-muted" id="va-description">Sign in and get back to your games.</p>
+  <form id="va-form">
+   <label class="va-field">Username
+    <input id="va-username" minlength="3" maxlength="24" required autocomplete="username" placeholder="Your username">
+   </label>
+   <label class="va-field">Password
+    <input id="va-password" type="password" minlength="4" required autocomplete="current-password" placeholder="Your password">
+   </label>
+   <button class="va-submit" id="va-submit" type="submit">Sign In</button>
+   <div class="va-message" id="va-message" role="status"></div>
+  </form>
+  <div class="va-switch"><span id="va-switch-text">New to Veria?</span>
+   <button id="va-switch-button" type="button">Create an account</button>
+  </div>
+ </section>
 </div>
 
 
-<script type="module">
-import * as THREE from "three";
-
-let veriaGame3D = null;
-
-let veriaMobileJoystickX = 0;
-let veriaMobileJoystickY = 0;
-let veriaMobileJump = false;
-let veriaJumpVelocity = 0;
-let veriaOnGround = true;
-let veriaMobileControlsReady = false;
-
-
-
-
-function setupVeriaMobileControls() {
-
-    const joystick = document.getElementById("mobileJoystick");
-    const knob = document.getElementById("joystickKnob");
-    const jump = document.getElementById("mobileJumpButton");
-
-    if (!joystick || !knob || !jump) {
-        console.error("Veria mobile controls not found.");
-        return;
-    }
-
-    const isMobile =
-        navigator.maxTouchPoints > 0 ||
-        "ontouchstart" in window ||
-        window.matchMedia("(pointer: coarse)").matches;
-
-    if (!isMobile) {
-        joystick.style.display = "none";
-        jump.style.display = "none";
-        return;
-    }
-
-    joystick.style.display = "block";
-    jump.style.display = "block";
-
-    /* Stop the phone from scrolling/zooming while playing */
-    const playPage = document.getElementById("playGamePage");
-
-    if (playPage) {
-        playPage.style.touchAction = "none";
-    }
-
-    const maxDistance = 36;
-
-    let joystickTouchId = null;
-
-    function updateJoystick(touch) {
-
-        const rect = joystick.getBoundingClientRect();
-
-        const centerX =
-            rect.left + rect.width / 2;
-
-        const centerY =
-            rect.top + rect.height / 2;
-
-        let dx =
-            touch.clientX - centerX;
-
-        let dy =
-            touch.clientY - centerY;
-
-        const distance =
-            Math.hypot(dx, dy);
-
-        if (distance > maxDistance) {
-
-            dx =
-                dx / distance *
-                maxDistance;
-
-            dy =
-                dy / distance *
-                maxDistance;
-        }
-
-        veriaMobileJoystickX =
-            dx / maxDistance;
-
-        veriaMobileJoystickY =
-            dy / maxDistance;
-
-        knob.style.transform =
-            "translate(" +
-            dx +
-            "px," +
-            dy +
-            "px)";
-    }
-
-    function resetJoystick() {
-
-        joystickTouchId = null;
-
-        veriaMobileJoystickX = 0;
-        veriaMobileJoystickY = 0;
-
-        knob.style.transform =
-            "translate(0px,0px)";
-    }
-
-    /*
-       IMPORTANT:
-       Touch events are handled on the DOCUMENT instead
-       of only on the joystick. This means the joystick
-       keeps working even when the finger moves outside
-       the joystick circle.
-    */
-
-    document.addEventListener(
-        "touchstart",
-        function(event) {
-
-            if (
-                document.getElementById("playGamePage")?.style.display === "none"
-            ) {
-                return;
-            }
-
-            for (
-                const touch of event.changedTouches
-            ) {
-
-                const rect =
-                    joystick.getBoundingClientRect();
-
-                const insideJoystick =
-                    touch.clientX >= rect.left &&
-                    touch.clientX <= rect.right &&
-                    touch.clientY >= rect.top &&
-                    touch.clientY <= rect.bottom;
-
-                if (
-                    insideJoystick &&
-                    joystickTouchId === null
-                ) {
-
-                    event.preventDefault();
-
-                    joystickTouchId =
-                        touch.identifier;
-
-                    updateJoystick(touch);
-
-                    return;
-                }
-            }
-
-            const jumpRect =
-                jump.getBoundingClientRect();
-
-            for (
-                const touch of event.changedTouches
-            ) {
-
-                const insideJump =
-                    touch.clientX >= jumpRect.left &&
-                    touch.clientX <= jumpRect.right &&
-                    touch.clientY >= jumpRect.top &&
-                    touch.clientY <= jumpRect.bottom;
-
-                if (insideJump) {
-
-                    event.preventDefault();
-
-                    veriaMobileJump = true;
-
-                    jump.style.transform =
-                        "scale(.90)";
-
-                    return;
-                }
-            }
-
-        },
-        {passive:false}
-    );
-
-    document.addEventListener(
-        "touchmove",
-        function(event) {
-
-            if (joystickTouchId === null) {
-                return;
-            }
-
-            for (
-                const touch of event.changedTouches
-            ) {
-
-                if (
-                    touch.identifier ===
-                    joystickTouchId
-                ) {
-
-                    event.preventDefault();
-
-                    updateJoystick(touch);
-
-                    return;
-                }
-            }
-
-        },
-        {passive:false}
-    );
-
-    document.addEventListener(
-        "touchend",
-        function(event) {
-
-            for (
-                const touch of event.changedTouches
-            ) {
-
-                if (
-                    touch.identifier ===
-                    joystickTouchId
-                ) {
-
-                    event.preventDefault();
-
-                    resetJoystick();
-
-                    return;
-                }
-            }
-
-            jump.style.transform =
-                "scale(1)";
-
-        },
-        {passive:false}
-    );
-
-    document.addEventListener(
-        "touchcancel",
-        function(event) {
-
-            if (joystickTouchId !== null) {
-                resetJoystick();
-            }
-
-            jump.style.transform =
-                "scale(1)";
-
-        },
-        {passive:false}
-    );
-
-    /* Also support tapping the jump button */
-
-    jump.addEventListener(
-        "click",
-        function(event) {
-
-            event.preventDefault();
-
-            veriaMobileJump = true;
-
-        }
-    );
-
-    console.log(
-        "Veria mobile controls ready."
-    );
-}
-
-window.startVeriaGame = function(game) {
-
-    const page = document.getElementById("playGamePage");
-    const canvas = document.getElementById("veriaGameCanvas");
-
-    if (!page || !canvas) {
-        console.error("Veria game elements are missing.");
-        return;
-    }
-
-    page.style.display = "block";
-
-    setupVeriaMobileControls();
-
-    if (veriaGame3D && veriaGame3D.renderer) {
-        veriaGame3D.renderer.dispose();
-    }
-
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true
-    });
-
-    renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio || 1, 2)
-    );
-
-    const width = window.innerWidth;
-    const height = Math.max(1, window.innerHeight - 64);
-
-    renderer.setSize(width, height);
-    renderer.shadowMap.enabled = true;
-
-    const scene = new THREE.Scene();
-
-    scene.background = new THREE.Color(0x87ceeb);
-
-    const camera = new THREE.PerspectiveCamera(
-        70,
-        width / height,
-        0.1,
-        2000
-    );
-
-    camera.position.set(10, 8, 12);
-
-    const ambient = new THREE.HemisphereLight(
-        0xffffff,
-        0x557755,
-        2
-    );
-
-    scene.add(ambient);
-
-    const sun = new THREE.DirectionalLight(
-        0xffffff,
-        2
-    );
-
-    sun.position.set(100, 150, 100);
-    sun.castShadow = true;
-
-    scene.add(sun);
-
-    /* BASEPLATE */
-
-    const ground = new THREE.Mesh(
-        new THREE.BoxGeometry(200, 2, 200),
-        new THREE.MeshStandardMaterial({
-            color: 0x6aaa52
-        })
-    );
-
-    ground.position.y = -1;
-    ground.receiveShadow = true;
-
-    scene.add(ground);
-
-    /* SPAWN */
-
-    const spawn = new THREE.Mesh(
-        new THREE.BoxGeometry(8, 0.25, 8),
-        new THREE.MeshStandardMaterial({
-            color: 0x4d90ff
-        })
-    );
-
-    spawn.position.y = 0.15;
-
-    scene.add(spawn);
-
-    /* PLAYER */
-
-    const player = new THREE.Group();
-
-    player.position.set(0, 0, 0);
-
-    scene.add(player);
-
-    const red = new THREE.MeshStandardMaterial({
-        color: 0xe53935
-    });
-
-    const yellow = new THREE.MeshStandardMaterial({
-        color: 0xf5c542
-    });
-
-    const black = new THREE.MeshStandardMaterial({
-        color: 0x111111
-    });
-
-    function addPart(
-        width,
-        height,
-        depth,
-        material,
-        x,
-        y,
-        z
-    ) {
-
-        const mesh = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                width,
-                height,
-                depth
-            ),
-            material
-        );
-
-        mesh.position.set(x, y, z);
-
-        mesh.castShadow = true;
-
-        player.add(mesh);
-
-        return mesh;
-    }
-
-    /* R6 BODY */
-
-    addPart(
-        0.65,
-        1.6,
-        0.7,
-        black,
-        -0.42,
-        0.8,
-        0
-    );
-
-    addPart(
-        0.65,
-        1.6,
-        0.7,
-        black,
-        0.42,
-        0.8,
-        0
-    );
-
-    addPart(
-        1.5,
-        1.8,
-        0.8,
-        red,
-        0,
-        2.45,
-        0
-    );
-
-    addPart(
-        0.55,
-        1.8,
-        0.65,
-        yellow,
-        -1.05,
-        2.45,
-        0
-    );
-
-    addPart(
-        0.55,
-        1.8,
-        0.65,
-        yellow,
-        1.05,
-        2.45,
-        0
-    );
-
-    addPart(
-        1.35,
-        1.35,
-        1.35,
-        yellow,
-        0,
-        4.0,
-        0
-    );
-
-    /* USERNAME */
-
-    const username =
-        localStorage.getItem("veriaUsername") ||
-        "Player";
-
-    const labelCanvas =
-        document.createElement("canvas");
-
-    labelCanvas.width = 512;
-    labelCanvas.height = 128;
-
-    const ctx =
-        labelCanvas.getContext("2d");
-
-    ctx.font = "bold 48px Arial";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 8;
-
-    ctx.strokeText(
-        username,
-        256,
-        70
-    );
-
-    ctx.fillText(
-        username,
-        256,
-        70
-    );
-
-    const labelTexture =
-        new THREE.CanvasTexture(
-            labelCanvas
-        );
-
-    const label =
-        new THREE.Sprite(
-            new THREE.SpriteMaterial({
-                map: labelTexture,
-                transparent: true
-            })
-        );
-
-    label.scale.set(4, 1, 1);
-
-    label.position.set(
-        0,
-        5.4,
-        0
-    );
-
-    player.add(label);
-
-    /* LOAD CREATOR PARTS */
-
-    if (game && Array.isArray(game.parts)) {
-
-        game.parts.forEach(data => {
-
-            if (!data) return;
-
-            const size = data.size || {
-                x: 2,
-                y: 2,
-                z: 2
-            };
-
-            const position =
-                data.position || {
-                    x: 0,
-                    y: 1,
-                    z: 0
-                };
-
-            let color = 0x888888;
-
-            if (data.color) {
-
-                try {
-
-                    if (
-                        typeof data.color === "string" &&
-                        data.color.startsWith("#")
-                    ) {
-                        color =
-                            parseInt(
-                                data.color.slice(1),
-                                16
-                            );
-                    }
-
-                } catch (e) {}
-            }
-
-            const part = new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    Number(size.x) || 2,
-                    Number(size.y) || 2,
-                    Number(size.z) || 2
-                ),
-                new THREE.MeshStandardMaterial({
-                    color: color
-                })
-            );
-
-            part.position.set(
-                Number(position.x) || 0,
-                Number(position.y) || 1,
-                Number(position.z) || 0
-            );
-
-            if (data.rotation) {
-
-                part.rotation.set(
-                    Number(data.rotation.x) || 0,
-                    Number(data.rotation.y) || 0,
-                    Number(data.rotation.z) || 0
-                );
-            }
-
-            part.castShadow = true;
-            part.receiveShadow = true;
-
-            scene.add(part);
-        });
-    }
-
-    /* KEYBOARD */
-
-    const keys = {};
-
-    function keyDown(event) {
-        keys[event.key.toLowerCase()] = true;
-    }
-
-    function keyUp(event) {
-        keys[event.key.toLowerCase()] = false;
-    }
-
-    window.addEventListener(
-        "keydown",
-        keyDown
-    );
-
-    window.addEventListener(
-        "keyup",
-        keyUp
-    );
-
-    /* ===============================
-       RIGHT CLICK CAMERA LOOK
-    =============================== */
-
-    let looking = false;
-    let yaw = 0;
-    let pitch = 0;
-
-    canvas.addEventListener("contextmenu", event => {
-        event.preventDefault();
-    });
-
-    canvas.addEventListener("mousedown", event => {
-
-        if (event.button !== 2) return;
-
-        looking = true;
-
-        // Keep the camera exactly where it was left.
-        // DO NOT reset yaw or pitch here.
-
-        canvas.requestPointerLock();
-    });
-
-    document.addEventListener("mouseup", event => {
-
-        if (event.button !== 2) return;
-
-        looking = false;
-
-        if (document.pointerLockElement === canvas) {
-            document.exitPointerLock();
-        }
-    });
-
-    document.addEventListener("mousemove", event => {
-
-        if (!looking) return;
-
-        yaw -= event.movementX * 0.0025;
-        pitch -= event.movementY * 0.0025;
-
-        pitch = THREE.MathUtils.clamp(
-            pitch,
-            -1.25,
-            1.25
-        );
-    });
-
-    const clock =
-        new THREE.Clock();
-
-    function animate() {
-
-        if (
-            document.getElementById(
-                "playGamePage"
-            )?.style.display === "none"
-        ) {
-            return;
-        }
-
-        requestAnimationFrame(
-            animate
-        );
-
-        const delta =
-            Math.min(
-                clock.getDelta(),
-                0.05
-            );
-
-        let forward = 0;
-        let sideways = 0;
-
-        /* DESKTOP MOVEMENT */
-
-        if (
-            keys["w"] ||
-            keys["arrowup"]
-        ) {
-            forward += 1;
-        }
-
-        if (
-            keys["s"] ||
-            keys["arrowdown"]
-        ) {
-            forward -= 1;
-        }
-
-        if (
-            keys["a"] ||
-            keys["arrowleft"]
-        ) {
-            sideways -= 1;
-        }
-
-        if (
-            keys["d"] ||
-            keys["arrowright"]
-        ) {
-            sideways += 1;
-        }
-
-        /* MOBILE THUMBSTICK */
-
-        if (
-            Math.abs(veriaMobileJoystickY) > 0.05 ||
-            Math.abs(veriaMobileJoystickX) > 0.05
-        ) {
-
-            forward +=
-                -veriaMobileJoystickY;
-
-            sideways +=
-                veriaMobileJoystickX;
-        }
-
-        /* MOBILE JUMP */
-
-        if (
-            veriaMobileJump &&
-            veriaOnGround
-        ) {
-
-            veriaJumpVelocity = 8;
-            veriaOnGround = false;
-            veriaMobileJump = false;
-        }
-
-        /* GRAVITY */
-
-        veriaJumpVelocity -=
-            20 * delta;
-
-        player.position.y +=
-            veriaJumpVelocity * delta;
-
-        /*
-           Keep the character at its original
-           ground height instead of forcing Y=0.
-        */
-
-        if (
-            player.userData.groundY === undefined
-        ) {
-            player.userData.groundY =
-                player.position.y;
-        }
-
-        if (
-            player.position.y <=
-            player.userData.groundY
-        ) {
-
-            player.position.y =
-                player.userData.groundY;
-
-            veriaJumpVelocity = 0;
-            veriaOnGround = true;
-        }
-
-        const length =
-            Math.hypot(
-                forward,
-                sideways
-            );
-
-        if (length > 0) {
-
-            forward /= length;
-            sideways /= length;
-
-            /*
-               CAMERA-RELATIVE MOVEMENT
-
-               W = forward where camera looks
-               S = backwards
-               A = camera-left
-               D = camera-right
-            */
-
-            const cameraForward =
-                new THREE.Vector3();
-
-            camera.getWorldDirection(
-                cameraForward
-            );
-
-            cameraForward.y = 0;
-
-            if (cameraForward.lengthSq() > 0) {
-                cameraForward.normalize();
-            }
-
-            const cameraRight =
-                new THREE.Vector3(
-                    -cameraForward.z,
-                    0,
-                    cameraForward.x
-                );
-
-            const movement =
-                new THREE.Vector3();
-
-            movement.addScaledVector(
-                cameraForward,
-                forward
-            );
-
-            movement.addScaledVector(
-                cameraRight,
-                sideways
-            );
-
-            if (movement.lengthSq() > 0) {
-
-                movement.normalize();
-
-                const speed =
-                    8 * delta;
-
-                player.position.x +=
-                    movement.x * speed;
-
-                player.position.z +=
-                    movement.z * speed;
-
-                /*
-                   Face the exact direction
-                   the character is moving.
-                */
-
-                const targetRotation =
-                    Math.atan2(
-                        movement.x,
-                        movement.z
-                    );
-
-                player.rotation.y =
-                    THREE.MathUtils.lerp(
-                        player.rotation.y,
-                        targetRotation,
-                        Math.min(
-                            1,
-                            12 * delta
-                        )
-                    );
-            }
-        }
-
-        player.position.x =
-            THREE.MathUtils.clamp(
-                player.position.x,
-                -95,
-                95
-            );
-
-        player.position.z =
-            THREE.MathUtils.clamp(
-                player.position.z,
-                -95,
-                95
-            );
-
-        /* THIRD PERSON CAMERA + RIGHT CLICK LOOK */
-
-        const target = new THREE.Vector3(
-            player.position.x,
-            player.position.y + 2,
-            player.position.z
-        );
-
-        const distance = 14;
-
-        const horizontal =
-            Math.cos(pitch) * distance;
-
-        const desiredCamera =
-            new THREE.Vector3(
-                player.position.x +
-                    Math.sin(yaw) * horizontal,
-                player.position.y +
-                    7 -
-                    Math.sin(pitch) * distance,
-                player.position.z +
-                    Math.cos(yaw) * horizontal
-            );
-
-        camera.position.lerp(
-            desiredCamera,
-            0.12
-        );
-
-        camera.lookAt(target);
-
-        renderer.render(
-            scene,
-            camera
-        );
-    }
-
-    function resize() {
-
-        const w =
-            window.innerWidth;
-
-        const h =
-            Math.max(
-                1,
-                window.innerHeight - 64
-            );
-
-        renderer.setSize(
-            w,
-            h
-        );
-
-        camera.aspect =
-            w / h;
-
-        camera.updateProjectionMatrix();
-    }
-
-    window.addEventListener(
-        "resize",
-        resize
-    );
-
-    veriaGame3D = {
-        renderer,
-        scene,
-        camera,
-        player,
-        keys
-    };
-
-    resize();
-    animate();
-};
-
-window.leavePlayedGame = function() {
-
-    const page =
-        document.getElementById(
-            "playGamePage"
-        );
-
-    if (page) {
-        page.style.display = "none";
-    }
-
-    if (veriaGame3D) {
-
-        Object.keys(
-            veriaGame3D.keys
-        ).forEach(key => {
-            veriaGame3D.keys[key] = false;
-        });
-    }
-
-    if (window.goHome) {
-        window.goHome();
-    }
-};
-
-window.addEventListener("load",()=>{
-    loadPublishedGamesOnStartup();
-});
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const modal=$('veria-auth-modal');
+ let mode='login', busy=false;
+ function currentUser(){try{return JSON.parse(localStorage.getItem('veriaUser')||'null')}catch{return null}}
+ function updateHeader(){
+   const user=currentUser(), signed=!!(user&&user.username);
+   $('veria-signin').style.display=signed?'none':'';
+   $('veria-signup').style.display=signed?'none':'';
+   $('veria-account').style.display=signed?'':'none';
+   $('veria-signout').style.display=signed?'':'none';
+   $('veria-account').textContent=signed?'👤 '+user.username:'';
+ }
+ function open(which){
+   mode=which; $('va-title').textContent=mode==='login'?'Welcome back.':'Create your account.';
+   $('va-description').textContent=mode==='login'?'Sign in and get back to your games.':'Join Veria and find your next favourite game.';
+   $('va-submit').textContent=mode==='login'?'Sign In':'Create Account';
+   $('va-switch-text').textContent=mode==='login'?'New to Veria?':'Already have an account?';
+   $('va-switch-button').textContent=mode==='login'?'Create an account':'Sign in instead';
+   $('va-password').autocomplete=mode==='login'?'current-password':'new-password';
+   $('va-message').textContent='';
+   modal.classList.add('open');modal.setAttribute('aria-hidden','false');
+   $('va-username').focus();
+ }
+ function close(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+ $('veria-signin').onclick=()=>open('login');
+ $('veria-signup').onclick=()=>open('signup');
+ $('va-close').onclick=close;
+ modal.addEventListener('click',e=>{if(e.target===modal)close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+ $('va-switch-button').onclick=()=>open(mode==='login'?'signup':'login');
+ $('veria-account').onclick=()=>{const u=currentUser();if(u)alert('Signed in as '+u.username)};
+ $('veria-signout').onclick=()=>{
+   localStorage.removeItem('veriaUser');updateHeader();
+   if(window.location.pathname!=='/')window.location.href='/';
+ };
+ $('va-form').addEventListener('submit',async e=>{
+   e.preventDefault();if(busy)return;
+   const username=$('va-username').value.trim();
+   const password=$('va-password').value;
+   const message=$('va-message'),submit=$('va-submit');
+   if(username.length<3){message.textContent='Username must be at least 3 characters.';return}
+   if(password.length<4){message.textContent='Password must be at least 4 characters.';return}
+   busy=true;submit.disabled=true;submit.textContent='Please wait...';message.style.color='#c5b7ff';message.textContent='Connecting to Veria...';
+   try{
+     const response=await fetch('http://localhost:5000/'+(mode==='login'?'login':'signup'),{
+       method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({username,password})
+     });
+     const data=await response.json();
+     if(!response.ok)throw new Error(data.error||'Something went wrong.');
+     if(!data.user||!data.user.username)throw new Error('The server returned an unexpected response.');
+     localStorage.setItem('veriaUser',JSON.stringify(data.user));
+     updateHeader();close();$('va-form').reset();
+     alert(mode==='login'?'Welcome back, '+data.user.username+'!':'Account created! Welcome to Veria, '+data.user.username+'!');
+   }catch(err){
+     message.style.color='#ff9eaa';
+     message.textContent=err.message==='Failed to fetch'
+       ?'Cannot reach Veria accounts. Make sure the backend is running on port 5000.'
+       :err.message;
+   }finally{
+     busy=false;submit.disabled=false;submit.textContent=mode==='login'?'Sign In':'Create Account';
+   }
+ });
+ updateHeader();
+})();
 </script>
 
+<script type="module" src="/public/js/veria-studio.js"></script>
 </body>
 </html>
